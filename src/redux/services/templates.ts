@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Response, Template } from '../../types'
 
-export const apiTemplates = createApi({
+export const templatesApi = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://fe4b689c1c30d08d.mokky.dev' }),
   tagTypes: ['Templates', 'Responses'],
@@ -44,4 +44,4 @@ export const {
   useCreateTemplateMutation,
   useGetResponsesByTemplateIdQuery,
   useCreateResponseMutation
-} = apiTemplates
+} = templatesApi
