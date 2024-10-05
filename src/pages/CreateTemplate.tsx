@@ -4,7 +4,7 @@ import { FC } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import { useCreateTemplateMutation } from '../redux/services/api'
+import { useCreateTemplateMutation } from '../redux/services/templates'
 import { Question, Template } from '../types'
 
 interface FormValues {
@@ -14,6 +14,7 @@ interface FormValues {
     type: Question['type']
     label: string
     description?: string
+    options: string
   }[]
 }
 
@@ -21,8 +22,9 @@ const CreateTemplate: FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    control
+    control,
+    watch,
+    formState: { errors }
   } = useForm<FormValues>({
     defaultValues: {
       title: '',
@@ -40,7 +42,7 @@ const CreateTemplate: FC = () => {
   const navigate = useNavigate()
 
   const addQuestion = () => {
-    append({ type: 'text', label: '', description: '' })
+    append({ type: 'text', label: '', description: '', options: '' })
   }
 
   const submitHandler = async (data: FormValues) => {
@@ -51,7 +53,8 @@ const CreateTemplate: FC = () => {
         id: uuidv4(),
         type: obj.type,
         label: obj.label,
-        description: obj.description
+        description: obj.description,
+        options: obj.options
       }))
     }
 
@@ -85,38 +88,55 @@ const CreateTemplate: FC = () => {
           Questions
         </Typography>
 
-        {fields.map((i, idx) => (
-          <Box key={i.id} className="mb-4 space-y-4 rounded border p-4">
-            <Box className="flex items-center justify-between">
-              <Typography variant="h6">Question {idx + 1}</Typography>
-              <IconButton color="error" onClick={() => remove(idx)}>
-                <Delete />
-              </IconButton>
+        {fields.map((i, idx) => {
+          const questionType = watch(`questions.${idx}.type`)
+
+          return (
+            <Box key={i.id} className="mb-4 space-y-4 rounded border p-4">
+              <Box className="flex items-center justify-between">
+                <Typography variant="h6">Question {idx + 1}</Typography>
+                <IconButton color="error" onClick={() => remove(idx)}>
+                  <Delete />
+                </IconButton>
+              </Box>
+
+              <Select defaultValue={i.type} fullWidth {...register(`questions.${idx}.type`)}>
+                <MenuItem value="text">Text</MenuItem>
+                <MenuItem value="number">Number</MenuItem>
+                <MenuItem value="select">Select</MenuItem>
+                <MenuItem value="checkbox">Checkbox</MenuItem>
+              </Select>
+
+              <TextField
+                label="Question title"
+                variant="outlined"
+                fullWidth
+                error={!!errors?.questions?.[idx]?.label}
+                helperText={errors?.questions?.[idx]?.label?.message}
+                {...register(`questions.${idx}.label`, { required: 'Title is required!' })}
+              />
+
+              <TextField
+                label="Question description"
+                variant="outlined"
+                fullWidth
+                {...register(`questions.${idx}.description`)}
+              />
+
+              {(questionType === 'select' || questionType === 'checkbox') && (
+                <TextField
+                  label="Options (comma-separated)"
+                  variant="outlined"
+                  fullWidth
+                  placeholder="Option1, Option2, Option3"
+                  error={!!errors?.questions?.[idx]?.options}
+                  helperText={errors?.questions?.[idx]?.options?.message}
+                  {...register(`questions.${idx}.options`, { required: 'Options is required!' })}
+                />
+              )}
             </Box>
-
-            <Select fullWidth defaultValue={i.type} {...register(`questions.${idx}.type`)}>
-              <MenuItem value="text">Text</MenuItem>
-              <MenuItem value="number">Number</MenuItem>
-            </Select>
-
-            <TextField
-              label="Question title"
-              variant="outlined"
-              fullWidth
-              error={!!errors?.questions?.[idx]?.label}
-              helperText={errors?.questions?.[idx]?.label?.message}
-              {...register(`questions.${idx}.label`, { required: 'Title is required!' })}
-            />
-
-            <TextField
-              label="Question description"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              {...register(`questions.${idx}.description`)}
-            />
-          </Box>
-        ))}
+          )
+        })}
 
         <Box className="flex gap-3">
           <Button variant="outlined" color="primary" onClick={addQuestion} disableElevation startIcon={<AddCircle />}>
@@ -132,7 +152,7 @@ const CreateTemplate: FC = () => {
             {isLoading ? 'Save...' : 'Save'}
           </Button>
           <Button onClick={() => navigate('/')} variant="contained" color="error" disableElevation>
-            Cancle
+            Cancel
           </Button>
         </Box>
       </Box>

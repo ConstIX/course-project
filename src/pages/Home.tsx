@@ -2,7 +2,7 @@ import { Add } from '@mui/icons-material'
 import { Box, Button, Typography } from '@mui/material'
 import { FC } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { useGetTemplatesQuery } from '../redux/services/api'
+import { useGetTemplatesQuery } from '../redux/services/templates'
 
 const Home: FC = () => {
   const { data: templates } = useGetTemplatesQuery()

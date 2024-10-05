@@ -3,7 +3,7 @@
 import { Box, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useGetResponsesByTemplateIdQuery, useGetTemplateByIdQuery } from '../redux/services/api'
+import { useGetResponsesByTemplateIdQuery, useGetTemplateByIdQuery } from '../redux/services/templates'
 
 const AnalyzeResponses: React.FC = () => {
   const { id } = useParams<{ id: string }>()
