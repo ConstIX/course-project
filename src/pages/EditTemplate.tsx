@@ -1,10 +1,9 @@
 import { AddCircle, Delete } from '@mui/icons-material'
 import { Box, Button, IconButton, MenuItem, Select, TextField, Typography } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { v4 as uuidv4 } from 'uuid'
-import { useCreateTemplateMutation } from '../redux/services/templates'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useGetTemplateByIdQuery, useUpdateTemplateMutation } from '../redux/services/templates'
 import { Question, Template } from '../types'
 
 interface FormValues {
@@ -18,61 +17,82 @@ interface FormValues {
   }[]
 }
 
-const CreateTemplate: FC = () => {
+const EditTemplate: FC = () => {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+
+  // Получение существующего шаблона по ID
+  const { data: template, isLoading } = useGetTemplateByIdQuery(id!)
+  const [updateTemplate, { isLoading: isUpdating }] = useUpdateTemplateMutation()
+
   const {
     register,
     handleSubmit,
     control,
     watch,
+    reset,
     formState: { errors }
-  } = useForm<FormValues>({
-    defaultValues: {
-      title: '',
-      description: '',
-      questions: []
-    }
-  })
+  } = useForm<FormValues>()
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'questions'
   })
 
-  const [createTemplate, { isLoading }] = useCreateTemplateMutation()
-  const navigate = useNavigate()
+  // Заполнение формы данными шаблона после их получения
+  useEffect(() => {
+    if (template) {
+      reset({
+        title: template.title,
+        description: template.description || '',
+        questions: template.questions.map((q) => ({
+          type: q.type,
+          label: q.label,
+          description: q.description || '',
+          options: q.options
+        }))
+      })
+    }
+  }, [template, reset])
 
   const addQuestion = () => {
     append({ type: 'text', label: '', description: '', options: '' })
   }
 
-  const submitHandler = async (data: FormValues) => {
-    const template: Partial<Template> = {
+  const onSubmit = async (data: FormValues) => {
+    const processedQuestions = data.questions.map((obj, index) => ({
+      id: template?.questions[index]?.id,
+      type: obj.type,
+      label: obj.label,
+      description: obj.description,
+      options: obj.options.split(',').map((opt) => opt.trim())
+    }))
+
+    const updatedTemplate: Partial<Template> = {
       title: data.title,
       description: data.description,
-      questions: data.questions.map((obj) => ({
-        id: uuidv4(),
-        type: obj.type,
-        label: obj.label,
-        description: obj.description,
-        options: obj.options.split(',').map((opt) => opt.trim())
-      }))
+      questions: processedQuestions
     }
 
     try {
-      await createTemplate(template).unwrap()
+      await updateTemplate({ id: id!, ...updatedTemplate }).unwrap()
       navigate('/')
-    } catch (error) {
-      console.error('Failed to create template:', error)
+    } catch (err) {
+      console.error('Failed to update template:', err)
     }
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>
   }
 
   return (
     <Box className="space-y-10 py-5">
       <Typography variant="h4" color="primary">
-        Creating a form template
+        Editing the form template
       </Typography>
 
-      <Box component="form" onSubmit={handleSubmit(submitHandler)} className="space-y-4">
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <TextField
           label="Title"
           variant="outlined"
@@ -88,11 +108,11 @@ const CreateTemplate: FC = () => {
           Questions
         </Typography>
 
-        {fields.map((i, idx) => {
+        {fields.map((field, idx) => {
           const questionType = watch(`questions.${idx}.type`)
 
           return (
-            <Box key={i.id} className="mb-4 space-y-4 rounded border p-4">
+            <Box key={field.id} className="mb-4 space-y-4 rounded border p-4">
               <Box className="flex items-center justify-between">
                 <Typography variant="h6">Question {idx + 1}</Typography>
                 <IconButton color="error" onClick={() => remove(idx)}>
@@ -100,7 +120,7 @@ const CreateTemplate: FC = () => {
                 </IconButton>
               </Box>
 
-              <Select defaultValue={i.type} fullWidth {...register(`questions.${idx}.type`)}>
+              <Select defaultValue={field.type} fullWidth {...register(`questions.${idx}.type` as const)}>
                 <MenuItem value="text">Text</MenuItem>
                 <MenuItem value="number">Number</MenuItem>
                 <MenuItem value="select">Select</MenuItem>
@@ -131,7 +151,7 @@ const CreateTemplate: FC = () => {
                   placeholder="Option1, Option2, Option3"
                   error={!!errors?.questions?.[idx]?.options}
                   helperText={errors?.questions?.[idx]?.options?.message}
-                  {...register(`questions.${idx}.options`, { required: 'Options is required!' })}
+                  {...register(`questions.${idx}.options`, { required: 'Options are required!' })}
                 />
               )}
             </Box>
@@ -146,10 +166,10 @@ const CreateTemplate: FC = () => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={isLoading}
+            disabled={isUpdating}
             disableElevation
             sx={{ margin: '0 0 0 auto' }}>
-            {isLoading ? 'Save...' : 'Save'}
+            {isUpdating ? 'Saving...' : 'Save Changes'}
           </Button>
           <Button onClick={() => navigate('/')} variant="contained" color="error" disableElevation>
             Cancel
@@ -160,4 +180,4 @@ const CreateTemplate: FC = () => {
   )
 }
 
-export default CreateTemplate
+export default EditTemplate

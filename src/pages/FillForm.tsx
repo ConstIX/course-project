@@ -76,7 +76,7 @@ const FillForm: FC = () => {
                 error={!!errors[question.id]}
                 {...register(question.id, { required: 'This field is required' })}>
                 {question.options &&
-                  question.options.split(',').map((option) => (
+                  question.options.map((option) => (
                     <MenuItem key={option} value={option.trim()}>
                       {option.trim()}
                     </MenuItem>
@@ -88,7 +88,7 @@ const FillForm: FC = () => {
             {question.type === 'checkbox' && (
               <Box>
                 {question.options &&
-                  question.options.split(',').map((option) => {
+                  question.options.map((option) => {
                     const value = option.trim() // Получаем значение чекбокса
                     return (
                       <FormControlLabel

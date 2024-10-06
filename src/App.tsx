@@ -6,6 +6,8 @@ import Header from './components/Header'
 import AnalyzeResponses from './pages/AnalyzeResponses'
 import Auth from './pages/Auth'
 import CreateTemplate from './pages/CreateTemplate'
+import Dashboard from './pages/Dashboard'
+import EditTemplate from './pages/EditTemplate'
 import FillForm from './pages/FillForm'
 import Home from './pages/Home'
 import ViewForm from './pages/ViewForm'
@@ -20,8 +22,10 @@ const App: FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={<Dashboard />} />
 
         <Route path="/create-template" element={<CreateTemplate />} />
+        <Route path="/edit-template/:id" element={<EditTemplate />} />
 
         <Route path="/view-form/:id" element={<ViewForm />} />
         <Route path="/fill-form/:id" element={<FillForm />} />

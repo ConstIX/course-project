@@ -22,6 +22,21 @@ export const templatesApi = createApi({
       }),
       invalidatesTags: ['Templates']
     }),
+    updateTemplate: builder.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `/templates/${id}`,
+        method: 'PATCH',
+        body: patch
+      }),
+      invalidatesTags: (_, __, { id }) => [{ type: 'Templates', id }]
+    }),
+    deleteTemplate: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `templates/${id}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: ['Templates']
+    }),
 
     getResponsesByTemplateId: builder.query<Response[], string>({
       query: (templateId) => `/responses?templateId=${templateId}`,
@@ -42,6 +57,8 @@ export const {
   useGetTemplatesQuery,
   useGetTemplateByIdQuery,
   useCreateTemplateMutation,
+  useDeleteTemplateMutation,
+  useUpdateTemplateMutation,
   useGetResponsesByTemplateIdQuery,
   useCreateResponseMutation
 } = templatesApi

@@ -2,12 +2,21 @@ import { Add, Comment, ThumbUp } from '@mui/icons-material'
 import { Box, Button, IconButton, Typography } from '@mui/material'
 import { FC } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { useGetTemplatesQuery } from '../redux/services/templates'
+import { useDeleteTemplateMutation, useGetTemplatesQuery } from '../redux/services/templates'
 
 const Home: FC = () => {
   const { data: templates } = useGetTemplatesQuery()
+  const [deleteTemplate] = useDeleteTemplateMutation()
   const isMobile = useMediaQuery({ maxWidth: 450 })
   const token = localStorage.getItem('token')
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteTemplate(id).unwrap()
+    } catch (err) {
+      console.error('Failed to delete template:', err)
+    }
+  }
 
   return (
     <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
@@ -46,6 +55,8 @@ const Home: FC = () => {
                       fullWidth={isMobile}>
                       View Results
                     </Button>
+                    <Button href={`/edit-template/${obj.id}`}>Edit</Button>
+                    <Button onClick={() => handleDelete(obj.id)}>Delete</Button>
                   </>
                 )}
               </Box>
