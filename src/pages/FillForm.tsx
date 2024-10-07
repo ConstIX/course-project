@@ -3,11 +3,14 @@ import { Box, Button, Checkbox, FormControlLabel, MenuItem, Select, TextField, T
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useCreateResponseMutation, useGetTemplateByIdQuery } from '../redux/services/templates'
+import { useCreateResponseMutation } from '../redux/services/answers'
+import { useGetTemplateByIdQuery } from '../redux/services/templates'
+import { useGetUserByIdQuery } from '../redux/services/users'
 
 const FillForm: FC = () => {
   const { id } = useParams()
   const { data: template } = useGetTemplateByIdQuery(id as string)
+  const { data: user } = useGetUserByIdQuery(localStorage.getItem('userID') as string)
   const {
     register,
     handleSubmit,
@@ -18,7 +21,9 @@ const FillForm: FC = () => {
 
   const submitHandler = async (data: any) => {
     const response = {
+      authorId: template?.authorId,
       templateId: template?.id,
+      userId: user.id,
       answers: data
     }
 
@@ -31,7 +36,7 @@ const FillForm: FC = () => {
   }
 
   return (
-    <Box className="space-y-10 py-5">
+    <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
       <Box>
         <Typography variant="h4" color="primary">
           {template?.title}
@@ -39,7 +44,7 @@ const FillForm: FC = () => {
         {template?.description && <Typography color="textSecondary">{template?.description}</Typography>}
       </Box>
 
-      <Box component="form" onSubmit={handleSubmit(submitHandler)} className="space-y-4">
+      <Box component="form" onSubmit={handleSubmit(submitHandler)} className="mt-10 space-y-4">
         {template?.questions.map((question) => (
           <Box key={question.id}>
             <Typography variant="h6">{question.label}</Typography>

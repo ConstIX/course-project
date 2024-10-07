@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Response, Template } from '../../types'
+import { Template } from '../../types'
 
 export const templatesApi = createApi({
-  reducerPath: 'api',
+  reducerPath: 'templatesApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://fe4b689c1c30d08d.mokky.dev' }),
-  tagTypes: ['Templates', 'Responses'],
+  tagTypes: ['Templates'],
   endpoints: (builder) => ({
     getTemplates: builder.query<Template[], void>({
       query: () => '/templates',
@@ -36,19 +36,6 @@ export const templatesApi = createApi({
         method: 'DELETE'
       }),
       invalidatesTags: ['Templates']
-    }),
-
-    getResponsesByTemplateId: builder.query<Response[], string>({
-      query: (templateId) => `/responses?templateId=${templateId}`,
-      providesTags: (_, __, templateId) => [{ type: 'Responses', id: templateId }]
-    }),
-    createResponse: builder.mutation<Response, Partial<Response>>({
-      query: (body) => ({
-        url: '/responses',
-        method: 'POST',
-        body
-      }),
-      invalidatesTags: (_, __, { templateId }) => [{ type: 'Responses', id: templateId }]
     })
   })
 })
@@ -58,7 +45,5 @@ export const {
   useGetTemplateByIdQuery,
   useCreateTemplateMutation,
   useDeleteTemplateMutation,
-  useUpdateTemplateMutation,
-  useGetResponsesByTemplateIdQuery,
-  useCreateResponseMutation
+  useUpdateTemplateMutation
 } = templatesApi

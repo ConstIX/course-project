@@ -21,7 +21,6 @@ const EditTemplate: FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  // Получение существующего шаблона по ID
   const { data: template, isLoading } = useGetTemplateByIdQuery(id!)
   const [updateTemplate, { isLoading: isUpdating }] = useUpdateTemplateMutation()
 
@@ -87,12 +86,12 @@ const EditTemplate: FC = () => {
   }
 
   return (
-    <Box className="space-y-10 py-5">
+    <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
       <Typography variant="h4" color="primary">
         Editing the form template
       </Typography>
 
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} className="mt-10 space-y-4">
         <TextField
           label="Title"
           variant="outlined"

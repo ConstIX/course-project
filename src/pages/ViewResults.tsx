@@ -3,9 +3,10 @@
 import { Box, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useGetResponsesByTemplateIdQuery, useGetTemplateByIdQuery } from '../redux/services/templates'
+import { useGetResponsesByTemplateIdQuery } from '../redux/services/answers'
+import { useGetTemplateByIdQuery } from '../redux/services/templates'
 
-const AnalyzeResponses: React.FC = () => {
+const ViewResults: React.FC = () => {
   const { id } = useParams<{ id: string }>()
 
   const { data: template, error: templateError, isLoading: isTemplateLoading } = useGetTemplateByIdQuery(id!)
@@ -48,10 +49,11 @@ const AnalyzeResponses: React.FC = () => {
   }
 
   return (
-    <Box className="p-4">
-      <Typography variant="h4" gutterBottom>
-        Анализ ответов для "{template.title}"
+    <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
+      <Typography variant="h4" color="primary">
+        Analysis of responses for <br /> "{template.title}"
       </Typography>
+
       <Table>
         <TableHead>
           <TableRow>
@@ -77,4 +79,4 @@ const AnalyzeResponses: React.FC = () => {
   )
 }
 
-export default AnalyzeResponses
+export default ViewResults

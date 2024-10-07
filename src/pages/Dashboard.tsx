@@ -1,22 +1,28 @@
-import { Delete, Lock, LockOpen } from '@mui/icons-material'
-import { Alert, Box, Button, IconButton, Snackbar, Typography } from '@mui/material'
+import { AdminPanelSettings, Delete, Lock, LockOpen } from '@mui/icons-material'
+import { Alert, Box, Button, IconButton, Snackbar } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDeleteUserMutation, useGetUsersQuery, useUpdateUserMutation } from '../redux/services/users'
+import {
+  useDeleteUserMutation,
+  useGetUserByIdQuery,
+  useGetUsersQuery,
+  useUpdateUserMutation
+} from '../redux/services/users'
 
 const Dashboard: FC = () => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false)
 
+  const userId = localStorage.getItem('userID')
   const { data: users } = useGetUsersQuery({})
+  const { data: user } = useGetUserByIdQuery(userId as string)
   const [deleteUser] = useDeleteUserMutation()
   const [updateUser] = useUpdateUserMutation()
 
-  const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
 
-  const handleAction = async (status: 'block' | 'active') => {
+  const handleAction = async (status: 'block' | 'active' | 'admin') => {
     try {
       for (const id of selectedUsers) {
         await updateUser({ id, status }).unwrap()
@@ -30,6 +36,20 @@ const Dashboard: FC = () => {
       setOpenSnackbar(true)
     } catch (error) {
       console.error(`Error updating users:`, error)
+    }
+  }
+
+  const handleToggleAdmin = async () => {
+    try {
+      for (const id of selectedUsers) {
+        const user = users.find((user: any) => user.id === id)
+        const newStatus = user.status === 'admin' ? 'active' : 'admin'
+        await updateUser({ id, status: newStatus }).unwrap()
+        await new Promise((resolve) => setTimeout(resolve, 50))
+      }
+      setOpenSnackbar(true)
+    } catch (error) {
+      console.error('Error toggling admin status:', error)
     }
   }
 
@@ -51,24 +71,18 @@ const Dashboard: FC = () => {
   }
 
   const columns: GridColDef[] = [
-    {
-      field: 'username',
-      headerName: 'Name',
-      width: 250,
-      renderCell: (params) => (
-        <Box>
-          <Typography>{params.row.username}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {params.row.specialization || '-'}
-          </Typography>
-        </Box>
-      )
-    },
+    { field: 'username', headerName: 'Name', width: 250 },
     { field: 'email', headerName: 'E-Mail', width: 250, sortable: false },
     { field: 'registrationDate', headerName: 'Registration date', width: 200, sortable: false },
     { field: 'loginDate', headerName: 'Last login', width: 200, sortable: false },
     { field: 'status', headerName: 'Status', width: 100, sortable: false }
   ]
+
+  useEffect(() => {
+    if (user && user.status !== 'admin') {
+      navigate('/')
+    }
+  }, [user])
 
   return (
     <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
@@ -87,6 +101,9 @@ const Dashboard: FC = () => {
         </IconButton>
         <IconButton onClick={handleDelete} color="error" disabled={!selectedUsers.length}>
           <Delete />
+        </IconButton>
+        <IconButton onClick={handleToggleAdmin} color="secondary" disabled={!selectedUsers.length}>
+          <AdminPanelSettings />
         </IconButton>
       </Box>
 

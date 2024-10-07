@@ -3,7 +3,6 @@ import { FC } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
 import Header from './components/Header'
-import AnalyzeResponses from './pages/AnalyzeResponses'
 import Auth from './pages/Auth'
 import CreateTemplate from './pages/CreateTemplate'
 import Dashboard from './pages/Dashboard'
@@ -11,6 +10,7 @@ import EditTemplate from './pages/EditTemplate'
 import FillForm from './pages/FillForm'
 import Home from './pages/Home'
 import ViewForm from './pages/ViewForm'
+import ViewResults from './pages/ViewResults'
 
 const App: FC = () => {
   const { pathname } = useLocation()
@@ -29,7 +29,7 @@ const App: FC = () => {
 
         <Route path="/view-form/:id" element={<ViewForm />} />
         <Route path="/fill-form/:id" element={<FillForm />} />
-        <Route path="/analyze-responses/:id" element={<AnalyzeResponses />} />
+        <Route path="/analyze-responses/:id" element={<ViewResults />} />
       </Routes>
     </Box>
   )

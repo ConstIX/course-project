@@ -5,6 +5,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import { useCreateTemplateMutation } from '../redux/services/templates'
+import { useGetUserByIdQuery } from '../redux/services/users'
 import { Question, Template } from '../types'
 
 interface FormValues {
@@ -38,6 +39,8 @@ const CreateTemplate: FC = () => {
     name: 'questions'
   })
 
+  const userId = localStorage.getItem('userID')
+  const { data: user } = useGetUserByIdQuery(userId as string)
   const [createTemplate, { isLoading }] = useCreateTemplateMutation()
   const navigate = useNavigate()
 
@@ -47,6 +50,7 @@ const CreateTemplate: FC = () => {
 
   const submitHandler = async (data: FormValues) => {
     const template: Partial<Template> = {
+      authorId: user.id,
       title: data.title,
       description: data.description,
       questions: data.questions.map((obj) => ({
@@ -67,12 +71,12 @@ const CreateTemplate: FC = () => {
   }
 
   return (
-    <Box className="space-y-10 py-5">
+    <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
       <Typography variant="h4" color="primary">
         Creating a form template
       </Typography>
 
-      <Box component="form" onSubmit={handleSubmit(submitHandler)} className="space-y-4">
+      <Box component="form" onSubmit={handleSubmit(submitHandler)} className="mt-10 space-y-4">
         <TextField
           label="Title"
           variant="outlined"

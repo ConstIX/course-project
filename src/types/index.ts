@@ -12,6 +12,7 @@ export interface Question {
 
 export interface Template {
   id: string
+  authorId: number
   title: string
   description?: string
   questions: Question[]
