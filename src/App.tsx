@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard'
 import EditTemplate from './pages/EditTemplate'
 import FillForm from './pages/FillForm'
 import Home from './pages/Home'
+import Profile from './pages/Profile'
 import ViewForm from './pages/ViewForm'
 import ViewResults from './pages/ViewResults'
 
@@ -21,15 +22,17 @@ const App: FC = () => {
 
       <Routes>
         <Route path="/" element={<Home />} />
+
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
 
         <Route path="/create-template" element={<CreateTemplate />} />
         <Route path="/edit-template/:id" element={<EditTemplate />} />
 
         <Route path="/view-form/:id" element={<ViewForm />} />
         <Route path="/fill-form/:id" element={<FillForm />} />
-        <Route path="/analyze-responses/:id" element={<ViewResults />} />
+        <Route path="/view-results/:id" element={<ViewResults />} />
       </Routes>
     </Box>
   )

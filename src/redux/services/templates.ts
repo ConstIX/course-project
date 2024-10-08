@@ -14,6 +14,10 @@ export const templatesApi = createApi({
       query: (id) => `/templates/${id}`,
       providesTags: (_, __, id) => [{ type: 'Templates', id }]
     }),
+    getTemplatesByUserId: builder.query<Template[], string>({
+      query: (userId) => `/templates?authorId=${userId}`,
+      providesTags: ['Templates']
+    }),
     createTemplate: builder.mutation<Template, Partial<Template>>({
       query: (body) => ({
         url: '/templates',
@@ -35,7 +39,7 @@ export const templatesApi = createApi({
         url: `templates/${id}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['Templates']
+      invalidatesTags: (_, __, id) => [{ type: 'Templates', id }]
     })
   })
 })
@@ -43,6 +47,7 @@ export const templatesApi = createApi({
 export const {
   useGetTemplatesQuery,
   useGetTemplateByIdQuery,
+  useGetTemplatesByUserIdQuery,
   useCreateTemplateMutation,
   useDeleteTemplateMutation,
   useUpdateTemplateMutation

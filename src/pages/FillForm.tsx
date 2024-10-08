@@ -24,6 +24,7 @@ const FillForm: FC = () => {
       authorId: template?.authorId,
       templateId: template?.id,
       userId: user.id,
+      templateTitle: template?.title,
       answers: data
     }
 

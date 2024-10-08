@@ -21,6 +21,9 @@ export interface Template {
 export interface Response {
   id: string
   templateId: string
+  authorId: string
+  userId: string
+  templateTitle: string
   answers: {
     [questionId: string]: any
   }

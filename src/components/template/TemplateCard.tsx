@@ -7,17 +7,17 @@ import { useGetUserByIdQuery } from '../../redux/services/users'
 
 interface ITemplateCard {
   id: string
-  userId: number
+  authorId: number
   title: string
   description?: string
 }
 
-const TemplateCard: FC<ITemplateCard> = ({ id, userId, title, description }) => {
+const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description }) => {
   const [deleteTemplate] = useDeleteTemplateMutation()
   const { data: user } = useGetUserByIdQuery(localStorage.getItem('userID') as string)
   const isMobile = useMediaQuery({ maxWidth: 450 })
   const token = localStorage.getItem('token')
-  const author = localStorage.getItem('userID') === String(userId)
+  const author = localStorage.getItem('userID') === String(authorId)
   const admin = user && user.status === 'admin'
 
   const handleDelete = async (id: string) => {
@@ -42,7 +42,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, userId, title, description }) => 
             <Button href={`/fill-form/${id}`} variant="outlined" color="primary" fullWidth={isMobile}>
               Fill Form
             </Button>
-            <Button href={`/analyze-responses/${id}`} variant="outlined" color="success" fullWidth={isMobile}>
+            <Button href={`/view-results/${id}`} variant="outlined" color="success" fullWidth={isMobile}>
               View Results
             </Button>
             {(admin || author) && (
