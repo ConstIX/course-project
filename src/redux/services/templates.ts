@@ -39,7 +39,7 @@ export const templatesApi = createApi({
         url: `templates/${id}`,
         method: 'DELETE'
       }),
-      invalidatesTags: (_, __, id) => [{ type: 'Templates', id }]
+      invalidatesTags: ['Templates']
     })
   })
 })

@@ -1,9 +1,11 @@
-import { AddCircle, Delete } from '@mui/icons-material'
-import { Box, Button, IconButton, MenuItem, Select, TextField, Typography } from '@mui/material'
-import { FC } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { Box, Button, Tab, Tabs, Typography } from '@mui/material'
+import { FC, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
+import AccessSettings from '../components/template/AccessSettings'
+import GeneralSettings from '../components/template/GeneralSettings'
+import QuestionSettings from '../components/template/QuestionSettings'
 import { useCreateTemplateMutation } from '../redux/services/templates'
 import { useGetUserByIdQuery } from '../redux/services/users'
 import { Question, Template } from '../types'
@@ -11,32 +13,31 @@ import { Question, Template } from '../types'
 interface FormValues {
   title: string
   description?: string
+  theme: string
+  customTheme?: string
   questions: {
     type: Question['type']
     label: string
     description?: string
     options: string
   }[]
+  tags: string[]
+  access: string | string[]
+  selectedUsers?: string[]
 }
 
 const CreateTemplate: FC = () => {
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    formState: { errors }
-  } = useForm<FormValues>({
+  const methods = useForm<FormValues>({
     defaultValues: {
       title: '',
       description: '',
-      questions: []
+      theme: 'quiz',
+      customTheme: '',
+      questions: [],
+      tags: [],
+      access: 'public',
+      selectedUsers: []
     }
-  })
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'questions'
   })
 
   const userId = localStorage.getItem('userID')
@@ -44,22 +45,26 @@ const CreateTemplate: FC = () => {
   const [createTemplate, { isLoading }] = useCreateTemplateMutation()
   const navigate = useNavigate()
 
-  const addQuestion = () => {
-    append({ type: 'text', label: '', description: '', options: '' })
-  }
+  const [tabIndex, setTabIndex] = useState(0)
 
   const submitHandler = async (data: FormValues) => {
+    const theme = data.theme === 'other' ? data.customTheme : data.theme
+    const access = data.access === 'public' ? 'public' : data.selectedUsers
+
     const template: Partial<Template> = {
       authorId: user.id,
       title: data.title,
       description: data.description,
+      theme,
       questions: data.questions.map((obj) => ({
         id: uuidv4(),
         type: obj.type,
         label: obj.label,
         description: obj.description,
         options: obj.options.split(',').map((opt) => opt.trim())
-      }))
+      })),
+      tags: data.tags,
+      access
     }
 
     try {
@@ -71,96 +76,34 @@ const CreateTemplate: FC = () => {
   }
 
   return (
-    <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
-      <Typography variant="h4" color="primary">
-        Creating a form template
-      </Typography>
-
-      <Box component="form" onSubmit={handleSubmit(submitHandler)} className="mt-10 space-y-4">
-        <TextField
-          label="Title"
-          variant="outlined"
-          fullWidth
-          error={!!errors.title}
-          helperText={errors.title?.message}
-          {...register('title', { required: 'Title is required!' })}
-        />
-
-        <TextField label="Description" variant="outlined" fullWidth multiline rows={3} {...register('description')} />
-
-        <Typography variant="h5" color="primary">
-          Questions
+    <FormProvider {...methods}>
+      <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
+        <Typography variant="h4" color="primary">
+          Creating a form template
         </Typography>
 
-        {fields.map((i, idx) => {
-          const questionType = watch(`questions.${idx}.type`)
+        <Tabs value={tabIndex} onChange={(_, newValue) => setTabIndex(newValue)} className="mt-4">
+          <Tab label="General" />
+          <Tab label="Questions" />
+          <Tab label="Tags & Access" />
+        </Tabs>
 
-          return (
-            <Box key={i.id} className="mb-4 space-y-4 rounded border p-4">
-              <Box className="flex items-center justify-between">
-                <Typography variant="h6">Question {idx + 1}</Typography>
-                <IconButton color="error" onClick={() => remove(idx)}>
-                  <Delete />
-                </IconButton>
-              </Box>
+        <form onSubmit={methods.handleSubmit(submitHandler)} className="mt-4">
+          {tabIndex === 0 && <GeneralSettings />}
+          {tabIndex === 1 && <QuestionSettings />}
+          {tabIndex === 2 && <AccessSettings />}
 
-              <Select defaultValue={i.type} fullWidth {...register(`questions.${idx}.type`)}>
-                <MenuItem value="text">Text</MenuItem>
-                <MenuItem value="number">Number</MenuItem>
-                <MenuItem value="select">Select</MenuItem>
-                <MenuItem value="checkbox">Checkbox</MenuItem>
-              </Select>
-
-              <TextField
-                label="Question title"
-                variant="outlined"
-                fullWidth
-                error={!!errors?.questions?.[idx]?.label}
-                helperText={errors?.questions?.[idx]?.label?.message}
-                {...register(`questions.${idx}.label`, { required: 'Title is required!' })}
-              />
-
-              <TextField
-                label="Question description"
-                variant="outlined"
-                fullWidth
-                {...register(`questions.${idx}.description`)}
-              />
-
-              {(questionType === 'select' || questionType === 'checkbox') && (
-                <TextField
-                  label="Options (comma-separated)"
-                  variant="outlined"
-                  fullWidth
-                  placeholder="Option1, Option2, Option3"
-                  error={!!errors?.questions?.[idx]?.options}
-                  helperText={errors?.questions?.[idx]?.options?.message}
-                  {...register(`questions.${idx}.options`, { required: 'Options is required!' })}
-                />
-              )}
-            </Box>
-          )
-        })}
-
-        <Box className="flex gap-3">
-          <Button variant="outlined" color="primary" onClick={addQuestion} disableElevation startIcon={<AddCircle />}>
-            Add Question
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={isLoading}
-            disableElevation
-            sx={{ margin: '0 0 0 auto' }}>
-            {isLoading ? 'Save...' : 'Save'}
-          </Button>
-          <Button onClick={() => navigate('/')} variant="contained" color="error" disableElevation>
-            Cancel
-          </Button>
-        </Box>
+          <Box className="mt-4 flex justify-end gap-3">
+            <Button variant="outlined" onClick={() => navigate('/')} disableElevation>
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" type="submit" disableElevation disabled={isLoading}>
+              Create Template
+            </Button>
+          </Box>
+        </form>
       </Box>
-    </Box>
+    </FormProvider>
   )
 }
 
