@@ -1,6 +1,6 @@
 // src/types/index.ts
 
-export type QuestionType = 'text' | 'number' | 'select' | 'checkbox'
+export type QuestionType = 'text' | 'number' | 'select' | 'checkbox' | 'radio' | 'tags'
 
 export interface Question {
   id: string
@@ -15,6 +15,11 @@ export interface Template {
   authorId: number
   title: string
   description?: string
+  theme: string
+  customTheme?: string
+  tags: string[]
+  access: string | string[]
+  selectedUsers?: string[]
   questions: Question[]
 }
 

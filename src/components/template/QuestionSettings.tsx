@@ -42,6 +42,8 @@ const QuestionSettings: FC = () => {
               <MenuItem value="number">Number</MenuItem>
               <MenuItem value="select">Select</MenuItem>
               <MenuItem value="checkbox">Checkbox</MenuItem>
+              <MenuItem value="radio">Radio</MenuItem>
+              <MenuItem value="tags">Tags</MenuItem>
             </Select>
 
             <TextField
@@ -60,7 +62,7 @@ const QuestionSettings: FC = () => {
               {...register(`questions.${idx}.description`)}
             />
 
-            {(questionType === 'select' || questionType === 'checkbox') && (
+            {(questionType === 'select' || questionType === 'checkbox' || questionType === 'radio') && (
               <TextField
                 label="Options (comma-separated)"
                 variant="outlined"

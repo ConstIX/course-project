@@ -17,7 +17,7 @@ const AccessSettings: FC<any> = () => {
       <Autocomplete
         multiple
         options={tags}
-        onChange={(_, newValue) => setValue('tags', newValue)} // Обновляем значение tags
+        onChange={(_, newValue) => setValue('tags', newValue)}
         renderInput={(params) => (
           <TextField {...params} label="Tags" variant="outlined" placeholder="Start typing..." />
         )}
@@ -32,7 +32,7 @@ const AccessSettings: FC<any> = () => {
         <Autocomplete
           multiple
           options={usersData}
-          onChange={(_, newValue) => setValue('selectedUsers', newValue)} // Обновляем значение выбранных пользователей
+          onChange={(_, newValue) => setValue('selectedUsers', newValue)}
           renderInput={(params) => (
             <TextField {...params} label="Select Users" variant="outlined" placeholder="Select users..." />
           )}

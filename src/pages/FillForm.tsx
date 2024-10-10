@@ -1,5 +1,17 @@
 import { Send } from '@mui/icons-material'
-import { Box, Button, Checkbox, FormControlLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
+  Typography
+} from '@mui/material'
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -7,14 +19,15 @@ import { useCreateResponseMutation } from '../redux/services/answers'
 import { useGetTemplateByIdQuery } from '../redux/services/templates'
 import { useGetUserByIdQuery } from '../redux/services/users'
 
-const FillForm: FC = () => {
+const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
   const { id } = useParams()
   const { data: template } = useGetTemplateByIdQuery(id as string)
   const { data: user } = useGetUserByIdQuery(localStorage.getItem('userID') as string)
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setValue
   } = useForm()
   const [createResponse, { isLoading }] = useCreateResponseMutation()
   const navigate = useNavigate()
@@ -50,84 +63,128 @@ const FillForm: FC = () => {
           <Box key={question.id}>
             <Typography variant="h6">{question.label}</Typography>
             {question.description && <Typography color="textSecondary">{question.description}</Typography>}
+            {errors[question.id] && <Typography color="error">{errors[question.id].message}</Typography>}
 
-            {/* Text input */}
             {question.type === 'text' && (
               <TextField
                 fullWidth
                 variant="outlined"
+                {...register(question.id, { required: 'This field is required' })}
                 error={!!errors[question.id]}
                 helperText={errors[question.id] && 'This field is required'}
-                {...register(question.id, { required: 'This field is required' })}
+                disabled={readOnly}
               />
             )}
 
-            {/* Number input */}
             {question.type === 'number' && (
               <TextField
                 fullWidth
                 type="number"
                 variant="outlined"
+                {...register(question.id, { required: 'This field is required' })}
                 error={!!errors[question.id]}
                 helperText={errors[question.id] && 'This field is required'}
-                {...register(question.id, { required: 'This field is required' })}
+                disabled={readOnly}
               />
             )}
 
-            {/* Select input */}
+            {question.type === 'tags' && (
+              <Autocomplete
+                multiple
+                freeSolo
+                options={[]}
+                onChange={(_, newValue) => setValue(question.id, newValue)}
+                disabled={readOnly}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Tags"
+                    variant="outlined"
+                    placeholder="Start typing..."
+                    {...register(question.id, { required: 'This field is required' })}
+                    error={!!errors[question.id]}
+                    helperText={errors[question.id] && 'This field is required'}
+                  />
+                )}
+              />
+            )}
+
             {question.type === 'select' && (
               <Select
                 fullWidth
                 defaultValue=""
+                {...register(question.id, { required: 'This field is required' })}
                 error={!!errors[question.id]}
-                {...register(question.id, { required: 'This field is required' })}>
+                disabled={readOnly}>
                 {question.options &&
-                  question.options.map((option) => (
-                    <MenuItem key={option} value={option.trim()}>
+                  question.options.map((option: string, idx: number) => (
+                    <MenuItem key={`${question.id}-${idx}`} value={option.trim()}>
                       {option.trim()}
                     </MenuItem>
                   ))}
               </Select>
             )}
 
-            {/* Checkbox input */}
+            {question.type === 'radio' && (
+              <RadioGroup row defaultValue="">
+                {question.options &&
+                  question.options.map((option: string, idx: number) => (
+                    <FormControlLabel
+                      key={`${question.id}-${idx}`}
+                      label={option.trim()}
+                      disabled={readOnly}
+                      control={
+                        <Radio
+                          value={option.trim()}
+                          {...register(question.id, { required: 'This field is required' })}
+                        />
+                      }
+                    />
+                  ))}
+              </RadioGroup>
+            )}
+
             {question.type === 'checkbox' && (
               <Box>
                 {question.options &&
-                  question.options.map((option) => {
-                    const value = option.trim() // Получаем значение чекбокса
-                    return (
-                      <FormControlLabel
-                        key={value}
-                        control={
-                          <Checkbox
-                            {...register(question.id)} // Регистрация чекбокса
-                            value={value} // Устанавливаем значение для отправки
-                          />
-                        }
-                        label={value}
-                      />
-                    )
-                  })}
+                  question.options.map((option: string, idx: number) => (
+                    <FormControlLabel
+                      key={`${question.id}-${idx}`}
+                      label={option.trim()}
+                      disabled={readOnly}
+                      control={
+                        <Checkbox
+                          value={option.trim()}
+                          {...register(question.id, { required: 'This field is required' })}
+                        />
+                      }
+                    />
+                  ))}
               </Box>
             )}
           </Box>
         ))}
 
-        <Box className="flex justify-between">
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={isLoading}
-            disableElevation
-            endIcon={<Send />}>
-            {isLoading ? 'Send...' : 'Send'}
-          </Button>
+        {readOnly ? (
           <Button onClick={() => navigate('/')} variant="contained" color="error" disableElevation>
-            Cancel
+            Back
           </Button>
-        </Box>
+        ) : (
+          <Box className="flex justify-between">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isLoading}
+              disableElevation
+              endIcon={<Send />}>
+              {isLoading ? 'Send...' : 'Send'}
+            </Button>
+            <Button onClick={() => navigate('/')} variant="contained" color="error" disableElevation>
+              Cancel
+            </Button>
+          </Box>
+        )}
       </Box>
     </Box>
   )

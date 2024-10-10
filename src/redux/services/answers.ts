@@ -35,7 +35,7 @@ export const answersApi = createApi({
         url: `/responses/${responseId}`,
         method: 'DELETE'
       }),
-      invalidatesTags: (_, __, responseId) => [{ type: 'Answers', id: responseId }]
+      invalidatesTags: ['Answers']
     })
   })
 })
