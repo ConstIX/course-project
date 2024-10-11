@@ -15,7 +15,7 @@ import {
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useCreateResponseMutation } from '../redux/services/answers'
+import { useCreateResponseMutation } from '../redux/services/results'
 import { useGetTemplateByIdQuery } from '../redux/services/templates'
 import { useGetUserByIdQuery } from '../redux/services/users'
 

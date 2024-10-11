@@ -20,7 +20,7 @@ import {
   useDeleteResponseMutation,
   useGetResponsesByTemplateIdQuery,
   useUpdateResponseMutation
-} from '../redux/services/answers'
+} from '../redux/services/results'
 import { useGetTemplateByIdQuery } from '../redux/services/templates'
 import { useGetUserByIdQuery } from '../redux/services/users'
 

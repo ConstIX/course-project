@@ -2,7 +2,7 @@ import { Box, Button } from '@mui/material'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useGetResponsesByUserIdQuery } from '../../redux/services/answers'
+import { useGetResponsesByUserIdQuery } from '../../redux/services/results'
 
 const MyResults: FC = () => {
   const { data: responses } = useGetResponsesByUserIdQuery(localStorage.getItem('userID')!)

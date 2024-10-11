@@ -4,15 +4,15 @@ import { Response } from '../../types'
 export const answersApi = createApi({
   reducerPath: 'answersApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://fe4b689c1c30d08d.mokky.dev' }),
-  tagTypes: ['Answers'],
+  tagTypes: ['Results'],
   endpoints: (builder) => ({
     getResponsesByTemplateId: builder.query<Response[], string>({
       query: (templateId) => `/responses?templateId=${templateId}`,
-      providesTags: (_, __, templateId) => [{ type: 'Answers', id: templateId }]
+      providesTags: (_, __, templateId) => [{ type: 'Results', id: templateId }]
     }),
     getResponsesByUserId: builder.query<Response[], string>({
       query: (userId) => `/responses?userId=${userId}`,
-      providesTags: ['Answers']
+      providesTags: ['Results']
     }),
     createResponse: builder.mutation<Response, Partial<Response>>({
       query: (body) => ({
@@ -20,7 +20,7 @@ export const answersApi = createApi({
         method: 'POST',
         body
       }),
-      invalidatesTags: (_, __, { templateId }) => [{ type: 'Answers', id: templateId }]
+      invalidatesTags: (_, __, { templateId }) => [{ type: 'Results', id: templateId }]
     }),
     updateResponse: builder.mutation<Response, { id: string; body: Partial<Response> }>({
       query: ({ id, body }) => ({
@@ -28,14 +28,14 @@ export const answersApi = createApi({
         method: 'PATCH',
         body
       }),
-      invalidatesTags: (_, __, { id }) => [{ type: 'Answers', id }]
+      invalidatesTags: (_, __, { id }) => [{ type: 'Results', id }]
     }),
     deleteResponse: builder.mutation<void, string>({
       query: (responseId) => ({
         url: `/responses/${responseId}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['Answers']
+      invalidatesTags: ['Results']
     })
   })
 })

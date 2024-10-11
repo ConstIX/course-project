@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
-import { answersApi } from './services/answers'
 import { authApi } from './services/auth'
+import { answersApi } from './services/results'
 import { templatesApi } from './services/templates'
 import { usersApi } from './services/users'
 
