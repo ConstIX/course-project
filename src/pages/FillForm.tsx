@@ -13,7 +13,7 @@ import {
   Typography
 } from '@mui/material'
 import { FC } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCreateResponseMutation } from '../redux/services/results'
 import { useGetTemplateByIdQuery } from '../redux/services/templates'
@@ -24,7 +24,7 @@ const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
   const { data: template } = useGetTemplateByIdQuery(id as string)
   const { data: user } = useGetUserByIdQuery(localStorage.getItem('userID') as string)
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
     setValue
@@ -63,104 +63,136 @@ const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
           <Box key={question.id}>
             <Typography variant="h6">{question.label}</Typography>
             {question.description && <Typography color="textSecondary">{question.description}</Typography>}
-            {errors[question.id] && <Typography color="error">{errors[question.id].message}</Typography>}
 
             {question.type === 'text' && (
-              <TextField
-                fullWidth
-                variant="outlined"
-                {...register(question.id, { required: 'This field is required' })}
-                error={!!errors[question.id]}
-                helperText={errors[question.id] && 'This field is required'}
-                disabled={readOnly}
+              <Controller
+                name={question.id}
+                control={control}
+                defaultValue=""
+                rules={{ required: 'This field is required' }}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    {...field}
+                    error={!!errors[question.id]}
+                    disabled={readOnly}
+                  />
+                )}
               />
             )}
 
             {question.type === 'number' && (
-              <TextField
-                fullWidth
-                type="number"
-                variant="outlined"
-                {...register(question.id, { required: 'This field is required' })}
-                error={!!errors[question.id]}
-                helperText={errors[question.id] && 'This field is required'}
-                disabled={readOnly}
+              <Controller
+                name={question.id}
+                control={control}
+                defaultValue=""
+                rules={{ required: 'This field is required' }}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="number"
+                    variant="outlined"
+                    {...field}
+                    error={!!errors[question.id]}
+                    disabled={readOnly}
+                  />
+                )}
               />
             )}
 
             {question.type === 'tags' && (
-              <Autocomplete
-                multiple
-                freeSolo
-                options={[]}
-                onChange={(_, newValue) => setValue(question.id, newValue)}
-                disabled={readOnly}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Tags"
-                    variant="outlined"
-                    placeholder="Start typing..."
-                    {...register(question.id, { required: 'This field is required' })}
-                    error={!!errors[question.id]}
-                    helperText={errors[question.id] && 'This field is required'}
+              <Controller
+                name={question.id}
+                control={control}
+                defaultValue={[]}
+                rules={{ required: 'This field is required' }}
+                render={() => (
+                  <Autocomplete
+                    multiple
+                    freeSolo
+                    options={[]}
+                    onChange={(_, newValue) => setValue(question.id, newValue)}
+                    disabled={readOnly}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Tags" variant="outlined" placeholder="Start typing..." />
+                    )}
                   />
                 )}
               />
             )}
 
             {question.type === 'select' && (
-              <Select
-                fullWidth
+              <Controller
+                name={question.id}
+                control={control}
                 defaultValue=""
-                {...register(question.id, { required: 'This field is required' })}
-                error={!!errors[question.id]}
-                disabled={readOnly}>
-                {question.options &&
-                  question.options.map((option: string, idx: number) => (
-                    <MenuItem key={`${question.id}-${idx}`} value={option.trim()}>
-                      {option.trim()}
-                    </MenuItem>
-                  ))}
-              </Select>
+                rules={{ required: 'This field is required' }}
+                render={({ field }) => (
+                  <Select fullWidth {...field} error={!!errors[question.id]} disabled={readOnly}>
+                    {question.options &&
+                      question.options.map((option: string, idx: number) => (
+                        <MenuItem key={`${question.id}-${idx}`} value={option.trim()}>
+                          {option.trim()}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                )}
+              />
             )}
 
             {question.type === 'radio' && (
-              <RadioGroup row defaultValue="">
-                {question.options &&
-                  question.options.map((option: string, idx: number) => (
-                    <FormControlLabel
-                      key={`${question.id}-${idx}`}
-                      label={option.trim()}
-                      disabled={readOnly}
-                      control={
-                        <Radio
-                          value={option.trim()}
-                          {...register(question.id, { required: 'This field is required' })}
+              <Controller
+                name={question.id}
+                control={control}
+                defaultValue=""
+                rules={{ required: 'This field is required' }}
+                render={({ field }) => (
+                  <RadioGroup row>
+                    {question.options &&
+                      question.options.map((option: string, idx: number) => (
+                        <FormControlLabel
+                          key={`${question.id}-${idx}`}
+                          label={option.trim()}
+                          disabled={readOnly}
+                          control={<Radio value={option.trim()} onChange={field.onChange} />}
                         />
-                      }
-                    />
-                  ))}
-              </RadioGroup>
+                      ))}
+                  </RadioGroup>
+                )}
+              />
             )}
 
             {question.type === 'checkbox' && (
-              <Box>
-                {question.options &&
-                  question.options.map((option: string, idx: number) => (
-                    <FormControlLabel
-                      key={`${question.id}-${idx}`}
-                      label={option.trim()}
-                      disabled={readOnly}
-                      control={
-                        <Checkbox
-                          value={option.trim()}
-                          {...register(question.id, { required: 'This field is required' })}
+              <Controller
+                name={question.id}
+                control={control}
+                defaultValue={[]}
+                rules={{ required: 'This field is required' }}
+                render={({ field }) => (
+                  <Box>
+                    {question.options &&
+                      question.options.map((option: string, idx: number) => (
+                        <FormControlLabel
+                          key={`${question.id}-${idx}`}
+                          label={option.trim()}
+                          disabled={readOnly}
+                          control={
+                            <Checkbox
+                              value={option.trim()}
+                              onChange={(e) => {
+                                const newValue = e.target.checked
+                                  ? [...field.value, option.trim()]
+                                  : field.value.filter((val: string) => val !== option.trim())
+                                field.onChange(newValue)
+                              }}
+                            />
+                          }
                         />
-                      }
-                    />
-                  ))}
-              </Box>
+                      ))}
+                  </Box>
+                )}
+              />
             )}
           </Box>
         ))}

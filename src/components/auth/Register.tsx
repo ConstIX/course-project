@@ -1,7 +1,7 @@
 import { Box, Button, TextField } from '@mui/material'
 import moment from 'moment'
 import { FC, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useRegisterUserMutation } from '../../redux/services/auth'
 
@@ -13,7 +13,7 @@ const fields = [
 
 const Register: FC = () => {
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors }
   } = useForm()
@@ -46,16 +46,24 @@ const Register: FC = () => {
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
       {fields.map((field) => (
-        <TextField
+        <Controller
           key={field.name}
-          type={field.type}
-          label={field.label}
-          fullWidth
-          variant="standard"
-          error={!!errors[field.name]}
-          helperText={errors[field.name]?.message as string}
-          {...register(field.name, { required: `${field.label} is required!` })}
-          sx={field.type === 'password' ? { marginBottom: 5 } : { marginBottom: 2 }}
+          name={field.name}
+          control={control}
+          defaultValue=""
+          rules={{ required: `${field.label} is required!` }}
+          render={({ field: controllerField }) => (
+            <TextField
+              type={field.type}
+              label={field.label}
+              fullWidth
+              variant="standard"
+              error={!!errors[field.name]}
+              helperText={errors[field.name]?.message as string}
+              {...controllerField}
+              sx={field.type === 'password' ? { marginBottom: 5 } : { marginBottom: 2 }}
+            />
+          )}
         />
       ))}
       <Button type="submit" variant="contained" fullWidth disabled={isLoading} disableElevation>

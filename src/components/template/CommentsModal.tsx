@@ -1,7 +1,7 @@
 import { Close, Send } from '@mui/icons-material'
 import { Box, Dialog, DialogContent, DialogTitle, IconButton, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useAddCommentMutation } from '../../redux/services/templates'
 import { useGetUserByIdQuery } from '../../redux/services/users'
 
@@ -14,7 +14,7 @@ interface ICommentsModal {
 
 const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments }) => {
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     formState: { errors }
@@ -79,12 +79,21 @@ const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments
 
       {token && (
         <Box component="form" onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-3 p-4">
-          <TextField
-            label="Add a comment"
-            size="small"
-            fullWidth
-            {...register('comment', { required: 'Comment is required' })}
-            error={!!errors.comment}
+          <Controller
+            name="comment"
+            control={control}
+            defaultValue=""
+            rules={{ required: 'Comment is required' }}
+            render={({ field }) => (
+              <TextField
+                label="Add a comment"
+                size="small"
+                fullWidth
+                {...field}
+                error={!!errors.comment}
+                helperText={errors.comment ? errors.comment.message : ''}
+              />
+            )}
           />
           <IconButton type="submit" color="primary">
             <Send />

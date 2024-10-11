@@ -1,7 +1,7 @@
 import { AddCircle, Delete } from '@mui/icons-material'
 import { Box, Button, IconButton, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { FC } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 
 const QuestionSettings: FC = () => {
   const {
@@ -37,40 +37,63 @@ const QuestionSettings: FC = () => {
               </IconButton>
             </Box>
 
-            <Select defaultValue={item.type} fullWidth {...register(`questions.${idx}.type`)}>
-              <MenuItem value="text">Text</MenuItem>
-              <MenuItem value="number">Number</MenuItem>
-              <MenuItem value="select">Select</MenuItem>
-              <MenuItem value="checkbox">Checkbox</MenuItem>
-              <MenuItem value="radio">Radio</MenuItem>
-              <MenuItem value="tags">Tags</MenuItem>
-            </Select>
-
-            <TextField
-              label="Question title"
-              variant="outlined"
-              fullWidth
-              error={!!errors?.questions?.[idx]?.label}
-              helperText={errors?.questions?.[idx]?.label?.message}
-              {...register(`questions.${idx}.label`, { required: 'Title is required!' })}
+            <Controller
+              name={`questions.${idx}.type`}
+              control={control}
+              defaultValue={item.type}
+              render={({ field }) => (
+                <Select {...field} fullWidth>
+                  <MenuItem value="text">Text</MenuItem>
+                  <MenuItem value="number">Number</MenuItem>
+                  <MenuItem value="select">Select</MenuItem>
+                  <MenuItem value="checkbox">Checkbox</MenuItem>
+                  <MenuItem value="radio">Radio</MenuItem>
+                  <MenuItem value="tags">Tags</MenuItem>
+                </Select>
+              )}
             />
 
-            <TextField
-              label="Question description"
-              variant="outlined"
-              fullWidth
-              {...register(`questions.${idx}.description`)}
+            <Controller
+              name={`questions.${idx}.label`}
+              control={control}
+              defaultValue=""
+              rules={{ required: 'Title is required!' }}
+              render={({ field }) => (
+                <TextField
+                  label="Question title"
+                  variant="outlined"
+                  fullWidth
+                  error={!!errors?.questions?.[idx]?.label}
+                  helperText={errors?.questions?.[idx]?.label?.message}
+                  {...field}
+                />
+              )}
+            />
+
+            <Controller
+              name={`questions.${idx}.description`}
+              control={control}
+              defaultValue=""
+              render={({ field }) => <TextField label="Question description" variant="outlined" fullWidth {...field} />}
             />
 
             {(questionType === 'select' || questionType === 'checkbox' || questionType === 'radio') && (
-              <TextField
-                label="Options (comma-separated)"
-                variant="outlined"
-                fullWidth
-                placeholder="Option1, Option2, Option3"
-                error={!!errors?.questions?.[idx]?.options}
-                helperText={errors?.questions?.[idx]?.options?.message}
-                {...register(`questions.${idx}.options`, { required: 'Options are required!' })}
+              <Controller
+                name={`questions.${idx}.options`}
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Options are required!' }}
+                render={({ field }) => (
+                  <TextField
+                    label="Options (comma-separated)"
+                    variant="outlined"
+                    fullWidth
+                    placeholder="Option1, Option2, Option3"
+                    error={!!errors?.questions?.[idx]?.options}
+                    helperText={errors?.questions?.[idx]?.options?.message}
+                    {...field}
+                  />
+                )}
               />
             )}
           </Box>

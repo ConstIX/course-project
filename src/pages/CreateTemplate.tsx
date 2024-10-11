@@ -49,14 +49,12 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
   const [tabIndex, setTabIndex] = useState(0)
 
   const submitHandler = async (data: FormValues) => {
-    const theme = data.theme === 'other' ? data.customTheme : data.theme
-    const access = data.access === 'public' ? 'public' : data.selectedUsers
-
     const template: Partial<Template> = {
       authorId: user.id,
       title: data.title,
       description: data.description,
-      theme,
+      theme: data.theme,
+      customTheme: data.theme === 'other' ? data.customTheme : '',
       questions: data.questions.map((obj) => ({
         id: uuidv4(),
         type: obj.type,
@@ -65,7 +63,8 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
         options: Array.isArray(obj.options) ? obj.options : obj.options.split(',').map((opt) => opt.trim())
       })),
       tags: data.tags,
-      access,
+      access: data.access,
+      selectedUsers: data.access === 'private' ? data.selectedUsers : [],
       likedBy: [],
       comments: []
     }
