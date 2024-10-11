@@ -27,7 +27,6 @@ interface FormValues {
 }
 
 const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
-  // Убедитесь, что у вас есть правильный интерфейс
   const methods = useForm<FormValues>({
     defaultValues: {
       title: '',
