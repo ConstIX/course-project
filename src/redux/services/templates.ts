@@ -40,6 +40,23 @@ export const templatesApi = createApi({
         method: 'DELETE'
       }),
       invalidatesTags: ['Templates']
+    }),
+
+    incrementLikes: builder.mutation({
+      query: ({ id, likedBy }) => ({
+        url: `/templates/${id}`,
+        method: 'PATCH',
+        body: { likedBy }
+      }),
+      invalidatesTags: ['Templates']
+    }),
+    addComment: builder.mutation({
+      query: ({ id, comments }) => ({
+        url: `/templates/${id}`,
+        method: 'PATCH',
+        body: { comments }
+      }),
+      invalidatesTags: ['Templates']
     })
   })
 })
@@ -50,5 +67,7 @@ export const {
   useGetTemplatesByUserIdQuery,
   useCreateTemplateMutation,
   useDeleteTemplateMutation,
-  useUpdateTemplateMutation
+  useUpdateTemplateMutation,
+  useIncrementLikesMutation,
+  useAddCommentMutation
 } = templatesApi

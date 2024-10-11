@@ -65,7 +65,9 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
         options: Array.isArray(obj.options) ? obj.options : obj.options.split(',').map((opt) => opt.trim())
       })),
       tags: data.tags,
-      access
+      access,
+      likedBy: [],
+      comments: []
     }
 
     try {

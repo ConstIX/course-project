@@ -17,10 +17,12 @@ export interface Template {
   description?: string
   theme: string
   customTheme?: string
+  questions: Question[]
   tags: string[]
   access: string | string[]
   selectedUsers?: string[]
-  questions: Question[]
+  likedBy: string[]
+  comments: { userId: string; username: string; email: string; comment: string }[]
 }
 
 export interface Response {
