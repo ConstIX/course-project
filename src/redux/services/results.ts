@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Response } from '../../types'
 
-export const answersApi = createApi({
-  reducerPath: 'answersApi',
+export const resultsApi = createApi({
+  reducerPath: 'resultsApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://fe4b689c1c30d08d.mokky.dev' }),
   tagTypes: ['Results'],
   endpoints: (builder) => ({
@@ -46,4 +46,4 @@ export const {
   useCreateResponseMutation,
   useDeleteResponseMutation,
   useUpdateResponseMutation
-} = answersApi
+} = resultsApi
