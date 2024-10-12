@@ -19,7 +19,7 @@ interface FormValues {
     type: Question['type']
     label: string
     description?: string
-    options: string
+    options: string | string[]
   }[]
   tags: string[]
   access: string | string[]
@@ -50,6 +50,13 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
   const [tabIndex, setTabIndex] = useState(0)
 
   const submitHandler = async (data: FormValues) => {
+    const isValid = await methods.trigger() // Укажите нужные поля
+
+    if (!isValid) {
+      console.log('Some fields are not valid!')
+      return // Прерывание выполнения, если поля не валидны
+    }
+
     const template: Partial<Template> = {
       authorId: user.id,
       title: data.title,
@@ -83,7 +90,17 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
   }
 
   const handleTabChange = async (_: React.SyntheticEvent, newValue: number) => {
-    const isValid = await methods.trigger()
+    const isValid = await methods.trigger([
+      'title',
+      'description',
+      'theme',
+      'customTheme',
+      'questions',
+      'tags',
+      'access',
+      'selectedUsers'
+    ])
+
     if (isValid) {
       setTabIndex(newValue)
     } else {

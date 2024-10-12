@@ -7,7 +7,7 @@ export interface Question {
   type: QuestionType
   label: string
   description?: string
-  options?: string
+  options: string | string[]
 }
 
 export interface Template {
