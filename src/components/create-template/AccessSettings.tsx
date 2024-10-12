@@ -1,11 +1,11 @@
-import { Autocomplete, Box, MenuItem, Select, TextField } from '@mui/material'
+import { Autocomplete, Box, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useGetUsersQuery } from '../../redux/services/users'
 
 const tags = ['Technology', 'Science', 'Education', 'Health', 'Art', 'Business', 'Sports']
 
-const AccessSettings: FC<any> = () => {
+const AccessSettings: FC = () => {
   const {
     control,
     watch,
@@ -18,6 +18,10 @@ const AccessSettings: FC<any> = () => {
 
   return (
     <Box>
+      <Typography variant="h5" color="primary">
+        Access
+      </Typography>
+
       <Controller
         name="tags"
         control={control}

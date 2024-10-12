@@ -1,5 +1,5 @@
-import { Box, Button, Tab, Tabs, Typography } from '@mui/material'
-import { FC, useEffect, useState } from 'react'
+import { Box, Button, Typography } from '@mui/material'
+import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
@@ -28,13 +28,19 @@ interface FormValues {
 
 const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
   const methods = useForm<FormValues>({
-    mode: 'all',
     defaultValues: {
       title: '',
       description: '',
       theme: 'quiz',
       customTheme: '',
-      questions: [],
+      questions: [
+        {
+          type: 'text',
+          label: '',
+          description: '',
+          options: ''
+        }
+      ],
       tags: [],
       access: 'public',
       selectedUsers: []
@@ -47,16 +53,7 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
   const [updateTemplate] = useUpdateTemplateMutation()
   const navigate = useNavigate()
 
-  const [tabIndex, setTabIndex] = useState(0)
-
   const submitHandler = async (data: FormValues) => {
-    const isValid = await methods.trigger() // Укажите нужные поля
-
-    if (!isValid) {
-      console.log('Some fields are not valid!')
-      return // Прерывание выполнения, если поля не валидны
-    }
-
     const template: Partial<Template> = {
       authorId: user.id,
       title: data.title,
@@ -89,25 +86,6 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
     }
   }
 
-  const handleTabChange = async (_: React.SyntheticEvent, newValue: number) => {
-    const isValid = await methods.trigger([
-      'title',
-      'description',
-      'theme',
-      'customTheme',
-      'questions',
-      'tags',
-      'access',
-      'selectedUsers'
-    ])
-
-    if (isValid) {
-      setTabIndex(newValue)
-    } else {
-      console.log('Some fields are not valid!')
-    }
-  }
-
   useEffect(() => {
     if (templateData) {
       methods.reset({
@@ -130,16 +108,10 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
           {templateData ? 'Editing' : 'Creating'} a form template
         </Typography>
 
-        <Tabs value={tabIndex} onChange={handleTabChange} className="mt-4">
-          <Tab label="General" />
-          <Tab label="Questions" />
-          <Tab label="Tags & Access" />
-        </Tabs>
-
         <Box component="form" onSubmit={methods.handleSubmit(submitHandler)} className="mt-4">
-          {tabIndex === 0 && <GeneralSettings />}
-          {tabIndex === 1 && <QuestionSettings />}
-          {tabIndex === 2 && <AccessSettings />}
+          <GeneralSettings />
+          <AccessSettings />
+          <QuestionSettings />
 
           <Box className="mt-4 flex justify-end gap-3">
             <Button variant="outlined" onClick={() => navigate('/')} disableElevation>

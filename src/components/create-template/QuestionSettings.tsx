@@ -31,23 +31,24 @@ const QuestionSettings: FC = () => {
           <Box key={item.id} className="mb-4 space-y-4 rounded border p-4">
             <Box className="flex items-center justify-between">
               <Typography variant="h6">Question {idx + 1}</Typography>
-              <IconButton color="error" onClick={() => remove(idx)}>
-                <Delete />
-              </IconButton>
+              {fields.length > 1 && (
+                <IconButton color="error" onClick={() => remove(idx)}>
+                  <Delete />
+                </IconButton>
+              )}
             </Box>
 
             <Controller
               name={`questions.${idx}.type`}
               control={control}
-              defaultValue={item.type}
+              defaultValue="text"
               render={({ field }) => (
                 <Select {...field} fullWidth>
-                  <MenuItem value="text">Text</MenuItem>
-                  <MenuItem value="number">Number</MenuItem>
-                  <MenuItem value="select">Select</MenuItem>
-                  <MenuItem value="checkbox">Checkbox</MenuItem>
-                  <MenuItem value="radio">Radio</MenuItem>
-                  <MenuItem value="tags">Tags</MenuItem>
+                  {['text', 'number', 'select', 'checkbox', 'radio', 'tags'].map((i) => (
+                    <MenuItem key={i} value={i}>
+                      {i.toUpperCase()}
+                    </MenuItem>
+                  ))}
                 </Select>
               )}
             />
