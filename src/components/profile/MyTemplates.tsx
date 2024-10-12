@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import { useDeleteTemplateMutation, useGetTemplatesByUserIdQuery } from '../../redux/services/templates'
 
 const MyTemplates: FC = () => {
+  const userId = localStorage.getItem('userID')
   const [deleteTemplate] = useDeleteTemplateMutation()
-  const { data: templates } = useGetTemplatesByUserIdQuery(localStorage.getItem('userID')!)
+  const { data: templates } = useGetTemplatesByUserIdQuery(userId!)
   const navigate = useNavigate()
 
   const handleDeleteTemplate = async (templateId: string) => {

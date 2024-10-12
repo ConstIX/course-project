@@ -52,6 +52,9 @@ const Header: FC = () => {
                     {obj.label}
                   </Link>
                 ))}
+                <Link key="dashboard" to="/dashboard">
+                  Dashboard
+                </Link>
               </Box>
             )}
             <Button onClick={handleLogout} color="inherit" startIcon={<Logout />} sx={{ textTransform: 'none' }}>

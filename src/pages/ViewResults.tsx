@@ -26,25 +26,24 @@ import { useGetUserByIdQuery } from '../redux/services/users'
 
 const ViewResults: FC = () => {
   const { id } = useParams<{ id: string }>()
+  const userId = localStorage.getItem('userID')
 
   const { data: template } = useGetTemplateByIdQuery(id!)
   const { data: responses } = useGetResponsesByTemplateIdQuery(id!)
   const [deleteResponse] = useDeleteResponseMutation()
   const [updateResponse] = useUpdateResponseMutation()
-  const { data: user } = useGetUserByIdQuery(localStorage.getItem('userID') as string)
+  const { data: user } = useGetUserByIdQuery(userId as string)
 
   const [open, setOpen] = useState(false)
   const [currentResponse, setCurrentResponse] = useState<any>(null)
 
   const { register, handleSubmit, reset } = useForm()
 
-  const author = localStorage.getItem('userID') === String(template?.authorId)
-  const admin = user && user.status === 'admin'
+  const isAuthor = userId === String(template?.authorId)
+  const isAdmin = user && user.status === 'admin'
 
   const filteredResponses =
-    !author && !admin
-      ? responses?.filter((response) => String(response.userId) === localStorage.getItem('userID'))
-      : responses
+    !isAuthor && !isAdmin ? responses?.filter((response) => String(response.userId) === userId) : responses
 
   const handleDelete = async (responseId: string) => {
     try {
@@ -89,7 +88,7 @@ const ViewResults: FC = () => {
           <TableRow>
             <TableCell>Response ID</TableCell>
             {template?.questions.map((q) => <TableCell key={q.id}>{q.label}</TableCell>)}
-            {(author || admin) && <TableCell>Actions</TableCell>}
+            {(isAuthor || isAdmin) && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -100,7 +99,7 @@ const ViewResults: FC = () => {
                 {template?.questions.map((q) => (
                   <TableCell key={q.id}>{JSON.stringify(response.answers[q.id])}</TableCell>
                 ))}
-                {(author || admin) && (
+                {(isAuthor || isAdmin) && (
                   <TableCell>
                     <Button variant="contained" color="primary" onClick={() => handleOpen(response)} className="mr-2">
                       Edit

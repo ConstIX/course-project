@@ -46,7 +46,7 @@ const QuestionSettings: FC = () => {
                 <Select {...field} fullWidth>
                   {['text', 'number', 'select', 'checkbox', 'radio', 'tags'].map((i) => (
                     <MenuItem key={i} value={i}>
-                      {i.toUpperCase()}
+                      {i}
                     </MenuItem>
                   ))}
                 </Select>

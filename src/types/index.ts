@@ -13,6 +13,7 @@ export interface Question {
 export interface Template {
   id: string
   authorId: number
+  author: { name: string; email: string }
   title: string
   description?: string
   theme: string

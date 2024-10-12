@@ -82,7 +82,7 @@ const Dashboard: FC = () => {
     if (user && user.status !== 'admin') {
       navigate('/')
     }
-  }, [user])
+  }, [user, navigate])
 
   return (
     <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
@@ -113,7 +113,6 @@ const Dashboard: FC = () => {
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10]}
         checkboxSelection
-        disableColumnMenu
         disableRowSelectionOnClick
         onRowSelectionModelChange={(newSelection) => setSelectedUsers(newSelection as number[])}
         sx={{

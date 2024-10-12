@@ -25,8 +25,8 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
 
   const isMobile = useMediaQuery({ maxWidth: 450 })
   const token = localStorage.getItem('token')
-  const author = userId === String(authorId)
-  const admin = user && user.status === 'admin'
+  const isAuthor = userId === String(authorId)
+  const isAdmin = user && user.status === 'admin'
 
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -42,7 +42,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
     if (hasLiked) return
 
     try {
-      await incrementLikes({ id, userId, likedBy: [...likedBy, userId] }).unwrap()
+      await incrementLikes({ id, likedBy: [...likedBy, userId] }).unwrap()
     } catch (err) {
       console.error('Failed to like template:', err)
     }
@@ -65,7 +65,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
             <Button href={`/view-results/${id}`} variant="outlined" color="success" fullWidth={isMobile}>
               View Results
             </Button>
-            {(admin || author) && (
+            {(isAdmin || isAuthor) && (
               <>
                 <Button href={`/edit-template/${id}`}>Edit</Button>
                 <Button onClick={() => handleDelete(id)}>Delete</Button>

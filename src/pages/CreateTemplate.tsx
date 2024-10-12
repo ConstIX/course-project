@@ -56,6 +56,10 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
   const submitHandler = async (data: FormValues) => {
     const template: Partial<Template> = {
       authorId: user.id,
+      author: {
+        name: user.username,
+        email: user.email
+      },
       title: data.title,
       description: data.description,
       theme: data.theme,
