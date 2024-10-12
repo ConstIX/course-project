@@ -6,7 +6,6 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 const QuestionSettings: FC = () => {
   const {
     control,
-    register,
     watch,
     formState: { errors }
   } = useFormContext()

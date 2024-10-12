@@ -3,9 +3,9 @@ import { FC, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import AccessSettings from '../components/template/AccessSettings'
-import GeneralSettings from '../components/template/GeneralSettings'
-import QuestionSettings from '../components/template/QuestionSettings'
+import AccessSettings from '../components/create-template/AccessSettings'
+import GeneralSettings from '../components/create-template/GeneralSettings'
+import QuestionSettings from '../components/create-template/QuestionSettings'
 import { useCreateTemplateMutation, useUpdateTemplateMutation } from '../redux/services/templates'
 import { useGetUserByIdQuery } from '../redux/services/users'
 import { Question, Template } from '../types'
@@ -28,6 +28,7 @@ interface FormValues {
 
 const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
   const methods = useForm<FormValues>({
+    mode: 'all',
     defaultValues: {
       title: '',
       description: '',
@@ -81,6 +82,15 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
     }
   }
 
+  const handleTabChange = async (_: React.SyntheticEvent, newValue: number) => {
+    const isValid = await methods.trigger()
+    if (isValid) {
+      setTabIndex(newValue)
+    } else {
+      console.log('Some fields are not valid!')
+    }
+  }
+
   useEffect(() => {
     if (templateData) {
       methods.reset({
@@ -103,13 +113,13 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
           {templateData ? 'Editing' : 'Creating'} a form template
         </Typography>
 
-        <Tabs value={tabIndex} onChange={(_, newValue) => setTabIndex(newValue)} className="mt-4">
+        <Tabs value={tabIndex} onChange={handleTabChange} className="mt-4">
           <Tab label="General" />
           <Tab label="Questions" />
           <Tab label="Tags & Access" />
         </Tabs>
 
-        <form onSubmit={methods.handleSubmit(submitHandler)} className="mt-4">
+        <Box component="form" onSubmit={methods.handleSubmit(submitHandler)} className="mt-4">
           {tabIndex === 0 && <GeneralSettings />}
           {tabIndex === 1 && <QuestionSettings />}
           {tabIndex === 2 && <AccessSettings />}
@@ -122,7 +132,7 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
               {templateData ? 'Update Template' : 'Create Template'}
             </Button>
           </Box>
-        </form>
+        </Box>
       </Box>
     </FormProvider>
   )
