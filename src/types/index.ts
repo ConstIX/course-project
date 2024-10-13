@@ -1,5 +1,3 @@
-// src/types/index.ts
-
 export type QuestionType = 'text' | 'number' | 'select' | 'checkbox' | 'radio' | 'tags'
 
 export interface Question {
@@ -23,6 +21,7 @@ export interface Template {
   access: string | string[]
   selectedUsers?: string[]
   likedBy: string[]
+  filledBy: string[]
   comments: { userId: string; username: string; email: string; comment: string }[]
 }
 

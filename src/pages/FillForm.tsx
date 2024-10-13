@@ -16,13 +16,12 @@ import { FC } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCreateResponseMutation } from '../redux/services/results'
-import { useGetTemplateByIdQuery } from '../redux/services/templates'
-import { useGetUserByIdQuery } from '../redux/services/users'
+import { useGetTemplateByIdQuery, useIncrementFillsMutation } from '../redux/services/templates'
 
 const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
   const { id } = useParams()
   const { data: template } = useGetTemplateByIdQuery(id as string)
-  const { data: user } = useGetUserByIdQuery(localStorage.getItem('userID') as string)
+  const userId = localStorage.getItem('userID')
   const {
     control,
     handleSubmit,
@@ -30,19 +29,21 @@ const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
     setValue
   } = useForm()
   const [createResponse, { isLoading }] = useCreateResponseMutation()
+  const [incrementFills] = useIncrementFillsMutation()
   const navigate = useNavigate()
 
   const submitHandler = async (data: any) => {
     const response = {
       authorId: template?.authorId,
       templateId: template?.id,
-      userId: user.id,
+      userId,
       templateTitle: template?.title,
       answers: data
     }
 
     try {
       await createResponse(response).unwrap()
+      await incrementFills({ id, filledBy: [...template!.filledBy, userId] }).unwrap()
       navigate('/')
     } catch (error) {
       console.error('Failed to submit response:', error)

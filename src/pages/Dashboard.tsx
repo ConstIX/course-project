@@ -57,7 +57,7 @@ const Dashboard: FC = () => {
     try {
       for (const id of selectedUsers) {
         await deleteUser(id).unwrap()
-        await new Promise((resolve) => setTimeout(resolve, 50))
+        await new Promise((resolve) => setTimeout(resolve, 10))
       }
       if (userId && selectedUsers.includes(+userId)) {
         localStorage.removeItem('token')

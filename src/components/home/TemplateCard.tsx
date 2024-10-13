@@ -2,6 +2,7 @@ import { Comment, ThumbUp } from '@mui/icons-material'
 import { Box, Button, IconButton, Typography } from '@mui/material'
 import { FC, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { useDeleteResponseMutation, useGetResponsesByTemplateIdQuery } from '../../redux/services/results'
 import { useDeleteTemplateMutation, useIncrementLikesMutation } from '../../redux/services/templates'
 import { useGetUserByIdQuery } from '../../redux/services/users'
 import CommentsModal from './CommentsModal'
@@ -20,6 +21,9 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
   const [deleteTemplate] = useDeleteTemplateMutation()
   const { data: user } = useGetUserByIdQuery(userId as string)
 
+  const { data: responses } = useGetResponsesByTemplateIdQuery(id)
+  const [deleteResponse] = useDeleteResponseMutation()
+
   const [incrementLikes] = useIncrementLikesMutation()
   const hasLiked = likedBy && likedBy.includes(userId as string)
 
@@ -33,6 +37,15 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
   const handleDelete = async (id: string) => {
     try {
       await deleteTemplate(id).unwrap()
+
+      if (responses) {
+        const allResponses = responses.map((i) => i.id)
+
+        for (const id of allResponses!) {
+          await deleteResponse(id).unwrap()
+          await new Promise((resolve) => setTimeout(resolve, 10))
+        }
+      }
     } catch (err) {
       console.error('Failed to delete template:', err)
     }

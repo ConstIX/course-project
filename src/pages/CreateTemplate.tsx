@@ -75,6 +75,7 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
       access: data.access,
       selectedUsers: data.access === 'private' ? data.selectedUsers : [],
       likedBy: [],
+      filledBy: [],
       comments: []
     }
 

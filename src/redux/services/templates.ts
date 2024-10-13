@@ -50,6 +50,14 @@ export const templatesApi = createApi({
       }),
       invalidatesTags: ['Templates']
     }),
+    incrementFills: builder.mutation({
+      query: ({ id, filledBy }) => ({
+        url: `/templates/${id}`,
+        method: 'PATCH',
+        body: { filledBy }
+      }),
+      invalidatesTags: ['Templates']
+    }),
     addComment: builder.mutation({
       query: ({ id, comments }) => ({
         url: `/templates/${id}`,
@@ -69,5 +77,6 @@ export const {
   useDeleteTemplateMutation,
   useUpdateTemplateMutation,
   useIncrementLikesMutation,
+  useIncrementFillsMutation,
   useAddCommentMutation
 } = templatesApi

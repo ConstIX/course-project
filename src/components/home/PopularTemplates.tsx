@@ -19,7 +19,7 @@ const PopularTemplates: FC = () => {
   const navigate = useNavigate()
 
   const popularTemplates =
-    (templates && [...templates].sort((a, b) => b.likedBy?.length - a.likedBy?.length).slice(0, 5)) || []
+    (templates && [...templates].sort((a, b) => b.filledBy?.length - a.filledBy?.length).slice(0, 5)) || []
 
   return (
     <Box className="mb-10">
@@ -33,7 +33,7 @@ const PopularTemplates: FC = () => {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Title</TableCell>
-              <TableCell>Username</TableCell>
+              <TableCell>Author</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
