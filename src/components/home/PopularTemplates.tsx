@@ -17,6 +17,7 @@ import { useGetTemplatesQuery } from '../../redux/services/templates'
 const PopularTemplates: FC = () => {
   const { data: templates } = useGetTemplatesQuery()
   const navigate = useNavigate()
+  const token = localStorage.getItem('token')
 
   const popularTemplates =
     (templates && [...templates].sort((a, b) => b.filledBy?.length - a.filledBy?.length).slice(0, 5)) || []
@@ -34,7 +35,7 @@ const PopularTemplates: FC = () => {
               <TableCell>ID</TableCell>
               <TableCell>Title</TableCell>
               <TableCell>Author</TableCell>
-              <TableCell>Actions</TableCell>
+              {token && <TableCell>Actions</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -46,18 +47,20 @@ const PopularTemplates: FC = () => {
                 <TableCell>{template.id}</TableCell>
                 <TableCell>{template.title}</TableCell>
                 <TableCell>{template.author.name}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      navigate(`/fill-form/${template.id}`)
-                    }}
-                    disableElevation>
-                    Fill Form
-                  </Button>
-                </TableCell>
+                {token && (
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        navigate(`/fill-form/${template.id}`)
+                      }}
+                      disableElevation>
+                      Fill Form
+                    </Button>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
