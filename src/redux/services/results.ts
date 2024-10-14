@@ -22,13 +22,13 @@ export const resultsApi = createApi({
       }),
       invalidatesTags: (_, __, { templateId }) => [{ type: 'Results', id: templateId }]
     }),
-    updateResponse: builder.mutation<Response, { id: string; body: Partial<Response> }>({
+    updateResponse: builder.mutation({
       query: ({ id, body }) => ({
         url: `/responses/${id}`,
         method: 'PATCH',
         body
       }),
-      invalidatesTags: (_, __, { id }) => [{ type: 'Results', id }]
+      invalidatesTags: ['Results']
     }),
     deleteResponse: builder.mutation<void, string>({
       query: (responseId) => ({

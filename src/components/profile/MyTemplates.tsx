@@ -57,7 +57,7 @@ const MyTemplates: FC = () => {
   ]
 
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
+    <Box>
       <Button
         variant="contained"
         color="primary"

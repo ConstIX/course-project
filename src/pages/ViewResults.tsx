@@ -1,61 +1,19 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { FC, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import {
-  useDeleteResponseMutation,
-  useGetResponsesByTemplateIdQuery,
-  useUpdateResponseMutation
-} from '../redux/services/results'
+import ResultsEditModal from '../components/view-results/ResultsEditModal'
+import ResultsTable from '../components/view-results/ResultsTable'
 import { useGetTemplateByIdQuery } from '../redux/services/templates'
-import { useGetUserByIdQuery } from '../redux/services/users'
 
 const ViewResults: FC = () => {
   const { id } = useParams<{ id: string }>()
-  const userId = localStorage.getItem('userID')
-
   const { data: template } = useGetTemplateByIdQuery(id!)
-  const { data: responses } = useGetResponsesByTemplateIdQuery(id!)
-  const [deleteResponse] = useDeleteResponseMutation()
-  const [updateResponse] = useUpdateResponseMutation()
-  const { data: user } = useGetUserByIdQuery(userId as string)
 
   const [open, setOpen] = useState(false)
   const [currentResponse, setCurrentResponse] = useState<any>(null)
 
-  const { register, handleSubmit, reset } = useForm()
-
-  const isAuthor = userId === String(template?.authorId)
-  const isAdmin = user && user.status === 'admin'
-
-  const filteredResponses =
-    !isAuthor && !isAdmin ? responses?.filter((response) => String(response.userId) === userId) : responses
-
-  const handleDelete = async (responseId: string) => {
-    try {
-      await deleteResponse(responseId).unwrap()
-    } catch (error) {
-      console.error('Failed to delete response:', error)
-    }
-  }
-
   const handleOpen = (response: any) => {
     setCurrentResponse(response)
-    reset(response.answers)
     setOpen(true)
   }
 
@@ -64,74 +22,15 @@ const ViewResults: FC = () => {
     setCurrentResponse(null)
   }
 
-  const onSubmit = async (data: any) => {
-    const updatedResponse = {
-      ...currentResponse,
-      answers: data
-    }
-    try {
-      await updateResponse({ id: currentResponse.id, body: updatedResponse }).unwrap()
-      handleClose()
-    } catch (error) {
-      console.error('Failed to update response:', error)
-    }
-  }
-
   return (
     <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
       <Typography variant="h4" color="primary">
         Analysis of responses for <br /> "{template?.title}"
       </Typography>
 
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Response ID</TableCell>
-            {template?.questions.map((q) => <TableCell key={q.id}>{q.label}</TableCell>)}
-            {(isAuthor || isAdmin) && <TableCell>Actions</TableCell>}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filteredResponses &&
-            filteredResponses.map((response) => (
-              <TableRow key={response.id}>
-                <TableCell>{response.id}</TableCell>
-                {template?.questions.map((q) => (
-                  <TableCell key={q.id}>{JSON.stringify(response.answers[q.id])}</TableCell>
-                ))}
-                {(isAuthor || isAdmin) && (
-                  <TableCell>
-                    <Button variant="contained" color="primary" onClick={() => handleOpen(response)} className="mr-2">
-                      Edit
-                    </Button>
-                    <Button variant="contained" color="secondary" onClick={() => handleDelete(response.id)}>
-                      Delete
-                    </Button>
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+      <ResultsTable id={id} handleOpen={handleOpen} />
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Edit Response</DialogTitle>
-        <DialogContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {template?.questions.map((q) => (
-              <TextField key={q.id} margin="dense" label={q.label} fullWidth {...register(q.id)} />
-            ))}
-            <DialogActions>
-              <Button onClick={handleClose} color="secondary">
-                Cancel
-              </Button>
-              <Button type="submit" color="primary">
-                Save
-              </Button>
-            </DialogActions>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <ResultsEditModal open={open} handleClose={handleClose} template={template} currentResponse={currentResponse} />
     </Box>
   )
 }

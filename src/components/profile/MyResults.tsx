@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material'
+import { Button } from '@mui/material'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -35,17 +35,15 @@ const MyResults: FC = () => {
   ]
 
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={responses || []}
-        columns={columns}
-        initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
-        pageSizeOptions={[10]}
-        disableRowSelectionOnClick
-        disableColumnMenu
-        onRowClick={(params) => navigate(`/view-form/${params.id}`)}
-      />
-    </Box>
+    <DataGrid
+      rows={responses || []}
+      columns={columns}
+      initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+      pageSizeOptions={[10]}
+      disableRowSelectionOnClick
+      disableColumnMenu
+      onRowClick={(params) => navigate(`/view-form/${params.id}`)}
+    />
   )
 }
 

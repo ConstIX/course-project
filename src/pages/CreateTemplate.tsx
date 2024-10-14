@@ -64,13 +64,16 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
       description: data.description,
       theme: data.theme,
       customTheme: data.theme === 'other' ? data.customTheme : '',
-      questions: data.questions.map((obj) => ({
-        id: uuidv4(),
-        type: obj.type,
-        label: obj.label,
-        description: obj.description,
-        options: Array.isArray(obj.options) ? obj.options : obj.options.split(',').map((opt) => opt.trim())
-      })),
+      questions: data.questions.map((obj, index) => {
+        const existingQuestion = templateData?.questions[index]
+        return {
+          id: existingQuestion ? existingQuestion.id : uuidv4(),
+          type: obj.type,
+          label: obj.label,
+          description: obj.description,
+          options: Array.isArray(obj.options) ? obj.options : obj.options.split(',').map((opt) => opt.trim())
+        }
+      }),
       tags: data.tags,
       access: data.access,
       selectedUsers: data.access === 'private' ? data.selectedUsers : [],
