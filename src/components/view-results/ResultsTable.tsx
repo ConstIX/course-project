@@ -29,15 +29,15 @@ const ResultsTable: FC<any> = ({ id, handleOpen }) => {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 150 },
     {
-      field: 'user',
+      field: 'userData',
       headerName: 'Author',
       width: 200,
       sortable: false,
       renderCell: (params: any) => (
         <Box>
-          <Typography>{params.row.user?.name}</Typography>
+          <Typography>{params.row.userData.name}</Typography>
           <Typography variant="body2" color="textSecondary">
-            {params.row.user?.email}
+            {params.row.userData.email}
           </Typography>
         </Box>
       )
@@ -75,7 +75,7 @@ const ResultsTable: FC<any> = ({ id, handleOpen }) => {
     filteredResponses &&
     [...filteredResponses].map((response) => ({
       id: response.id,
-      user: { name: response.user.name, email: response.user.email },
+      userData: { name: response.userData.name, email: response.userData.email },
       ...response.answers
     }))
 

@@ -30,7 +30,7 @@ export interface Response {
   templateId: string
   authorId: string
   userId: string
-  user: { name: string; email: string }
+  userData: { name: string; email: string }
   templateTitle: string
   answers: {
     [questionId: string]: any

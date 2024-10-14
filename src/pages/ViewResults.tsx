@@ -30,7 +30,7 @@ const ViewResults: FC = () => {
 
       <ResultsTable id={id} handleOpen={handleOpen} />
 
-      <ResultsEditModal open={open} handleClose={handleClose} template={template} currentResponse={currentResponse} />
+      <ResultsEditModal open={open} handleClose={handleClose} currentResponse={currentResponse} />
     </Box>
   )
 }

@@ -12,14 +12,14 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useCreateResponseMutation } from '../redux/services/results'
+import { useCreateResponseMutation, useUpdateResponseMutation } from '../redux/services/results'
 import { useGetTemplateByIdQuery, useIncrementFillsMutation } from '../redux/services/templates'
 import { useGetUserByIdQuery } from '../redux/services/users'
 
-const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
+const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) => {
   const { id } = useParams()
   const userId = localStorage.getItem('userID')
   const { data: template } = useGetTemplateByIdQuery(id as string)
@@ -29,30 +29,48 @@ const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
     control,
     handleSubmit,
     formState: { errors },
-    setValue
+    setValue,
+    reset
   } = useForm()
   const [createResponse, { isLoading }] = useCreateResponseMutation()
   const [incrementFills] = useIncrementFillsMutation()
+  const [updateResponse] = useUpdateResponseMutation()
   const navigate = useNavigate()
 
   const submitHandler = async (data: any) => {
-    const response = {
+    const response: any = {
       authorId: template?.authorId,
       templateId: template?.id,
       userId,
-      user: { name: user.username, email: user.email },
+      userData: { name: user.username, email: user.email },
       templateTitle: template?.title,
       answers: data
     }
 
+    const { id, userData, ...newAnswers } = response.answers
+    const newData = {
+      answers: { ...newAnswers }
+    }
+
     try {
-      await createResponse(response).unwrap()
-      await incrementFills({ id, filledBy: [...template!.filledBy, userId] }).unwrap()
-      navigate('/')
+      if (currentResponse) {
+        await updateResponse({ id: currentResponse.id, body: newData }).unwrap()
+        handleClose()
+      } else {
+        await createResponse(response).unwrap()
+        await incrementFills({ id: template?.id, filledBy: [...template!.filledBy, userId] }).unwrap()
+        navigate('/')
+      }
     } catch (error) {
       console.error('Failed to submit response:', error)
     }
   }
+
+  useEffect(() => {
+    if (currentResponse) {
+      reset(currentResponse)
+    }
+  }, [currentResponse, reset])
 
   return (
     <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
@@ -112,12 +130,13 @@ const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
                 control={control}
                 defaultValue={[]}
                 rules={{ required: 'This field is required' }}
-                render={() => (
+                render={({ field: { onChange, value } }) => (
                   <Autocomplete
                     multiple
                     freeSolo
                     options={[]}
-                    onChange={(_, newValue) => setValue(question.id, newValue)}
+                    value={value}
+                    onChange={(_, newValue) => onChange(newValue)}
                     disabled={readOnly}
                     renderInput={(params) => (
                       <TextField {...params} label="Tags" variant="outlined" placeholder="Start typing..." />
@@ -160,7 +179,13 @@ const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
                           key={`${question.id}-${idx}`}
                           label={option.trim()}
                           disabled={readOnly}
-                          control={<Radio value={option.trim()} onChange={field.onChange} />}
+                          control={
+                            <Radio
+                              value={option.trim()}
+                              checked={field.value === option.trim()}
+                              onChange={field.onChange}
+                            />
+                          }
                         />
                       ))}
                   </RadioGroup>
@@ -185,6 +210,7 @@ const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
                           control={
                             <Checkbox
                               value={option.trim()}
+                              checked={field.value.includes(option.trim())}
                               onChange={(e) => {
                                 const newValue = e.target.checked
                                   ? [...field.value, option.trim()]
