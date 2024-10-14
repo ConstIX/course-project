@@ -17,11 +17,14 @@ import { Controller, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCreateResponseMutation } from '../redux/services/results'
 import { useGetTemplateByIdQuery, useIncrementFillsMutation } from '../redux/services/templates'
+import { useGetUserByIdQuery } from '../redux/services/users'
 
 const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
   const { id } = useParams()
-  const { data: template } = useGetTemplateByIdQuery(id as string)
   const userId = localStorage.getItem('userID')
+  const { data: template } = useGetTemplateByIdQuery(id as string)
+  const { data: user } = useGetUserByIdQuery(userId as string)
+
   const {
     control,
     handleSubmit,
@@ -37,6 +40,7 @@ const FillForm: FC<{ readOnly: boolean }> = ({ readOnly = false }) => {
       authorId: template?.authorId,
       templateId: template?.id,
       userId,
+      user: { name: user.username, email: user.email },
       templateTitle: template?.title,
       answers: data
     }

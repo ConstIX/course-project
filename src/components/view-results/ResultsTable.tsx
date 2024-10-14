@@ -35,9 +35,9 @@ const ResultsTable: FC<any> = ({ id, handleOpen }) => {
       sortable: false,
       renderCell: (params: any) => (
         <Box>
-          <Typography>{params.row.user.name}</Typography>
+          <Typography>{params.row.user?.name}</Typography>
           <Typography variant="body2" color="textSecondary">
-            {params.row.user.email}
+            {params.row.user?.email}
           </Typography>
         </Box>
       )
