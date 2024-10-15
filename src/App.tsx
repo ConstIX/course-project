@@ -18,24 +18,18 @@ const App: FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const { pathname } = useLocation()
 
-  const darkTheme = createTheme({
+  const theme = createTheme({
     palette: {
-      mode: 'dark',
+      mode: isDarkMode ? 'dark' : 'light',
       background: {
-        default: '#252525',
-        paper: '#252525'
+        default: isDarkMode ? '#252525' : '#fff',
+        paper: isDarkMode ? '#252525' : '#fff'
       }
     }
   })
 
-  const lightTheme = createTheme({
-    palette: {
-      mode: 'light'
-    }
-  })
-
   return (
-    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
 
       <Box className="flex min-h-screen flex-col">

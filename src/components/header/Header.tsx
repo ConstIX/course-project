@@ -1,20 +1,22 @@
-import { Logout, Menu as MenuIcon } from '@mui/icons-material'
+import { Home, Logout, Menu as MenuIcon, Person } from '@mui/icons-material'
 import { AppBar, Box, Button, IconButton, Toolbar } from '@mui/material'
 import { FC, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Link, useNavigate } from 'react-router-dom'
+import { useGetUserByIdQuery } from '../../redux/services/users'
 import HeaderDrawer from './HeaderDrawer'
 import ThemeSwitcher from './ThemeSwitcher'
 
 const navigation = [
-  { label: 'Home', link: '/' },
-  { label: 'Profile', link: '/profile' }
+  { label: 'Home', link: '/', icon: <Home /> },
+  { label: 'Profile', link: '/profile', icon: <Person /> }
 ]
 
 const Header: FC<any> = ({ isDarkMode, setIsDarkMode }) => {
-  const token = localStorage.getItem('token')
+  const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const { data: user } = useGetUserByIdQuery(userId)
 
   const isMobile = useMediaQuery({ maxWidth: 767.98 })
 
@@ -40,21 +42,27 @@ const Header: FC<any> = ({ isDarkMode, setIsDarkMode }) => {
                     {obj.label}
                   </Link>
                 ))}
-                <Link key="dashboard" to="/dashboard">
-                  Dashboard
-                </Link>
+                {user && user.status === 'admin' && <Link to="/dashboard">Dashboard</Link>}
               </Box>
             )}
-            <ThemeSwitcher isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
-            <Button onClick={handleLogout} color="inherit" startIcon={<Logout />} sx={{ textTransform: 'none' }}>
-              {token ? 'Logout' : 'Log-in'}
-            </Button>
+            <Box className="flex items-center gap-5">
+              <ThemeSwitcher isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+
+              <Button onClick={handleLogout} color="inherit" startIcon={<Logout />} sx={{ textTransform: 'none' }}>
+                {userId ? 'Logout' : 'Log-in'}
+              </Button>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
 
-      <HeaderDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} navigation={navigation} />
+      <HeaderDrawer
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        navigation={navigation}
+        status={user?.status || ''}
+      />
     </Box>
   )
 }

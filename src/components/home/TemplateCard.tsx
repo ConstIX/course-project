@@ -1,5 +1,5 @@
 import { Comment, ThumbUp } from '@mui/icons-material'
-import { Box, Button, IconButton, Typography } from '@mui/material'
+import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
 import { FC, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useNavigate } from 'react-router-dom'
@@ -64,7 +64,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
   }
 
   return (
-    <Box className="rounded p-4 shadow-md">
+    <Paper className="p-5">
       <Typography variant="h6" color="textPrimary">
         {title}
       </Typography>
@@ -116,7 +116,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
       </Box>
 
       <CommentsModal open={modalOpen} onClose={() => setModalOpen(false)} templateId={id} comments={comments} />
-    </Box>
+    </Paper>
   )
 }
 
