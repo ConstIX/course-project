@@ -1,17 +1,5 @@
 import { Add } from '@mui/icons-material'
-import {
-  Autocomplete,
-  Box,
-  Button,
-  debounce,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Pagination,
-  Select,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Autocomplete, Box, Button, debounce, Pagination, TextField, Typography } from '@mui/material'
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetTemplatesQuery } from '../../redux/services/templates'
@@ -23,25 +11,25 @@ const Templates: FC = () => {
   const navigate = useNavigate()
 
   const [searchValue, setSearchValue] = useState<string>('')
-  const [selectedTag, setSelectedTag] = useState<string>('None')
+  const [selectedTag, setSelectedTag] = useState<string>('All')
   const [currentPage, setCurrentPage] = useState<number>(1)
   const templatesPerPage = 5
 
-  const tags = ['None', 'Technology', 'Science', 'Education', 'Health', 'Art', 'Business', 'Sports']
+  const tags = ['All', 'Technology', 'Science', 'Education', 'Health', 'Art', 'Business', 'Sports']
 
   const handleSearch = debounce((event: string) => {
     setSearchValue(event)
     setCurrentPage(1)
   }, 300)
 
-  const handleTagChange = (event: any) => {
-    setSelectedTag(event.target.value)
+  const handleTagChange = debounce((event: any) => {
+    setSelectedTag(event)
     setCurrentPage(1)
-  }
+  }, 300)
 
   const filteredTemplates = templates?.filter((template) => {
     const matchesSearch = template.title.toLowerCase().includes(searchValue.toLowerCase())
-    const matchesTag = selectedTag === 'None' || template.tags.includes(selectedTag) // фильтруем по тегу
+    const matchesTag = selectedTag === 'All' || selectedTag === '' || template.tags.includes(selectedTag)
     return matchesSearch && matchesTag
   })
 
@@ -61,27 +49,21 @@ const Templates: FC = () => {
       <Box className="mb-10 flex items-center justify-between">
         <Autocomplete
           freeSolo
-          id="template-search"
           disableClearable
           options={templates?.map((obj) => obj.title) || []}
           value={searchValue}
-          onInputChange={(_, newInputValue) => {
-            handleSearch(newInputValue)
-          }}
+          onInputChange={(_, newInputValue) => handleSearch(newInputValue)}
           sx={{ width: 350 }}
           renderInput={(params) => <TextField {...params} type="search" label="Search templates" />}
         />
 
-        <FormControl sx={{ width: 150 }}>
-          <InputLabel id="tag-select-label">Tag</InputLabel>
-          <Select labelId="tag-select-label" value={selectedTag} onChange={handleTagChange} fullWidth label="Tag">
-            {tags.map((tag) => (
-              <MenuItem key={tag} value={tag}>
-                {tag}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Autocomplete
+          options={tags}
+          value={selectedTag}
+          onInputChange={(_, newInputValue) => handleTagChange(newInputValue)}
+          sx={{ width: 200 }}
+          renderInput={(params) => <TextField {...params} label="Tag" />}
+        />
 
         {token && (
           <Button
