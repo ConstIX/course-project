@@ -1,29 +1,17 @@
 import { Logout, Menu as MenuIcon } from '@mui/icons-material'
-import MailIcon from '@mui/icons-material/Mail'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import {
-  AppBar,
-  Box,
-  Button,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar
-} from '@mui/material'
+import { AppBar, Box, Button, IconButton, Toolbar } from '@mui/material'
 import { FC, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Link, useNavigate } from 'react-router-dom'
+import HeaderDrawer from './HeaderDrawer'
+import ThemeSwitcher from './ThemeSwitcher'
 
 const navigation = [
   { label: 'Home', link: '/' },
   { label: 'Profile', link: '/profile' }
 ]
 
-const Header: FC = () => {
+const Header: FC<any> = ({ isDarkMode, setIsDarkMode }) => {
   const token = localStorage.getItem('token')
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -57,6 +45,8 @@ const Header: FC = () => {
                 </Link>
               </Box>
             )}
+            <ThemeSwitcher isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+
             <Button onClick={handleLogout} color="inherit" startIcon={<Logout />} sx={{ textTransform: 'none' }}>
               {token ? 'Logout' : 'Log-in'}
             </Button>
@@ -64,20 +54,7 @@ const Header: FC = () => {
         </Toolbar>
       </AppBar>
 
-      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <Box sx={{ width: '250px' }}>
-          <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
+      <HeaderDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} navigation={navigation} />
     </Box>
   )
 }

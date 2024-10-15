@@ -1,8 +1,9 @@
-import { Box } from '@mui/material'
-import { FC } from 'react'
+import { Box, CssBaseline } from '@mui/material'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { FC, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
-import Header from './components/Header'
+import Header from './components/header/Header'
 import Auth from './pages/Auth'
 import CreateTemplate from './pages/CreateTemplate'
 import Dashboard from './pages/Dashboard'
@@ -14,27 +15,48 @@ import ViewForm from './pages/ViewForm'
 import ViewResults from './pages/ViewResults'
 
 const App: FC = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const { pathname } = useLocation()
 
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+      background: {
+        default: '#252525',
+        paper: '#252525'
+      }
+    }
+  })
+
+  const lightTheme = createTheme({
+    palette: {
+      mode: 'light'
+    }
+  })
+
   return (
-    <Box className="flex min-h-screen flex-col">
-      {pathname !== '/auth' && <Header />}
+    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+      <CssBaseline />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
+      <Box className="flex min-h-screen flex-col">
+        {pathname !== '/auth' && <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}
 
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile />} />
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-        <Route path="/create-template" element={<CreateTemplate />} />
-        <Route path="/edit-template/:id" element={<EditTemplate />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
 
-        <Route path="/view-form/:id" element={<ViewForm />} />
-        <Route path="/fill-form/:id" element={<FillForm />} />
-        <Route path="/view-results/:id" element={<ViewResults />} />
-      </Routes>
-    </Box>
+          <Route path="/create-template" element={<CreateTemplate />} />
+          <Route path="/edit-template/:id" element={<EditTemplate />} />
+
+          <Route path="/view-form/:id" element={<ViewForm />} />
+          <Route path="/fill-form/:id" element={<FillForm />} />
+          <Route path="/view-results/:id" element={<ViewResults />} />
+        </Routes>
+      </Box>
+    </ThemeProvider>
   )
 }
 

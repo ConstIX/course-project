@@ -13,12 +13,14 @@ import {
   Typography
 } from '@mui/material'
 import { FC, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useGetTemplatesQuery } from '../../redux/services/templates'
 import TemplateCard from './TemplateCard'
 
 const Templates: FC = () => {
   const { data: templates } = useGetTemplatesQuery()
   const token = localStorage.getItem('token')
+  const navigate = useNavigate()
 
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedTag, setSelectedTag] = useState<string>('None')
@@ -82,7 +84,12 @@ const Templates: FC = () => {
         </FormControl>
 
         {token && (
-          <Button href="/create-template" variant="contained" color="primary" disableElevation startIcon={<Add />}>
+          <Button
+            onClick={() => navigate('/create-template')}
+            variant="contained"
+            color="primary"
+            disableElevation
+            startIcon={<Add />}>
             New template
           </Button>
         )}

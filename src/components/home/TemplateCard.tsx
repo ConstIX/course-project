@@ -2,6 +2,7 @@ import { Comment, ThumbUp } from '@mui/icons-material'
 import { Box, Button, IconButton, Typography } from '@mui/material'
 import { FC, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { useNavigate } from 'react-router-dom'
 import { useDeleteResponseMutation, useGetResponsesByTemplateIdQuery } from '../../redux/services/results'
 import { useDeleteTemplateMutation, useIncrementLikesMutation } from '../../redux/services/templates'
 import { useGetUserByIdQuery } from '../../redux/services/users'
@@ -33,6 +34,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
   const isAdmin = user && user.status === 'admin'
 
   const [modalOpen, setModalOpen] = useState(false)
+  const navigate = useNavigate()
 
   const handleDelete = async (id: string) => {
     try {
@@ -63,24 +65,34 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
 
   return (
     <Box className="rounded p-4 shadow-md">
-      <Typography variant="h6">{title}</Typography>
+      <Typography variant="h6" color="textPrimary">
+        {title}
+      </Typography>
       <Typography color="textSecondary">{description}</Typography>
 
       <Box className="mt-5 flex gap-3">
-        <Button href={`/view-form/${id}`} variant="outlined" color="secondary" fullWidth={isMobile}>
+        <Button onClick={() => navigate(`/view-form/${id}`)} variant="outlined" color="secondary" fullWidth={isMobile}>
           View Form
         </Button>
         {token && (
           <>
-            <Button href={`/fill-form/${id}`} variant="outlined" color="primary" fullWidth={isMobile}>
+            <Button
+              onClick={() => navigate(`/fill-form/${id}`)}
+              variant="outlined"
+              color="primary"
+              fullWidth={isMobile}>
               Fill Form
             </Button>
-            <Button href={`/view-results/${id}`} variant="outlined" color="success" fullWidth={isMobile}>
+            <Button
+              onClick={() => navigate(`/view-results/${id}`)}
+              variant="outlined"
+              color="success"
+              fullWidth={isMobile}>
               View Results
             </Button>
             {(isAdmin || isAuthor) && (
               <>
-                <Button href={`/edit-template/${id}`}>Edit</Button>
+                <Button onClick={() => navigate(`/edit-template/${id}`)}>Edit</Button>
                 <Button onClick={() => handleDelete(id)}>Delete</Button>
               </>
             )}
