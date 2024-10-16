@@ -10,7 +10,7 @@ export const resultsApi = createApi({
       query: (templateId) => `/responses?templateId=${templateId}`,
       providesTags: (_, __, templateId) => [{ type: 'Results', id: templateId }]
     }),
-    getResponsesByUserId: builder.query<Response[], string>({
+    getResponsesByUserId: builder.query({
       query: (userId) => `/responses?userId=${userId}`,
       providesTags: ['Results']
     }),

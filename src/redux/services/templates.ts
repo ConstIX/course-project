@@ -14,7 +14,7 @@ export const templatesApi = createApi({
       query: (id) => `/templates/${id}`,
       providesTags: (_, __, id) => [{ type: 'Templates', id }]
     }),
-    getTemplatesByUserId: builder.query<Template[], string>({
+    getTemplatesByUserId: builder.query({
       query: (userId) => `/templates?authorId=${userId}`,
       providesTags: ['Templates']
     }),
