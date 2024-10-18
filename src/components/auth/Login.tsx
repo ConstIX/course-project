@@ -28,6 +28,7 @@ const Login: FC = () => {
     try {
       const { token, data } = await loginUser(userData).unwrap()
       await updateUser({ id: data.id, loginDate: moment().format('DD/MM/YYYY HH:mm') })
+
       if (data.status !== 'block') {
         localStorage.setItem('token', token)
         localStorage.setItem('userID', `${data.id}`)
@@ -65,11 +66,7 @@ const Login: FC = () => {
         </Button>
       </Box>
 
-      <Snackbar
-        open={snackbarState.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+      <Snackbar open={snackbarState.open} autoHideDuration={3000} onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <Alert onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} severity="error">
           {snackbarState.message}
         </Alert>

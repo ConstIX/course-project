@@ -4,7 +4,7 @@ import Login from '../components/auth/Login'
 import Register from '../components/auth/Register'
 
 const Auth: FC = () => {
-  const [isLogin, setIsLogin] = useState(true)
+  const [isLogin, setIsLogin] = useState<boolean>(true)
 
   return (
     <Box className="flex flex-1 items-center justify-center p-3">
@@ -15,11 +15,7 @@ const Auth: FC = () => {
 
         {isLogin ? <Login /> : <Register />}
 
-        <Typography
-          onClick={() => setIsLogin(!isLogin)}
-          align="center"
-          color="primary"
-          sx={{ marginTop: 1, cursor: 'pointer' }}>
+        <Typography onClick={() => setIsLogin(!isLogin)} align="center" color="primary" sx={{ marginTop: 1, cursor: 'pointer' }}>
           {isLogin ? 'Don`t have an account?' : 'Already have an account?'}
         </Typography>
       </Paper>

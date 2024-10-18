@@ -1,24 +1,24 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Template } from '../../types'
+import { ITemplate } from '../../types/templates.types'
 
 export const templatesApi = createApi({
   reducerPath: 'templatesApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://fe4b689c1c30d08d.mokky.dev' }),
   tagTypes: ['Templates'],
   endpoints: (builder) => ({
-    getTemplates: builder.query<Template[], void>({
+    getTemplates: builder.query<ITemplate[], void>({
       query: () => '/templates',
       providesTags: ['Templates']
     }),
-    getTemplateById: builder.query<Template, string>({
+    getTemplateById: builder.query<ITemplate, string>({
       query: (id) => `/templates/${id}`,
-      providesTags: (_, __, id) => [{ type: 'Templates', id }]
+      providesTags: ['Templates']
     }),
-    getTemplatesByUserId: builder.query({
+    getTemplatesByUserId: builder.query<ITemplate[], string | number>({
       query: (userId) => `/templates?authorId=${userId}`,
       providesTags: ['Templates']
     }),
-    createTemplate: builder.mutation<Template, Partial<Template>>({
+    createTemplate: builder.mutation<ITemplate, Partial<ITemplate>>({
       query: (body) => ({
         url: '/templates',
         method: 'POST',
@@ -32,9 +32,9 @@ export const templatesApi = createApi({
         method: 'PATCH',
         body: patch
       }),
-      invalidatesTags: (_, __, { id }) => [{ type: 'Templates', id }]
+      invalidatesTags: ['Templates']
     }),
-    deleteTemplate: builder.mutation<void, string>({
+    deleteTemplate: builder.mutation<void, number>({
       query: (id) => ({
         url: `templates/${id}`,
         method: 'DELETE'

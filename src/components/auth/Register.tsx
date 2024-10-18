@@ -29,6 +29,7 @@ const Register: FC = () => {
         ...userData,
         registrationDate: moment().format('DD/MM/YYYY HH:mm'),
         loginDate: moment().format('DD/MM/YYYY HH:mm'),
+        role: 'guest',
         status: 'active'
       }).unwrap()
 
@@ -65,11 +66,7 @@ const Register: FC = () => {
         </Button>
       </Box>
 
-      <Snackbar
-        open={snackbarState.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+      <Snackbar open={snackbarState.open} autoHideDuration={3000} onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <Alert onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} severity="error">
           {snackbarState.message}
         </Alert>

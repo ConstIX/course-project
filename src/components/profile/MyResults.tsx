@@ -1,29 +1,28 @@
-import { Button } from '@mui/material'
+import { Visibility } from '@mui/icons-material'
+import { Box, Button } from '@mui/material'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetResponsesByUserIdQuery } from '../../redux/services/results'
 
 const MyResults: FC = () => {
-  const { data: responses } = useGetResponsesByUserIdQuery(localStorage.getItem('userID')!)
+  const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
+  const { data: responses } = useGetResponsesByUserIdQuery(userId!)
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'Response ID', width: 200 },
-    {
-      field: 'templateTitle',
-      headerName: 'Template Title',
-      width: 300
-    },
+    { field: 'id', headerName: 'ID', width: 100 },
+    { field: 'templateTitle', headerName: 'Template title', width: 300 },
     {
       field: 'actions',
-      headerName: 'Actions',
-      width: 250,
+      type: 'actions',
+      width: 200,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => (
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
+          startIcon={<Visibility />}
           onClick={(e) => {
             e.stopPropagation()
             navigate(`/view-results/${params.row.templateId}`)
@@ -35,15 +34,17 @@ const MyResults: FC = () => {
   ]
 
   return (
-    <DataGrid
-      rows={responses || []}
-      columns={columns}
-      initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
-      pageSizeOptions={[10]}
-      disableRowSelectionOnClick
-      disableColumnMenu
-      onRowClick={(params) => navigate(`/view-form/${params.id}`)}
-    />
+    <Box className="h-96">
+      <DataGrid
+        rows={responses || []}
+        columns={columns}
+        initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+        pageSizeOptions={[10]}
+        disableRowSelectionOnClick
+        onRowClick={(params) => navigate(`/view-form/${params.id}`)}
+        sx={{ '& .MuiDataGrid-columnHeaderTitle': { fontWeight: 'bold' } }}
+      />
+    </Box>
   )
 }
 

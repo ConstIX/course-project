@@ -1,26 +1,26 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Response } from '../../types'
+import { Result } from '../../types/results.types'
 
 export const resultsApi = createApi({
   reducerPath: 'resultsApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://fe4b689c1c30d08d.mokky.dev' }),
   tagTypes: ['Results'],
   endpoints: (builder) => ({
-    getResponsesByTemplateId: builder.query<Response[], string>({
+    getResponsesByTemplateId: builder.query<Result[], number>({
       query: (templateId) => `/responses?templateId=${templateId}`,
-      providesTags: (_, __, templateId) => [{ type: 'Results', id: templateId }]
+      providesTags: ['Results']
     }),
-    getResponsesByUserId: builder.query({
+    getResponsesByUserId: builder.query<Result[], string | number>({
       query: (userId) => `/responses?userId=${userId}`,
       providesTags: ['Results']
     }),
-    createResponse: builder.mutation<Response, Partial<Response>>({
+    createResponse: builder.mutation<Result, Partial<Result>>({
       query: (body) => ({
         url: '/responses',
         method: 'POST',
         body
       }),
-      invalidatesTags: (_, __, { templateId }) => [{ type: 'Results', id: templateId }]
+      invalidatesTags: ['Results']
     }),
     updateResponse: builder.mutation({
       query: ({ id, body }) => ({
@@ -30,7 +30,7 @@ export const resultsApi = createApi({
       }),
       invalidatesTags: ['Results']
     }),
-    deleteResponse: builder.mutation<void, string>({
+    deleteResponse: builder.mutation<void, number>({
       query: (responseId) => ({
         url: `/responses/${responseId}`,
         method: 'DELETE'

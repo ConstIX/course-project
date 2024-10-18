@@ -3,7 +3,7 @@ import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const HeaderDrawer: FC<any> = ({ drawerOpen, setDrawerOpen, navigation, status }) => {
+const HeaderDrawer: FC<any> = ({ drawerOpen, setDrawerOpen, navigation, role }) => {
   const navigate = useNavigate()
 
   return (
@@ -22,7 +22,7 @@ const HeaderDrawer: FC<any> = ({ drawerOpen, setDrawerOpen, navigation, status }
               </ListItemButton>
             </ListItem>
           ))}
-          {status === 'admin' && (
+          {role === 'admin' && (
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {

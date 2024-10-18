@@ -42,7 +42,7 @@ const Header: FC<any> = ({ isDarkMode, setIsDarkMode }) => {
                     {obj.label}
                   </Link>
                 ))}
-                {user && user.status === 'admin' && <Link to="/dashboard">Dashboard</Link>}
+                {user && user.role === 'admin' && <Link to="/dashboard">Dashboard</Link>}
               </Box>
             )}
 
@@ -61,7 +61,7 @@ const Header: FC<any> = ({ isDarkMode, setIsDarkMode }) => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         navigation={navigation}
-        status={user?.status || ''}
+        role={user?.role || ''}
       />
     </Box>
   )

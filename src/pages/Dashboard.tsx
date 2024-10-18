@@ -14,11 +14,17 @@ import {
 
 const Dashboard: FC = () => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false)
+  const [snackbarState, setSnackbarState] = useState<{ message: string; open: boolean; severity: 'success' | 'error' }>(
+    {
+      message: '',
+      open: false,
+      severity: 'success' as 'success' | 'error'
+    }
+  )
 
   const userId = localStorage.getItem('userID')
-  const { data: users } = useGetUsersQuery({})
-  const { data: user } = useGetUserByIdQuery(userId as string)
+  const { data: users } = useGetUsersQuery()
+  const { data: user } = useGetUserByIdQuery(userId!)
   const [deleteUser] = useDeleteUserMutation()
   const [updateUser] = useUpdateUserMutation()
 
@@ -31,19 +37,22 @@ const Dashboard: FC = () => {
 
   const navigate = useNavigate()
 
-  const handleAction = async (status: 'block' | 'active' | 'admin') => {
+  const handleAction = async (status: 'block' | 'active') => {
     try {
       for (const id of selectedUsers) {
         await updateUser({ id, status }).unwrap()
         await new Promise((resolve) => setTimeout(resolve, 50))
       }
-      if (userId && status === 'block' && selectedUsers.includes(+userId)) {
+
+      if (status === 'block' && selectedUsers.includes(+userId!)) {
         localStorage.removeItem('token')
         localStorage.removeItem('userID')
         navigate('/auth')
       }
-      setOpenSnackbar(true)
+
+      setSnackbarState({ message: 'Action completed successfuly.', open: true, severity: 'success' })
     } catch (error) {
+      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
       console.error(`Error updating users:`, error)
     }
   }
@@ -51,14 +60,15 @@ const Dashboard: FC = () => {
   const handleToggleAdmin = async () => {
     try {
       for (const id of selectedUsers) {
-        const user = users.find((user: any) => user.id === id)
-        const newStatus = user.status === 'admin' ? 'active' : 'admin'
-        await updateUser({ id, status: newStatus }).unwrap()
+        const user = users?.find((user) => user.id === id)
+        const newRole = user?.role === 'admin' ? 'guest' : 'admin'
+        await updateUser({ id, role: newRole }).unwrap()
         await new Promise((resolve) => setTimeout(resolve, 50))
       }
-      setOpenSnackbar(true)
+      setSnackbarState({ message: 'Action completed successfuly.', open: true, severity: 'success' })
     } catch (error) {
-      console.error('Error toggling admin status:', error)
+      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      console.error('Error toggling admin role:', error)
     }
   }
 
@@ -92,8 +102,9 @@ const Dashboard: FC = () => {
         localStorage.removeItem('userID')
         navigate('/auth')
       }
-      setOpenSnackbar(true)
+      setSnackbarState({ message: 'Action completed successfuly.', open: true, severity: 'success' })
     } catch (error) {
+      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
       console.error('Error deleting users, templates, and responses:', error)
     }
   }
@@ -101,15 +112,14 @@ const Dashboard: FC = () => {
   const columns: GridColDef[] = [
     { field: 'username', headerName: 'Name', width: 250 },
     { field: 'email', headerName: 'E-Mail', width: 250, sortable: false },
-    { field: 'registrationDate', headerName: 'Registration date', width: 200, sortable: false },
-    { field: 'loginDate', headerName: 'Last login', width: 200, sortable: false },
-    { field: 'status', headerName: 'Status', width: 100, sortable: false }
+    { field: 'registrationDate', headerName: 'Registration date', width: 200 },
+    { field: 'loginDate', headerName: 'Last login', width: 200 },
+    { field: 'status', headerName: 'Status', width: 100, sortable: false },
+    { field: 'role', headerName: 'Role', width: 100, sortable: false }
   ]
 
   useEffect(() => {
-    if (user && user.status !== 'admin') {
-      navigate('/auth')
-    }
+    if (user && user.role !== 'admin') navigate('/auth')
   }, [user, navigate])
 
   return (
@@ -151,12 +161,12 @@ const Dashboard: FC = () => {
       />
 
       <Snackbar
-        open={openSnackbar}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        autoHideDuration={3000}>
-        <Alert severity="success" variant="filled">
-          Action completed successfully!
+        open={snackbarState.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} severity={snackbarState.severity}>
+          {snackbarState.message}
         </Alert>
       </Snackbar>
     </Box>

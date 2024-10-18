@@ -4,6 +4,7 @@ export interface IUser {
   password: string
   registrationDate: string
   loginDate: string
+  role: string
   status: string
   id: number
 }
