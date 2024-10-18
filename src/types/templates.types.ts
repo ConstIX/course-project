@@ -7,7 +7,7 @@ export interface IQuestion {
 }
 
 export interface ITemplate {
-  id: string
+  id: number
   authorId: number
   author: { name: string; email: string }
   title: string

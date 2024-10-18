@@ -12,8 +12,8 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
     open: false,
     severity: 'success' as 'success' | 'error'
   })
-  const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
+  const userId = localStorage.getItem('userID')
 
   const { data: templates } = useGetTemplatesByUserIdQuery(userId!)
   const [getResponsesByTemplateId] = resultsApi.useLazyGetResponsesByTemplateIdQuery()

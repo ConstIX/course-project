@@ -5,22 +5,15 @@ import { FC, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { resultsApi, useDeleteResponseMutation } from '../redux/services/results'
 import { templatesApi, useDeleteTemplateMutation } from '../redux/services/templates'
-import {
-  useDeleteUserMutation,
-  useGetUserByIdQuery,
-  useGetUsersQuery,
-  useUpdateUserMutation
-} from '../redux/services/users'
+import { useDeleteUserMutation, useGetUserByIdQuery, useGetUsersQuery, useUpdateUserMutation } from '../redux/services/users'
 
 const Dashboard: FC = () => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
-  const [snackbarState, setSnackbarState] = useState<{ message: string; open: boolean; severity: 'success' | 'error' }>(
-    {
-      message: '',
-      open: false,
-      severity: 'success' as 'success' | 'error'
-    }
-  )
+  const [snackbarState, setSnackbarState] = useState<{ message: string; open: boolean; severity: 'success' | 'error' }>({
+    message: '',
+    open: false,
+    severity: 'success' as 'success' | 'error'
+  })
 
   const userId = localStorage.getItem('userID')
   const { data: users } = useGetUsersQuery()
@@ -119,19 +112,13 @@ const Dashboard: FC = () => {
   ]
 
   useEffect(() => {
-    if (user && user.role !== 'admin') navigate('/auth')
+    if (user && user.role !== 'admin') navigate('/')
   }, [user, navigate])
 
   return (
     <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
       <Box className="mb-5 flex gap-3">
-        <Button
-          onClick={() => handleAction('block')}
-          variant="contained"
-          disableElevation
-          disabled={!selectedUsers.length}
-          startIcon={<Lock />}
-          sx={{ textTransform: 'none' }}>
+        <Button onClick={() => handleAction('block')} variant="contained" disableElevation disabled={!selectedUsers.length} startIcon={<Lock />} sx={{ textTransform: 'none' }}>
           Block
         </Button>
         <IconButton onClick={() => handleAction('active')} color="primary" disabled={!selectedUsers.length}>
@@ -145,26 +132,20 @@ const Dashboard: FC = () => {
         </IconButton>
       </Box>
 
-      <DataGrid
-        rows={users}
-        columns={columns}
-        initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
-        pageSizeOptions={[10]}
-        checkboxSelection
-        disableRowSelectionOnClick
-        onRowSelectionModelChange={(newSelection) => setSelectedUsers(newSelection as number[])}
-        sx={{
-          '& .MuiDataGrid-columnHeaderTitle': {
-            fontWeight: 'bold'
-          }
-        }}
-      />
+      <Box className="h-96">
+        <DataGrid
+          rows={users}
+          columns={columns}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+          pageSizeOptions={[10]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          onRowSelectionModelChange={(newSelection) => setSelectedUsers(newSelection as number[])}
+          sx={{ '& .MuiDataGrid-columnHeaderTitle': { fontWeight: 'bold' } }}
+        />
+      </Box>
 
-      <Snackbar
-        open={snackbarState.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+      <Snackbar open={snackbarState.open} autoHideDuration={3000} onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <Alert onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} severity={snackbarState.severity}>
           {snackbarState.message}
         </Alert>
