@@ -1,7 +1,7 @@
-import { Box, Button, TextField } from '@mui/material'
+import { Alert, Box, Button, Snackbar, TextField } from '@mui/material'
 import moment from 'moment'
-import { FC, useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { FC, useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useRegisterUserMutation } from '../../redux/services/auth'
 
@@ -13,63 +13,68 @@ const fields = [
 
 const Register: FC = () => {
   const {
-    control,
+    register,
     handleSubmit,
     formState: { errors }
   } = useForm()
   const [registerUser, { isLoading }] = useRegisterUserMutation()
+  const [snackbarState, setSnackbarState] = useState<{ message: string; open: boolean }>({ message: '', open: false })
+
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
+
+  const onSubmit = async (userData: Record<string, string>) => {
+    try {
+      const { token, data } = await registerUser({
+        ...userData,
+        registrationDate: moment().format('DD/MM/YYYY HH:mm'),
+        loginDate: moment().format('DD/MM/YYYY HH:mm'),
+        status: 'active'
+      }).unwrap()
+
+      localStorage.setItem('token', token)
+      localStorage.setItem('userID', `${data.id}`)
+    } catch (err) {
+      setSnackbarState({ message: 'Register failed. Please try again.', open: true })
+      console.error('Failed to register:', err)
+    }
+  }
 
   useEffect(() => {
     if (token) navigate('/')
   }, [navigate, token])
 
-  const onSubmit = async (data: Record<string, string>) => {
-    try {
-      const {
-        token,
-        data: { id }
-      } = await registerUser({
-        ...data,
-        registrationDate: moment().format('DD/MM/YYYY HH:mm'),
-        loginDate: moment().format('DD/MM/YYYY HH:mm'),
-        status: 'active'
-      }).unwrap()
-      localStorage.setItem('token', token)
-      localStorage.setItem('userID', String(id))
-    } catch (err) {
-      console.error('Failed to register:', err)
-    }
-  }
-
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-      {fields.map((field) => (
-        <Controller
-          key={field.name}
-          name={field.name}
-          control={control}
-          defaultValue=""
-          rules={{ required: `${field.label} is required!` }}
-          render={({ field: controllerField }) => (
-            <TextField
-              type={field.type}
-              label={field.label}
-              fullWidth
-              variant="standard"
-              error={!!errors[field.name]}
-              helperText={errors[field.name]?.message as string}
-              {...controllerField}
-              sx={field.type === 'password' ? { marginBottom: 5 } : { marginBottom: 2 }}
-            />
-          )}
-        />
-      ))}
-      <Button type="submit" variant="contained" fullWidth disabled={isLoading} disableElevation>
-        Submit
-      </Button>
-    </Box>
+    <>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        {fields.map((field) => (
+          <TextField
+            key={field.name}
+            type={field.type}
+            label={field.label}
+            variant="standard"
+            fullWidth
+            {...register(field.name, { required: `${field.label} is required!` })}
+            error={!!errors[field.name]}
+            helperText={errors[field.name]?.message as string}
+            sx={{ marginBottom: field.type === 'password' ? 5 : 2 }}
+          />
+        ))}
+        <Button type="submit" variant="contained" fullWidth disabled={isLoading} disableElevation>
+          Submit
+        </Button>
+      </Box>
+
+      <Snackbar
+        open={snackbarState.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} severity="error">
+          {snackbarState.message}
+        </Alert>
+      </Snackbar>
+    </>
   )
 }
 
