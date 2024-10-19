@@ -1,7 +1,6 @@
 import { Grading, Newspaper } from '@mui/icons-material'
-import { Box, Tab, Tabs } from '@mui/material'
+import { Box, Tab, Tabs, useMediaQuery } from '@mui/material'
 import { FC, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import MyResults from '../components/profile/MyResults'
 import MyTemplates from '../components/profile/MyTemplates'
 
@@ -12,7 +11,7 @@ const tabs = [
 
 const Profile: FC = () => {
   const [tab, setTab] = useState<number>(0)
-  const isMobile = useMediaQuery({ maxWidth: 450 })
+  const isMobile = useMediaQuery('(max-width: 450px)')
 
   return (
     <Box className="mx-auto mt-32 w-full max-w-7xl space-y-10 px-3 md3:mt-24">
