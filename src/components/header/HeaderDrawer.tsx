@@ -3,7 +3,14 @@ import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const HeaderDrawer: FC<any> = ({ drawerOpen, setDrawerOpen, navigation, role }) => {
+interface IHeaderDrawer {
+  drawerOpen: boolean
+  setDrawerOpen: (i: boolean) => void
+  navigation: { label: string; link: string; icon: JSX.Element }[]
+  role: string
+}
+
+const HeaderDrawer: FC<IHeaderDrawer> = ({ drawerOpen, setDrawerOpen, navigation, role }) => {
   const navigate = useNavigate()
 
   return (

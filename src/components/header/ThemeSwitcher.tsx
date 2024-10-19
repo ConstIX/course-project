@@ -41,13 +41,8 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   }
 }))
 
-const ThemeSwitcher: FC<any> = ({ isDarkMode, setIsDarkMode }) => {
-  return (
-    <FormControlLabel
-      control={<MaterialUISwitch checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} />}
-      label=""
-    />
-  )
+const ThemeSwitcher: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> = ({ isDarkMode, setIsDarkMode }) => {
+  return <FormControlLabel control={<MaterialUISwitch checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} />} label="" />
 }
 
 export default ThemeSwitcher

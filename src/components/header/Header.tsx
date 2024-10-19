@@ -12,17 +12,16 @@ const navigation = [
   { label: 'Profile', link: '/profile', icon: <Person /> }
 ]
 
-const Header: FC<any> = ({ isDarkMode, setIsDarkMode }) => {
+const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> = ({ isDarkMode, setIsDarkMode }) => {
   const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const { data: user } = useGetUserByIdQuery(userId)
+  const { data: user } = useGetUserByIdQuery(userId!)
 
   const isMobile = useMediaQuery({ maxWidth: 767.98 })
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('userID')
+    localStorage.clear()
     navigate('/auth')
   }
 
@@ -57,12 +56,7 @@ const Header: FC<any> = ({ isDarkMode, setIsDarkMode }) => {
         </Toolbar>
       </AppBar>
 
-      <HeaderDrawer
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        navigation={navigation}
-        role={user?.role || ''}
-      />
+      <HeaderDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} navigation={navigation} role={user?.role || ''} />
     </Box>
   )
 }
