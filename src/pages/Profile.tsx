@@ -14,7 +14,7 @@ const Profile: FC = () => {
   const isMobile = useMediaQuery('(max-width: 450px)')
 
   return (
-    <Box className="mx-auto mt-32 w-full max-w-7xl space-y-10 px-3 md3:mt-24">
+    <Box className="custom-container space-y-10">
       <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} variant={isMobile ? 'fullWidth' : 'standard'}>
         {tabs.map((obj) => (
           <Tab key={obj.label} label={obj.label} icon={obj.icon} iconPosition="start" sx={{ textTransform: 'none' }} />

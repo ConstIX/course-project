@@ -12,8 +12,8 @@ const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> =
     <Box>
       <AppBar position="fixed">
         <Toolbar>
-          <Box className="mx-auto flex w-full max-w-7xl items-center px-3 md1:p-0">
-            <Link to="/" className="flex flex-1 gap-3 text-2xl">
+          <Box className="custom-container flex items-center py-0 md1:p-0">
+            <Link to="/" className="flex flex-1 items-center gap-3 text-2xl">
               <Api fontSize="large" /> {!isMobile && 'ReactApp'}
             </Link>
 

@@ -33,7 +33,7 @@ const Dashboard: FC = () => {
   }, [user, navigate])
 
   return (
-    <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
+    <Box className="custom-container">
       <UserActions selectedUsers={selectedUsers} users={users || []} setSnackbarState={setSnackbarState} onUserDeleted={() => setSelectedUsers([])} />
 
       <Box className="h-96">
