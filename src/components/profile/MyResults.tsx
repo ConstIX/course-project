@@ -41,7 +41,6 @@ const MyResults: FC = () => {
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10]}
         loading={isLoading}
-        slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
         disableRowSelectionOnClick
         onRowClick={(params) => navigate(`/view-form/${params.id}`)}
         sx={{ '& .MuiDataGrid-columnHeaderTitle': { fontWeight: 'bold' } }}

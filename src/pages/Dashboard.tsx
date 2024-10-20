@@ -16,7 +16,7 @@ const Dashboard: FC = () => {
   const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
 
-  const { data: users } = useGetUsersQuery()
+  const { data: users, isLoading } = useGetUsersQuery()
   const { data: user } = useGetUserByIdQuery(userId!)
 
   const columns: GridColDef[] = [
@@ -42,6 +42,7 @@ const Dashboard: FC = () => {
           columns={columns}
           initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
           pageSizeOptions={[10]}
+          loading={isLoading}
           checkboxSelection
           disableRowSelectionOnClick
           onRowSelectionModelChange={(newSelection) => setSelectedUsers(newSelection as number[])}

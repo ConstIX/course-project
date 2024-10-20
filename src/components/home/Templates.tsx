@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material'
-import { Autocomplete, Box, Button, debounce, Pagination, TextField, Typography, useMediaQuery } from '@mui/material'
+import { Autocomplete, Box, Button, CircularProgress, debounce, Pagination, TextField, Typography, useMediaQuery } from '@mui/material'
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetTemplatesQuery } from '../../redux/services/templates'
@@ -17,7 +17,7 @@ const Templates: FC = () => {
   const isTablet = useMediaQuery('(max-width: 767.98px)')
   const navigate = useNavigate()
 
-  const { data: templates } = useGetTemplatesQuery()
+  const { data: templates, isLoading } = useGetTemplatesQuery()
   const templatesPerPage = 10
 
   const filteredTemplates = templates?.filter((template) => {
@@ -67,16 +67,25 @@ const Templates: FC = () => {
         </Button>
       </Box>
 
-      <Box>{currentTemplates && currentTemplates.map((obj) => <TemplateCard key={obj.id} {...obj} />)}</Box>
+      <Box className="space-y-5">
+        {isLoading ? (
+          <Box className="p-10 text-center">
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <Box>{currentTemplates?.map((obj) => <TemplateCard key={obj.id} {...obj} />)}</Box>
 
-      <Box className="mt-8 flex justify-center">
-        <Pagination
-          count={Math.ceil((filteredTemplates?.length || 0) / templatesPerPage)}
-          page={filters.currentPage}
-          onChange={(_, value) => setFilters((prev) => ({ ...prev, currentPage: value }))}
-          color="primary"
-          shape="rounded"
-        />
+            <Pagination
+              count={Math.ceil((filteredTemplates?.length || 0) / templatesPerPage)}
+              page={filters.currentPage}
+              onChange={(_, value) => setFilters((prev) => ({ ...prev, currentPage: value }))}
+              color="primary"
+              shape="rounded"
+              sx={{ display: 'flex', justifyContent: 'center' }}
+            />
+          </>
+        )}
       </Box>
     </Box>
   )

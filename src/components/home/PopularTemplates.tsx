@@ -68,7 +68,6 @@ const PopularTemplates: FC = () => {
           initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
           pageSizeOptions={[5]}
           loading={isLoading}
-          slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
           disableRowSelectionOnClick
           disableColumnMenu
           onRowClick={(params) => navigate(`/view-form/${params.id}`)}
