@@ -7,6 +7,7 @@ import ThemeSwitcher from './ThemeSwitcher'
 
 const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> = ({ isDarkMode, setIsDarkMode }) => {
   const isMobile = useMediaQuery('(max-width: 450px)')
+  const token = localStorage.getItem('token')
 
   return (
     <Box>
@@ -18,7 +19,7 @@ const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> =
             </Link>
 
             <ThemeSwitcher isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-            <HeaderMenu />
+            {token && <HeaderMenu />}
           </Box>
         </Toolbar>
       </AppBar>

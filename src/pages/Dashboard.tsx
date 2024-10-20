@@ -38,7 +38,7 @@ const Dashboard: FC = () => {
 
       <Box className="h-96">
         <DataGrid
-          rows={users}
+          rows={users || []}
           columns={columns}
           initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
           pageSizeOptions={[10]}

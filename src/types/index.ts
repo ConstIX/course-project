@@ -20,6 +20,7 @@ export interface Template {
   tags: string[]
   access: string | string[]
   selectedUsers?: string[]
+  date: string
   likedBy: string[]
   filledBy: string[]
   comments: { userId: string; username: string; email: string; comment: string }[]

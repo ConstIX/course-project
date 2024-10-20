@@ -4,6 +4,7 @@ import { FC, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
 import Header from './components/header/Header'
+import PrivateRoute from './components/PrivateRoute'
 import Auth from './pages/Auth'
 import CreateTemplate from './pages/CreateTemplate'
 import Dashboard from './pages/Dashboard'
@@ -39,15 +40,15 @@ const App: FC = () => {
           <Route path="/" element={<Home />} />
 
           <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
+          <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
 
-          <Route path="/create-template" element={<CreateTemplate />} />
-          <Route path="/edit-template/:id" element={<EditTemplate />} />
+          <Route path="/create-template" element={<PrivateRoute element={<CreateTemplate />} />} />
+          <Route path="/edit-template/:id" element={<PrivateRoute element={<EditTemplate />} />} />
 
           <Route path="/view-form/:id" element={<ViewForm />} />
-          <Route path="/fill-form/:id" element={<FillForm />} />
-          <Route path="/view-results/:id" element={<ViewResults />} />
+          <Route path="/fill-form/:id" element={<PrivateRoute element={<FillForm />} />} />
+          <Route path="/view-results/:id" element={<PrivateRoute element={<ViewResults />} />} />
         </Routes>
       </Box>
     </ThemeProvider>

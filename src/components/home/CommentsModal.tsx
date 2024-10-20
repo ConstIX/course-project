@@ -8,7 +8,7 @@ import { useGetUserByIdQuery } from '../../redux/services/users'
 interface ICommentsModal {
   open: boolean
   onClose: () => void
-  templateId: string
+  templateId: number
   comments: { userId: string; username: string; email: string; comment: string }[]
 }
 
@@ -84,16 +84,7 @@ const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments
             control={control}
             defaultValue=""
             rules={{ required: 'Comment is required' }}
-            render={({ field }) => (
-              <TextField
-                label="Add a comment"
-                size="small"
-                fullWidth
-                {...field}
-                error={!!errors.comment}
-                helperText={errors.comment ? errors.comment.message : ''}
-              />
-            )}
+            render={({ field }) => <TextField label="Add a comment" size="small" fullWidth {...field} error={!!errors.comment} helperText={errors.comment?.message as string} />}
           />
           <IconButton type="submit" color="primary">
             <Send />

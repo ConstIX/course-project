@@ -15,14 +15,14 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
   const navigate = useNavigate()
   const userId = localStorage.getItem('userID')
 
-  const { data: templates } = useGetTemplatesByUserIdQuery(userId!)
+  const { data: templates, isLoading } = useGetTemplatesByUserIdQuery(userId!)
   const [getResponsesByTemplateId] = resultsApi.useLazyGetResponsesByTemplateIdQuery()
   const [deleteTemplate] = useDeleteTemplateMutation()
   const [deleteResponse] = useDeleteResponseMutation()
 
   const handleDeleteTemplate = async (templateId: number) => {
     try {
-      deleteTemplate(templateId)
+      await deleteTemplate(templateId).unwrap()
       setSnackbarState({ message: 'Template deleted successfuly.', open: true, severity: 'success' })
 
       const templateResponses = await getResponsesByTemplateId(templateId!).unwrap()
@@ -37,7 +37,7 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'title', headerName: 'Template title', width: 300 },
+    { field: 'title', headerName: 'Template title', width: 250 },
     {
       field: 'filledBy',
       headerName: 'Number of fillings',
@@ -69,6 +69,8 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
           columns={columns}
           initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
           pageSizeOptions={[10]}
+          loading={isLoading}
+          slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
           disableRowSelectionOnClick
           onRowClick={(params) => navigate(`/view-form/${params.id}`)}
           sx={{ '& .MuiDataGrid-columnHeaderTitle': { fontWeight: 'bold' } }}

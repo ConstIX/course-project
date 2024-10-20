@@ -9,7 +9,7 @@ import { useGetUserByIdQuery } from '../../redux/services/users'
 import CommentsModal from './CommentsModal'
 
 interface ITemplateCard {
-  id: string
+  id: number
   authorId: number
   title: string
   description?: string
@@ -20,7 +20,7 @@ interface ITemplateCard {
 const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, likedBy, comments }) => {
   const userId = localStorage.getItem('userID')
   const [deleteTemplate] = useDeleteTemplateMutation()
-  const { data: user } = useGetUserByIdQuery(userId as string)
+  const { data: user } = useGetUserByIdQuery(userId!)
 
   const { data: responses } = useGetResponsesByTemplateIdQuery(id)
   const [deleteResponse] = useDeleteResponseMutation()
@@ -36,7 +36,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
   const [modalOpen, setModalOpen] = useState(false)
   const navigate = useNavigate()
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     try {
       await deleteTemplate(id).unwrap()
 
@@ -76,18 +76,10 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
         </Button>
         {token && (
           <>
-            <Button
-              onClick={() => navigate(`/fill-form/${id}`)}
-              variant="outlined"
-              color="primary"
-              fullWidth={isMobile}>
+            <Button onClick={() => navigate(`/fill-form/${id}`)} variant="outlined" color="primary" fullWidth={isMobile}>
               Fill Form
             </Button>
-            <Button
-              onClick={() => navigate(`/view-results/${id}`)}
-              variant="outlined"
-              color="success"
-              fullWidth={isMobile}>
+            <Button onClick={() => navigate(`/view-results/${id}`)} variant="outlined" color="success" fullWidth={isMobile}>
               View Results
             </Button>
             {(isAdmin || isAuthor) && (

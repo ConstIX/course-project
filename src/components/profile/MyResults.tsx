@@ -8,11 +8,11 @@ import { useGetResponsesByUserIdQuery } from '../../redux/services/results'
 const MyResults: FC = () => {
   const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
-  const { data: responses } = useGetResponsesByUserIdQuery(userId!)
+  const { data: responses, isLoading } = useGetResponsesByUserIdQuery(userId!)
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'templateTitle', headerName: 'Template title', width: 300 },
+    { field: 'templateTitle', headerName: 'Template title', width: 250 },
     {
       field: 'actions',
       type: 'actions',
@@ -40,6 +40,8 @@ const MyResults: FC = () => {
         columns={columns}
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10]}
+        loading={isLoading}
+        slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
         disableRowSelectionOnClick
         onRowClick={(params) => navigate(`/view-form/${params.id}`)}
         sx={{ '& .MuiDataGrid-columnHeaderTitle': { fontWeight: 'bold' } }}

@@ -1,4 +1,5 @@
 import { Box, Button, Typography } from '@mui/material'
+import moment from 'moment'
 import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -77,6 +78,7 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
       tags: data.tags,
       access: data.access,
       selectedUsers: data.access === 'private' ? data.selectedUsers : [],
+      date: moment().format('DD/MM/YYYY HH:mm'),
       likedBy: [],
       filledBy: [],
       comments: []

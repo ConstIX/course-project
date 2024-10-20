@@ -10,7 +10,7 @@ export const templatesApi = createApi({
       query: () => '/templates',
       providesTags: ['Templates']
     }),
-    getTemplateById: builder.query<ITemplate, string>({
+    getTemplateById: builder.query<ITemplate, number>({
       query: (id) => `/templates/${id}`,
       providesTags: ['Templates']
     }),
