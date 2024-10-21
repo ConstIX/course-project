@@ -1,13 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ITemplate } from '../../types/templates.types'
+import { IComment, ITemplate } from '../../types/templates.types'
 
 export const templatesApi = createApi({
   reducerPath: 'templatesApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://fe4b689c1c30d08d.mokky.dev' }),
   tagTypes: ['Templates'],
   endpoints: (builder) => ({
-    getTemplates: builder.query<ITemplate[], void>({
-      query: () => '/templates',
+    getFilteredTemplates: builder.query<{ meta: { total_pages: number }; items: ITemplate[] }, Record<string, string>>({
+      query: ({ search, tag, page }) => `/templates${page}${tag}${search}`,
+      providesTags: ['Templates']
+    }),
+    getPopularTemplates: builder.query<ITemplate[], void>({
+      query: () => '/templates?sortBy=-filledBy',
       providesTags: ['Templates']
     }),
     getTemplateById: builder.query<ITemplate, number>({
@@ -42,7 +46,7 @@ export const templatesApi = createApi({
       invalidatesTags: ['Templates']
     }),
 
-    incrementLikes: builder.mutation({
+    like: builder.mutation<void, { id: number; likedBy: string[] }>({
       query: ({ id, likedBy }) => ({
         url: `/templates/${id}`,
         method: 'PATCH',
@@ -58,7 +62,7 @@ export const templatesApi = createApi({
       }),
       invalidatesTags: ['Templates']
     }),
-    addComment: builder.mutation({
+    createComment: builder.mutation<void, { id: number; comments: IComment[] }>({
       query: ({ id, comments }) => ({
         url: `/templates/${id}`,
         method: 'PATCH',
@@ -70,13 +74,14 @@ export const templatesApi = createApi({
 })
 
 export const {
-  useGetTemplatesQuery,
+  useGetFilteredTemplatesQuery,
+  useGetPopularTemplatesQuery,
   useGetTemplateByIdQuery,
   useGetTemplatesByUserIdQuery,
   useCreateTemplateMutation,
   useDeleteTemplateMutation,
   useUpdateTemplateMutation,
-  useIncrementLikesMutation,
+  useLikeMutation,
   useIncrementFillsMutation,
-  useAddCommentMutation
+  useCreateCommentMutation
 } = templatesApi

@@ -3,7 +3,7 @@ import { Alert, Box, Snackbar, Typography } from '@mui/material'
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useGetTemplatesQuery } from '../../redux/services/templates'
+import { useGetPopularTemplatesQuery } from '../../redux/services/templates'
 
 const PopularTemplates: FC = () => {
   const [snackbarState, setSnackbarState] = useState<{ message: string; open: boolean; severity: 'success' | 'error' }>({
@@ -14,8 +14,7 @@ const PopularTemplates: FC = () => {
   const token = localStorage.getItem('token')
   const navigate = useNavigate()
 
-  const { data: templates, isLoading } = useGetTemplatesQuery()
-  const popularTemplates = templates && [...templates].sort((a, b) => b.filledBy?.length - a.filledBy?.length).slice(0, 5)
+  const { data: templates, isLoading } = useGetPopularTemplatesQuery()
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100, sortable: false },
@@ -50,7 +49,12 @@ const PopularTemplates: FC = () => {
           onClick={() => (token ? navigate(`/fill-form/${params.row.id}`) : setSnackbarState({ message: 'You are not authorized!', open: true, severity: 'error' }))}
           showInMenu
         />,
-        <GridActionsCellItem icon={<Visibility />} label="View Results" onClick={() => navigate(`/view-results/${params.row.id}`)} showInMenu />
+        <GridActionsCellItem
+          icon={<Visibility />}
+          label="View Results"
+          onClick={() => (token ? navigate(`/view-results/${params.row.id}`) : setSnackbarState({ message: 'You are not authorized!', open: true, severity: 'error' }))}
+          showInMenu
+        />
       ]
     }
   ]
@@ -63,7 +67,7 @@ const PopularTemplates: FC = () => {
 
       <Box className="h-[370px]">
         <DataGrid
-          rows={popularTemplates || []}
+          rows={templates?.slice(0, 5) || []}
           columns={columns}
           initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
           pageSizeOptions={[5]}

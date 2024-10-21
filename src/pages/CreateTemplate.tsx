@@ -79,9 +79,9 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
       access: data.access,
       selectedUsers: data.access === 'private' ? data.selectedUsers : [],
       date: moment().format('DD/MM/YYYY HH:mm'),
-      likedBy: [],
-      filledBy: [],
-      comments: []
+      likedBy: templateData ? templateData.likedBy : [],
+      filledBy: templateData ? templateData.filledBy : [],
+      comments: templateData ? templateData.comments : []
     }
 
     try {

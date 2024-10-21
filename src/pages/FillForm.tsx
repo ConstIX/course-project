@@ -1,21 +1,9 @@
 import { Send } from '@mui/icons-material'
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Autocomplete, Box, Button, Checkbox, FormControlLabel, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from '@mui/material'
 import { FC, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useCreateResponseMutation, useUpdateResponseMutation } from '../redux/services/results'
+import { useCreateResultsMutation, useUpdateResultsMutation } from '../redux/services/results'
 import { useGetTemplateByIdQuery, useIncrementFillsMutation } from '../redux/services/templates'
 import { useGetUserByIdQuery } from '../redux/services/users'
 
@@ -32,9 +20,9 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
     setValue,
     reset
   } = useForm()
-  const [createResponse, { isLoading }] = useCreateResponseMutation()
+  const [createResults, { isLoading }] = useCreateResultsMutation()
   const [incrementFills] = useIncrementFillsMutation()
-  const [updateResponse] = useUpdateResponseMutation()
+  const [updateResults] = useUpdateResultsMutation()
   const navigate = useNavigate()
 
   const submitHandler = async (data: any) => {
@@ -54,10 +42,10 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
 
     try {
       if (currentResponse) {
-        await updateResponse({ id: currentResponse.id, body: newData }).unwrap()
+        await updateResults({ id: currentResponse.id, body: newData }).unwrap()
         handleClose()
       } else {
-        await createResponse(response).unwrap()
+        await createResults(response).unwrap()
         await incrementFills({ id: template?.id, filledBy: [...template!.filledBy, userId] }).unwrap()
         navigate('/')
       }
@@ -93,15 +81,7 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
                 control={control}
                 defaultValue=""
                 rules={{ required: 'This field is required' }}
-                render={({ field }) => (
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    {...field}
-                    error={!!errors[question.id]}
-                    disabled={readOnly}
-                  />
-                )}
+                render={({ field }) => <TextField fullWidth variant="outlined" {...field} error={!!errors[question.id]} disabled={readOnly} />}
               />
             )}
 
@@ -111,16 +91,7 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
                 control={control}
                 defaultValue=""
                 rules={{ required: 'This field is required' }}
-                render={({ field }) => (
-                  <TextField
-                    fullWidth
-                    type="number"
-                    variant="outlined"
-                    {...field}
-                    error={!!errors[question.id]}
-                    disabled={readOnly}
-                  />
-                )}
+                render={({ field }) => <TextField fullWidth type="number" variant="outlined" {...field} error={!!errors[question.id]} disabled={readOnly} />}
               />
             )}
 
@@ -138,9 +109,7 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
                     value={value}
                     onChange={(_, newValue) => onChange(newValue)}
                     disabled={readOnly}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Tags" variant="outlined" placeholder="Start typing..." />
-                    )}
+                    renderInput={(params) => <TextField {...params} label="Tags" variant="outlined" placeholder="Start typing..." />}
                   />
                 )}
               />
@@ -179,13 +148,7 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
                           key={`${question.id}-${idx}`}
                           label={option.trim()}
                           disabled={readOnly}
-                          control={
-                            <Radio
-                              value={option.trim()}
-                              checked={field.value === option.trim()}
-                              onChange={field.onChange}
-                            />
-                          }
+                          control={<Radio value={option.trim()} checked={field.value === option.trim()} onChange={field.onChange} />}
                         />
                       ))}
                   </RadioGroup>
@@ -212,9 +175,7 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
                               value={option.trim()}
                               checked={field.value.includes(option.trim())}
                               onChange={(e) => {
-                                const newValue = e.target.checked
-                                  ? [...field.value, option.trim()]
-                                  : field.value.filter((val: string) => val !== option.trim())
+                                const newValue = e.target.checked ? [...field.value, option.trim()] : field.value.filter((val: string) => val !== option.trim())
                                 field.onChange(newValue)
                               }}
                             />
@@ -234,13 +195,7 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
           </Button>
         ) : (
           <Box className="flex justify-between">
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={isLoading}
-              disableElevation
-              endIcon={<Send />}>
+            <Button type="submit" variant="contained" color="primary" disabled={isLoading} disableElevation endIcon={<Send />}>
               {isLoading ? 'Send...' : 'Send'}
             </Button>
             <Button onClick={() => navigate('/')} variant="contained" color="error" disableElevation>

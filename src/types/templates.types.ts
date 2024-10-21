@@ -6,6 +6,13 @@ export interface IQuestion {
   options: string[]
 }
 
+export interface IComment {
+  userId: string | null
+  username: string | undefined
+  email: string | undefined
+  comment: string
+}
+
 export interface ITemplate {
   id: number
   authorId: number
@@ -18,7 +25,8 @@ export interface ITemplate {
   tags: string[]
   access: string
   selectedUsers?: string[]
+  date: string
   likedBy: string[]
   filledBy: string[]
-  comments: { userId: string; username: string; email: string; comment: string }[]
+  comments: IComment[]
 }

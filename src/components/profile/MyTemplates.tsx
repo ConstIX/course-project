@@ -3,8 +3,8 @@ import { Alert, Box, Button, Snackbar, Typography } from '@mui/material'
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { resultsApi, useDeleteResponseMutation } from '../../redux/services/results'
-import { useDeleteTemplateMutation, useGetTemplatesByUserIdQuery } from '../../redux/services/templates'
+import { useDeleteTemplate } from '../../hooks/useDeleteTemplate'
+import { useGetTemplatesByUserIdQuery } from '../../redux/services/templates'
 
 const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
   const [snackbarState, setSnackbarState] = useState<{ message: string; open: boolean; severity: 'success' | 'error' }>({
@@ -16,22 +16,15 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
   const userId = localStorage.getItem('userID')
 
   const { data: templates, isLoading } = useGetTemplatesByUserIdQuery(userId!)
-  const [getResponsesByTemplateId] = resultsApi.useLazyGetResponsesByTemplateIdQuery()
-  const [deleteTemplate] = useDeleteTemplateMutation()
-  const [deleteResponse] = useDeleteResponseMutation()
+  const [deleteTemplateWithResults] = useDeleteTemplate()
 
   const handleDeleteTemplate = async (templateId: number) => {
     try {
-      await deleteTemplate(templateId).unwrap()
+      await deleteTemplateWithResults(templateId)
       setSnackbarState({ message: 'Template deleted successfuly.', open: true, severity: 'success' })
-
-      const templateResponses = await getResponsesByTemplateId(templateId!).unwrap()
-      for (const response of templateResponses) {
-        await deleteResponse(response.id).unwrap()
-      }
     } catch (error) {
       setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
-      console.error('Error deleting template and responses:', error)
+      console.error('Error deleting template and results:', error)
     }
   }
 

@@ -1,13 +1,14 @@
-import { Api } from '@mui/icons-material'
-import { AppBar, Box, Toolbar, useMediaQuery } from '@mui/material'
+import { Api, Login } from '@mui/icons-material'
+import { AppBar, Box, Button, Toolbar, useMediaQuery } from '@mui/material'
 import { FC } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import HeaderMenu from './HeaderMenu'
 import ThemeSwitcher from './ThemeSwitcher'
 
 const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> = ({ isDarkMode, setIsDarkMode }) => {
   const isMobile = useMediaQuery('(max-width: 450px)')
   const token = localStorage.getItem('token')
+  const navigate = useNavigate()
 
   return (
     <Box>
@@ -19,7 +20,13 @@ const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> =
             </Link>
 
             <ThemeSwitcher isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-            {token && <HeaderMenu />}
+            {token ? (
+              <HeaderMenu />
+            ) : (
+              <Button onClick={() => navigate('/auth')} variant="contained" disableElevation startIcon={<Login />} sx={{ textTransform: 'none' }}>
+                Sign-in
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </AppBar>

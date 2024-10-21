@@ -1,11 +1,8 @@
-import { Add } from '@mui/icons-material'
-import { Autocomplete, Box, Button, CircularProgress, debounce, Pagination, TextField, Typography, useMediaQuery } from '@mui/material'
+import { Alert, Box, CircularProgress, debounce, Pagination, Snackbar, Typography } from '@mui/material'
 import { FC, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useGetTemplatesQuery } from '../../redux/services/templates'
+import { useGetFilteredTemplatesQuery } from '../../redux/services/templates'
 import TemplateCard from './TemplateCard'
-
-const tags = ['All', 'Technology', 'Science', 'Education', 'Health', 'Art', 'Business', 'Sports']
+import TemplateFilters from './TemplateFilters'
 
 const Templates: FC = () => {
   const [filters, setFilters] = useState<{ searchValue: string; selectedTag: string; currentPage: number }>({
@@ -13,80 +10,63 @@ const Templates: FC = () => {
     selectedTag: 'All',
     currentPage: 1
   })
-  const token = localStorage.getItem('token')
-  const isTablet = useMediaQuery('(max-width: 767.98px)')
-  const navigate = useNavigate()
-
-  const { data: templates, isLoading } = useGetTemplatesQuery()
-  const templatesPerPage = 10
-
-  const filteredTemplates = templates?.filter((template) => {
-    const matchesSearch = template.title.toLowerCase().includes(filters.searchValue.toLowerCase()) || String(template.id) === filters.searchValue
-    const matchesTag = filters.selectedTag === 'All' || template.tags.includes(filters.selectedTag)
-    return matchesSearch && matchesTag
+  const [snackbarState, setSnackbarState] = useState<{ message: string; open: boolean; severity: 'success' | 'error' }>({
+    message: '',
+    open: false,
+    severity: 'success' as 'success' | 'error'
   })
 
-  const currentTemplates = filteredTemplates?.slice((filters.currentPage - 1) * templatesPerPage, filters.currentPage * templatesPerPage)
+  const { data: templates, isLoading } = useGetFilteredTemplatesQuery({
+    search: filters.searchValue ? `&title=*${filters.searchValue}*` : '',
+    tag: filters.selectedTag === 'All' ? '' : `&tags[]=${filters.selectedTag}`,
+    page: `?page=${filters.currentPage}&limit=10`
+  })
 
   const handleInputChange = debounce((value: string, isTag: boolean) => {
     if (isTag) setFilters((prev) => ({ ...prev, selectedTag: value, currentPage: 1 }))
     else setFilters((prev) => ({ ...prev, searchValue: value, currentPage: 1 }))
   }, 300)
 
+  if (isLoading) {
+    return (
+      <Box className="p-10 text-center">
+        <CircularProgress />
+      </Box>
+    )
+  }
+
   return (
-    <Box className="space-y-5">
-      <Typography color="primary" variant="h4">
+    <Box>
+      <Typography color="primary" variant="h4" sx={{ marginBottom: '20px' }}>
         Templates
       </Typography>
 
-      <Box className="flex items-center justify-between gap-5 md3:flex-col">
-        <Box className="flex gap-5 md3:w-full md4:flex-col-reverse md4:gap-3">
-          <Autocomplete
-            freeSolo
-            disableClearable
-            options={currentTemplates?.map((obj) => obj.title) || []}
-            value={filters.searchValue}
-            onInputChange={(_, newValue) => handleInputChange(newValue, false)}
-            size={isTablet ? 'small' : 'medium'}
-            sx={{ width: isTablet ? '100%' : 300 }}
-            renderInput={(params) => <TextField {...params} type="search" label="Search..." />}
-          />
-
-          <Autocomplete
-            options={tags}
-            value={filters.selectedTag}
-            onInputChange={(_, newValue) => handleInputChange(newValue, true)}
-            size={isTablet ? 'small' : 'medium'}
-            sx={{ width: isTablet ? '100%' : 200 }}
-            renderInput={(params) => <TextField {...params} label="Tag" />}
-          />
-        </Box>
-
-        <Button fullWidth={isTablet} onClick={() => navigate('/create-template')} variant="contained" color="primary" disableElevation startIcon={<Add />} disabled={!token}>
-          New template
-        </Button>
-      </Box>
+      <TemplateFilters templates={templates?.items || []} filters={filters} handleInputChange={handleInputChange} />
 
       <Box className="space-y-5">
-        {isLoading ? (
-          <Box className="p-10 text-center">
-            <CircularProgress />
-          </Box>
+        {templates?.items.length ? (
+          <Box>{templates?.items.map((obj) => <TemplateCard key={obj.id} {...obj} setSnackbarState={setSnackbarState} />)}</Box>
         ) : (
-          <>
-            <Box>{currentTemplates?.map((obj) => <TemplateCard key={obj.id} {...obj} />)}</Box>
-
-            <Pagination
-              count={Math.ceil((filteredTemplates?.length || 0) / templatesPerPage)}
-              page={filters.currentPage}
-              onChange={(_, value) => setFilters((prev) => ({ ...prev, currentPage: value }))}
-              color="primary"
-              shape="rounded"
-              sx={{ display: 'flex', justifyContent: 'center' }}
-            />
-          </>
+          <Typography color="textSecondary" variant="h6" sx={{ padding: 5, textAlign: 'center' }}>
+            No Templates...
+          </Typography>
         )}
+
+        <Pagination
+          count={templates?.meta.total_pages}
+          page={filters.currentPage}
+          onChange={(_, value) => setFilters((prev) => ({ ...prev, currentPage: value }))}
+          color="primary"
+          shape="rounded"
+          sx={{ display: 'flex', justifyContent: 'center' }}
+        />
       </Box>
+
+      <Snackbar open={snackbarState.open} autoHideDuration={3000} onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert severity={snackbarState.severity} onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}>
+          {snackbarState.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

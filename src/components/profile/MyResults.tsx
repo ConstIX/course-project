@@ -3,12 +3,12 @@ import { Box, Button } from '@mui/material'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useGetResponsesByUserIdQuery } from '../../redux/services/results'
+import { useGetResultsByUserIdQuery } from '../../redux/services/results'
 
 const MyResults: FC = () => {
   const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
-  const { data: responses, isLoading } = useGetResponsesByUserIdQuery(userId!)
+  const { data: results, isLoading } = useGetResultsByUserIdQuery(userId!)
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -36,7 +36,7 @@ const MyResults: FC = () => {
   return (
     <Box className="h-96">
       <DataGrid
-        rows={responses || []}
+        rows={results || []}
         columns={columns}
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10]}

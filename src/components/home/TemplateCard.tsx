@@ -1,11 +1,11 @@
 import { Comment, ThumbUp } from '@mui/icons-material'
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
 import { FC, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import { useNavigate } from 'react-router-dom'
-import { useDeleteResponseMutation, useGetResponsesByTemplateIdQuery } from '../../redux/services/results'
-import { useDeleteTemplateMutation, useIncrementLikesMutation } from '../../redux/services/templates'
-import { useGetUserByIdQuery } from '../../redux/services/users'
+import { useDeleteTemplate } from '../../hooks/useDeleteTemplate'
+import { useIsAdminOrAuthor } from '../../hooks/useIsAdminOrAuthor'
+import { useLikeMutation } from '../../redux/services/templates'
+import { IComment } from '../../types/templates.types'
 import CommentsModal from './CommentsModal'
 
 interface ITemplateCard {
@@ -14,52 +14,37 @@ interface ITemplateCard {
   title: string
   description?: string
   likedBy: string[]
-  comments: { userId: string; username: string; email: string; comment: string }[]
+  comments: IComment[]
+  setSnackbarState: (obj: { message: string; open: boolean; severity: 'success' | 'error' }) => void
 }
 
-const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, likedBy, comments }) => {
-  const userId = localStorage.getItem('userID')
-  const [deleteTemplate] = useDeleteTemplateMutation()
-  const { data: user } = useGetUserByIdQuery(userId!)
-
-  const { data: responses } = useGetResponsesByTemplateIdQuery(id)
-  const [deleteResponse] = useDeleteResponseMutation()
-
-  const [incrementLikes] = useIncrementLikesMutation()
-  const hasLiked = likedBy && likedBy.includes(userId as string)
-
-  const isMobile = useMediaQuery({ maxWidth: 450 })
-  const token = localStorage.getItem('token')
-  const isAuthor = userId === String(authorId)
-  const isAdmin = user && user.status === 'admin'
-
+const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, likedBy, comments, setSnackbarState }) => {
   const [modalOpen, setModalOpen] = useState(false)
+  const userId = localStorage.getItem('userID')
+  const token = localStorage.getItem('token')
   const navigate = useNavigate()
 
-  const handleDelete = async (id: number) => {
+  const [like] = useLikeMutation()
+  const [deleteTemplateWithResults] = useDeleteTemplate()
+  const [isAdminOrAuthor] = useIsAdminOrAuthor(authorId)
+
+  const handleLikeTemplate = async () => {
+    if (userId && likedBy.includes(userId)) return
+
     try {
-      await deleteTemplate(id).unwrap()
-
-      if (responses) {
-        const allResponses = responses.map((i) => i.id)
-
-        for (const id of allResponses!) {
-          await deleteResponse(id).unwrap()
-          await new Promise((resolve) => setTimeout(resolve, 10))
-        }
-      }
+      if (userId) await like({ id, likedBy: [...likedBy, userId] }).unwrap()
     } catch (err) {
-      console.error('Failed to delete template:', err)
+      console.error('Failed to like template:', err)
     }
   }
 
-  const handleLike = async () => {
-    if (hasLiked) return
-
+  const handleDeleteTemplate = async (id: number) => {
     try {
-      await incrementLikes({ id, likedBy: [...likedBy, userId] }).unwrap()
+      await deleteTemplateWithResults(id)
+      setSnackbarState({ message: 'Template deleted successfuly.', open: true, severity: 'success' })
     } catch (err) {
-      console.error('Failed to like template:', err)
+      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      console.error('Failed to delete template:', err)
     }
   }
 
@@ -71,21 +56,21 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
       <Typography color="textSecondary">{description}</Typography>
 
       <Box className="mt-5 flex gap-3">
-        <Button onClick={() => navigate(`/view-form/${id}`)} variant="outlined" color="secondary" fullWidth={isMobile}>
+        <Button onClick={() => navigate(`/view-form/${id}`)} variant="outlined" color="secondary">
           View Form
         </Button>
         {token && (
           <>
-            <Button onClick={() => navigate(`/fill-form/${id}`)} variant="outlined" color="primary" fullWidth={isMobile}>
+            <Button onClick={() => navigate(`/fill-form/${id}`)} variant="outlined" color="primary">
               Fill Form
             </Button>
-            <Button onClick={() => navigate(`/view-results/${id}`)} variant="outlined" color="success" fullWidth={isMobile}>
+            <Button onClick={() => navigate(`/view-results/${id}`)} variant="outlined" color="success">
               View Results
             </Button>
-            {(isAdmin || isAuthor) && (
+            {isAdminOrAuthor && (
               <>
                 <Button onClick={() => navigate(`/edit-template/${id}`)}>Edit</Button>
-                <Button onClick={() => handleDelete(id)}>Delete</Button>
+                <Button onClick={() => handleDeleteTemplate(id)}>Delete</Button>
               </>
             )}
           </>
@@ -100,7 +85,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
           <Typography color="textSecondary">{comments.length}</Typography>
         </Box>
         <Box className="flex items-center gap-1">
-          <IconButton onClick={handleLike} color="primary" size="small" disabled={!token}>
+          <IconButton onClick={handleLikeTemplate} color="primary" size="small" disabled={!token}>
             <ThumbUp fontSize="small" />
           </IconButton>
           <Typography color="textSecondary">{likedBy.length}</Typography>

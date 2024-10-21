@@ -6,15 +6,15 @@ export const resultsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://fe4b689c1c30d08d.mokky.dev' }),
   tagTypes: ['Results'],
   endpoints: (builder) => ({
-    getResponsesByTemplateId: builder.query<Result[], number>({
+    getResultsByTemplateId: builder.query<Result[], number>({
       query: (templateId) => `/responses?templateId=${templateId}`,
       providesTags: ['Results']
     }),
-    getResponsesByUserId: builder.query<Result[], string | number>({
+    getResultsByUserId: builder.query<Result[], string | number>({
       query: (userId) => `/responses?userId=${userId}`,
       providesTags: ['Results']
     }),
-    createResponse: builder.mutation<Result, Partial<Result>>({
+    createResults: builder.mutation<Result, Partial<Result>>({
       query: (body) => ({
         url: '/responses',
         method: 'POST',
@@ -22,7 +22,7 @@ export const resultsApi = createApi({
       }),
       invalidatesTags: ['Results']
     }),
-    updateResponse: builder.mutation({
+    updateResults: builder.mutation({
       query: ({ id, body }) => ({
         url: `/responses/${id}`,
         method: 'PATCH',
@@ -30,7 +30,7 @@ export const resultsApi = createApi({
       }),
       invalidatesTags: ['Results']
     }),
-    deleteResponse: builder.mutation<void, number>({
+    deleteResults: builder.mutation<void, number>({
       query: (responseId) => ({
         url: `/responses/${responseId}`,
         method: 'DELETE'
@@ -40,10 +40,4 @@ export const resultsApi = createApi({
   })
 })
 
-export const {
-  useGetResponsesByTemplateIdQuery,
-  useGetResponsesByUserIdQuery,
-  useCreateResponseMutation,
-  useDeleteResponseMutation,
-  useUpdateResponseMutation
-} = resultsApi
+export const { useGetResultsByTemplateIdQuery, useGetResultsByUserIdQuery, useCreateResultsMutation, useUpdateResultsMutation, useDeleteResultsMutation } = resultsApi

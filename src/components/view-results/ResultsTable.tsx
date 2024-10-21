@@ -1,26 +1,25 @@
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { FC } from 'react'
-import { useDeleteResponseMutation, useGetResponsesByTemplateIdQuery } from '../../redux/services/results'
+import { useDeleteResultsMutation, useGetResultsByTemplateIdQuery } from '../../redux/services/results'
 import { useGetTemplateByIdQuery } from '../../redux/services/templates'
 import { useGetUserByIdQuery } from '../../redux/services/users'
 
 const ResultsTable: FC<any> = ({ id, handleOpen }) => {
   const userId = localStorage.getItem('userID')
   const { data: template } = useGetTemplateByIdQuery(id!)
-  const { data: responses } = useGetResponsesByTemplateIdQuery(id!)
+  const { data: results } = useGetResultsByTemplateIdQuery(id!)
   const { data: user } = useGetUserByIdQuery(userId as string)
-  const [deleteResponse] = useDeleteResponseMutation()
+  const [deleteResults] = useDeleteResultsMutation()
 
   const isAuthor = userId === String(template?.authorId)
   const isAdmin = user && user.status === 'admin'
 
-  const filteredResponses =
-    !isAuthor && !isAdmin ? responses?.filter((response) => String(response.userId) === userId) : responses
+  const filteredResponses = !isAuthor && !isAdmin ? results?.filter((result) => String(result.userId) === userId) : results
 
   const handleDelete = async (responseId: string) => {
     try {
-      await deleteResponse(responseId).unwrap()
+      await deleteResults(responseId).unwrap()
     } catch (error) {
       console.error('Failed to delete response:', error)
     }
@@ -47,11 +46,7 @@ const ResultsTable: FC<any> = ({ id, handleOpen }) => {
       headerName: q.label,
       width: `${q.type === 'text' ? 300 : 200}`,
       sortable: false,
-      renderCell: (params: any) => (
-        <Typography variant="body2">
-          {Array.isArray(params.value) ? params.value.join(', ') : params.value || '-'}
-        </Typography>
-      )
+      renderCell: (params: any) => <Typography variant="body2">{Array.isArray(params.value) ? params.value.join(', ') : params.value || '-'}</Typography>
     })) || []),
     (isAuthor || isAdmin) && {
       field: 'actions',

@@ -2,8 +2,7 @@ import { AdminPanelSettings, Delete, Lock, LockOpen } from '@mui/icons-material'
 import { Button, IconButton } from '@mui/material'
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { resultsApi, useDeleteResponseMutation } from '../../redux/services/results'
-import { templatesApi, useDeleteTemplateMutation } from '../../redux/services/templates'
+import { resultsApi, useDeleteResultsMutation } from '../../redux/services/results'
 import { useDeleteUserMutation, useUpdateUserMutation } from '../../redux/services/users'
 import { IUser } from '../../types/user.types'
 
@@ -18,14 +17,11 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
   const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
 
-  const [getTemplatesByUserId] = templatesApi.useLazyGetTemplatesByUserIdQuery()
-  const [getResponsesByTemplateId] = resultsApi.useLazyGetResponsesByTemplateIdQuery()
-  const [getResponsesByUserId] = resultsApi.useLazyGetResponsesByUserIdQuery()
+  const [getResultsByUserId] = resultsApi.useLazyGetResultsByUserIdQuery()
 
   const [deleteUser] = useDeleteUserMutation()
   const [updateUser] = useUpdateUserMutation()
-  const [deleteTemplate] = useDeleteTemplateMutation()
-  const [deleteResponse] = useDeleteResponseMutation()
+  const [deleteResults] = useDeleteResultsMutation()
 
   const handleAction = async (status: 'block' | 'active') => {
     try {
@@ -69,31 +65,22 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
       for (const id of selectedUsers) {
         await deleteUser(id).unwrap()
 
-        const userTemplates = await getTemplatesByUserId(id).unwrap()
-        for (const template of userTemplates) {
-          const templateResponses = await getResponsesByTemplateId(template.id).unwrap()
-          for (const response of templateResponses) {
-            await deleteResponse(response.id).unwrap()
-          }
-
-          await deleteTemplate(template.id).unwrap()
-        }
-
-        const userResponses = await getResponsesByUserId(id).unwrap()
-        for (const response of userResponses) {
-          await deleteResponse(response.id).unwrap()
+        const userResults = await getResultsByUserId(id).unwrap()
+        for (const results of userResults) {
+          await deleteResults(results.id).unwrap()
         }
       }
-      onUserDeleted()
 
       if (selectedUsers.includes(+userId!)) {
         localStorage.clear()
         navigate('/auth')
       }
+
+      onUserDeleted()
       setSnackbarState({ message: 'Action completed successfuly.', open: true, severity: 'success' })
     } catch (error) {
       setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
-      console.error('Error deleting users, templates, and responses:', error)
+      console.error('Error deleting users, templates, and results:', error)
     }
   }
 

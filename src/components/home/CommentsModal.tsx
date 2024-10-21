@@ -1,45 +1,34 @@
-import { Close, Send } from '@mui/icons-material'
-import { Box, Dialog, DialogContent, DialogTitle, IconButton, TextField, Typography } from '@mui/material'
+import { Close, PersonPin, Send } from '@mui/icons-material'
+import { Box, Dialog, DialogContent, DialogTitle, Divider, IconButton, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useRef } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { useAddCommentMutation } from '../../redux/services/templates'
+import { useForm } from 'react-hook-form'
+import { useCreateCommentMutation } from '../../redux/services/templates'
 import { useGetUserByIdQuery } from '../../redux/services/users'
+import { IComment } from '../../types/templates.types'
 
 interface ICommentsModal {
   open: boolean
   onClose: () => void
   templateId: number
-  comments: { userId: string; username: string; email: string; comment: string }[]
+  comments: IComment[]
 }
 
 const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments }) => {
   const {
-    control,
+    register,
     handleSubmit,
     reset,
     formState: { errors }
-  } = useForm()
+  } = useForm<{ comment: string }>()
 
-  const [addComment] = useAddCommentMutation()
   const userId = localStorage.getItem('userID')
   const token = localStorage.getItem('token')
-  const { data: user } = useGetUserByIdQuery(userId as string)
-
   const commentsRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (open) {
-      const scrollToBottom = () => {
-        commentsRef.current?.scrollTo({
-          top: commentsRef.current.scrollHeight,
-          behavior: 'smooth'
-        })
-      }
-      setTimeout(scrollToBottom, 0)
-    }
-  }, [open, comments])
+  const { data: user } = useGetUserByIdQuery(userId || '')
+  const [createComment] = useCreateCommentMutation()
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: { comment: string }) => {
     const commentData = {
       userId,
       username: user?.username,
@@ -48,49 +37,56 @@ const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments
     }
 
     try {
-      await addComment({
-        id: templateId,
-        comments: [...comments, commentData]
-      }).unwrap()
+      await createComment({ id: templateId, comments: [...comments, commentData] }).unwrap()
       reset()
     } catch (err) {
       console.error('Failed to add comment:', err)
     }
   }
 
+  useEffect(() => {
+    if (open) setTimeout(() => commentsRef.current?.scrollTo({ top: commentsRef.current.scrollHeight, behavior: 'smooth' }), 0)
+  }, [open, comments])
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <Box className="flex justify-between">
-        <DialogTitle>Comments</DialogTitle>
-        <IconButton onClick={onClose} color="primary">
+        <DialogTitle color="primary">Comments</DialogTitle>
+        <IconButton onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
           <Close />
         </IconButton>
       </Box>
 
-      <DialogContent ref={commentsRef} className="max-h-72 overflow-auto">
-        {comments.map((comment, index) => (
-          <Box key={index}>
-            <Typography variant="subtitle2">{comment.username}</Typography>
-            <Typography variant="subtitle2">{comment.email}</Typography>
-            <Typography>{comment.comment}</Typography>
-          </Box>
-        ))}
+      <DialogContent ref={commentsRef} className="max-h-72 space-y-3 overflow-auto">
+        {comments.length ? (
+          comments.map((comment, index) => (
+            <Box key={index} className="space-y-3">
+              <Box className="flex items-center gap-3">
+                <PersonPin fontSize="large" color="disabled" />
+                <Box>
+                  <Typography>{comment.username}</Typography>
+                  <Typography variant="subtitle2" color="textSecondary">
+                    {comment.email}
+                  </Typography>
+                </Box>
+              </Box>
+              <Typography sx={{ marginLeft: 6 }}>{comment.comment}</Typography>
+              <Divider />
+            </Box>
+          ))
+        ) : (
+          <Typography sx={{ textAlign: 'center' }} color="textSecondary">
+            No comments...
+          </Typography>
+        )}
       </DialogContent>
 
-      {token && (
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-3 p-4">
-          <Controller
-            name="comment"
-            control={control}
-            defaultValue=""
-            rules={{ required: 'Comment is required' }}
-            render={({ field }) => <TextField label="Add a comment" size="small" fullWidth {...field} error={!!errors.comment} helperText={errors.comment?.message as string} />}
-          />
-          <IconButton type="submit" color="primary">
-            <Send />
-          </IconButton>
-        </Box>
-      )}
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-3 p-4">
+        <TextField label="Message..." size="small" fullWidth {...register('comment', { required: 'Comment is required' })} error={!!errors.comment} disabled={!token} />
+        <IconButton type="submit" color="primary" disabled={!token}>
+          <Send />
+        </IconButton>
+      </Box>
     </Dialog>
   )
 }
