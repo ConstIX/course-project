@@ -4,8 +4,8 @@ import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDeleteTemplate } from '../../hooks/useDeleteTemplate'
 import { useIsAdminOrAuthor } from '../../hooks/useIsAdminOrAuthor'
+import { useTemplateAccess } from '../../hooks/useTemplateAccess'
 import { useLikeMutation } from '../../redux/services/templates'
-import { useGetUserByIdQuery } from '../../redux/services/users'
 import { ITemplate } from '../../types/templates.types'
 import DropdownMenu from '../Menu'
 import CommentsModal from './CommentsModal'
@@ -23,9 +23,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, dat
   const [like] = useLikeMutation()
   const [deleteTemplateWithResults] = useDeleteTemplate()
   const [isAdminOrAuthor] = useIsAdminOrAuthor(authorId)
-
-  const { data: user } = useGetUserByIdQuery(userId || '')
-  const hasAccess = access === 'public' || (access === 'private' && selectedUsers?.includes(user?.email || '')) || isAdminOrAuthor
+  const [hasAccess] = useTemplateAccess(access, selectedUsers, isAdminOrAuthor)
 
   const handleLikeTemplate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
