@@ -16,7 +16,7 @@ export const usersApi = createApi({
       query: (id) => `/users/${id}`,
       providesTags: ['Users']
     }),
-    updateUser: builder.mutation<IUser, { id: string | number; loginDate?: string; status?: string; role?: string }>({
+    updateUser: builder.mutation<void, { id: string | number; loginDate?: string; status?: string; role?: string }>({
       query: (user) => ({
         url: `/users/${user.id}`,
         method: 'PATCH',

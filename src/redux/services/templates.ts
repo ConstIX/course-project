@@ -14,7 +14,7 @@ export const templatesApi = createApi({
       query: () => '/templates?sortBy=-filledBy',
       providesTags: ['Templates']
     }),
-    getTemplateById: builder.query<ITemplate, number>({
+    getTemplateById: builder.query<ITemplate, string | number>({
       query: (id) => `/templates/${id}`,
       providesTags: ['Templates']
     }),
@@ -22,7 +22,7 @@ export const templatesApi = createApi({
       query: (userId) => `/templates?authorId=${userId}`,
       providesTags: ['Templates']
     }),
-    createTemplate: builder.mutation<ITemplate, Partial<ITemplate>>({
+    createTemplate: builder.mutation<void, ITemplate>({
       query: (body) => ({
         url: '/templates',
         method: 'POST',
@@ -30,7 +30,7 @@ export const templatesApi = createApi({
       }),
       invalidatesTags: ['Templates']
     }),
-    updateTemplate: builder.mutation({
+    updateTemplate: builder.mutation<void, ITemplate>({
       query: ({ id, ...patch }) => ({
         url: `/templates/${id}`,
         method: 'PATCH',
@@ -54,7 +54,7 @@ export const templatesApi = createApi({
       }),
       invalidatesTags: ['Templates']
     }),
-    incrementFills: builder.mutation({
+    incrementFills: builder.mutation<void, { id: number; filledBy: string[] }>({
       query: ({ id, filledBy }) => ({
         url: `/templates/${id}`,
         method: 'PATCH',

@@ -3,7 +3,7 @@ export interface IQuestion {
   type: 'text' | 'number' | 'select' | 'checkbox' | 'radio' | 'tags'
   label: string
   description?: string
-  options: string[]
+  options: string | string[]
 }
 
 export interface IComment {
@@ -14,7 +14,7 @@ export interface IComment {
 }
 
 export interface ITemplate {
-  id: number
+  id?: number
   authorId: number
   author: { name: string; email: string }
   title: string

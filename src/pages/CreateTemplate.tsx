@@ -9,39 +9,16 @@ import GeneralSettings from '../components/create-template/GeneralSettings'
 import QuestionSettings from '../components/create-template/QuestionSettings'
 import { useCreateTemplateMutation, useUpdateTemplateMutation } from '../redux/services/templates'
 import { useGetUserByIdQuery } from '../redux/services/users'
-import { Question, Template } from '../types'
+import { ITemplate } from '../types/templates.types'
 
-interface FormValues {
-  title: string
-  description?: string
-  theme: string
-  customTheme?: string
-  questions: {
-    type: Question['type']
-    label: string
-    description?: string
-    options: string | string[]
-  }[]
-  tags: string[]
-  access: string | string[]
-  selectedUsers?: string[]
-}
-
-const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
-  const methods = useForm<FormValues>({
+const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
+  const methods = useForm<ITemplate>({
     defaultValues: {
       title: '',
       description: '',
       theme: 'quiz',
       customTheme: '',
-      questions: [
-        {
-          type: 'text',
-          label: '',
-          description: '',
-          options: ''
-        }
-      ],
+      questions: [{ type: 'text', label: '', description: '', options: '' }],
       tags: [],
       access: 'public',
       selectedUsers: []
@@ -49,17 +26,18 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
   })
 
   const userId = localStorage.getItem('userID')
-  const { data: user } = useGetUserByIdQuery(userId as string)
-  const [createTemplate, { isLoading }] = useCreateTemplateMutation()
-  const [updateTemplate] = useUpdateTemplateMutation()
   const navigate = useNavigate()
 
-  const submitHandler = async (data: FormValues) => {
-    const template: Partial<Template> = {
-      authorId: user.id,
+  const { data: user } = useGetUserByIdQuery(userId!)
+  const [createTemplate, { isLoading: createLoading }] = useCreateTemplateMutation()
+  const [updateTemplate, { isLoading: updateLoading }] = useUpdateTemplateMutation()
+
+  const submitHandler = async (data: ITemplate) => {
+    const template = {
+      authorId: user!.id,
       author: {
-        name: user.username,
-        email: user.email
+        name: user!.username,
+        email: user!.email
       },
       title: data.title,
       description: data.description,
@@ -72,7 +50,7 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
           type: obj.type,
           label: obj.label,
           description: obj.description,
-          options: Array.isArray(obj.options) ? obj.options : obj.options.split(',').map((opt) => opt.trim())
+          options: Array.isArray(obj.options) ? obj.options : obj.options.split(',').map((i) => i.trim())
         }
       }),
       tags: data.tags,
@@ -85,11 +63,9 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
     }
 
     try {
-      if (templateData) {
-        await updateTemplate({ id: templateData.id, ...template }).unwrap()
-      } else {
-        await createTemplate(template).unwrap()
-      }
+      if (templateData) await updateTemplate({ id: templateData.id, ...template }).unwrap()
+      else await createTemplate(template).unwrap()
+
       navigate('/')
     } catch (error) {
       console.error('Failed to save template:', error)
@@ -113,7 +89,7 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
 
   return (
     <FormProvider {...methods}>
-      <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
+      <Box className="custom-container">
         <Typography variant="h4" color="primary">
           {templateData ? 'Editing' : 'Creating'} a form template
         </Typography>
@@ -123,11 +99,11 @@ const CreateTemplate: FC<{ templateData?: Template }> = ({ templateData }) => {
           <AccessSettings />
           <QuestionSettings />
 
-          <Box className="mt-4 flex justify-end gap-3">
-            <Button variant="outlined" onClick={() => navigate('/')} disableElevation>
+          <Box className="flex justify-end gap-3">
+            <Button variant="outlined" onClick={() => navigate('/')} color="error">
               Cancel
             </Button>
-            <Button variant="contained" color="primary" type="submit" disableElevation disabled={isLoading}>
+            <Button type="submit" variant="contained" color="primary" disableElevation disabled={createLoading || updateLoading}>
               {templateData ? 'Update Template' : 'Create Template'}
             </Button>
           </Box>

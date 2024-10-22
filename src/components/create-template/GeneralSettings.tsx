@@ -1,85 +1,50 @@
-import { Box, MenuItem, Select, TextField } from '@mui/material'
+import { Box, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-const GeneralSettings: FC<any> = () => {
+const themes = ['quiz', 'exam', 'test', 'other']
+
+const GeneralSettings: FC = () => {
   const {
     control,
     watch,
     formState: { errors }
   } = useFormContext()
-
   const themeType = watch('theme')
 
-  return (
-    <Box>
-      <Controller
-        name="title"
-        control={control}
-        defaultValue=""
-        rules={{ required: 'Title is required!' }}
-        render={({ field }) => (
-          <TextField
-            label="Title"
-            variant="outlined"
-            fullWidth
-            {...field}
-            error={!!errors.title}
-            helperText={errors.title?.message as string}
-          />
-        )}
-      />
+  const renderTextField = (name: string, label: string, multiline = false, rows = 1, rules = {}) => (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field }) => <TextField label={label} variant="outlined" fullWidth multiline={multiline} rows={rows} {...field} error={!!errors[name]} helperText={errors[name]?.message as string} />}
+    />
+  )
 
-      <Controller
-        name="description"
-        control={control}
-        defaultValue=""
-        render={({ field }) => (
-          <TextField
-            label="Description (Markdown)"
-            variant="outlined"
-            fullWidth
-            multiline
-            rows={3}
-            {...field}
-            error={!!errors.description}
-            helperText={errors.description?.message as string}
-          />
-        )}
-      />
+  return (
+    <Box className="mb-10 space-y-3">
+      {renderTextField('title', 'Title', false, 1, { required: 'Title is required!' })}
+      {renderTextField('description', 'Description', true, 3)}
 
       <Controller
         name="theme"
         control={control}
         defaultValue="quiz"
         render={({ field }) => (
-          <Select {...field} fullWidth>
-            <MenuItem value="quiz">Quiz</MenuItem>
-            <MenuItem value="exam">Exam</MenuItem>
-            <MenuItem value="test">Test</MenuItem>
-            <MenuItem value="other">Other</MenuItem>
-          </Select>
+          <FormControl fullWidth>
+            <InputLabel>Theme</InputLabel>
+            <Select {...field} label="Theme">
+              {themes.map((item) => (
+                <MenuItem key={item} value={item}>
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         )}
       />
 
-      {themeType === 'other' && (
-        <Controller
-          name="customTheme"
-          control={control}
-          defaultValue=""
-          rules={{ required: 'Theme is required!' }}
-          render={({ field }) => (
-            <TextField
-              label="Custom Theme"
-              variant="outlined"
-              fullWidth
-              {...field}
-              error={!!errors.customTheme}
-              helperText={errors.customTheme?.message as string}
-            />
-          )}
-        />
-      )}
+      {themeType === 'other' && renderTextField('customTheme', 'Custom Theme', false, 1, { required: 'Theme is required!' })}
     </Box>
   )
 }

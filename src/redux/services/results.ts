@@ -14,7 +14,7 @@ export const resultsApi = createApi({
       query: (userId) => `/responses?userId=${userId}`,
       providesTags: ['Results']
     }),
-    createResults: builder.mutation<Result, Partial<Result>>({
+    createResults: builder.mutation<void, Partial<Result>>({
       query: (body) => ({
         url: '/responses',
         method: 'POST',

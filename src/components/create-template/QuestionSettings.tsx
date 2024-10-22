@@ -1,5 +1,5 @@
 import { AddCircle, Delete } from '@mui/icons-material'
-import { Box, Button, IconButton, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { FC } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 
@@ -9,17 +9,21 @@ const QuestionSettings: FC = () => {
     watch,
     formState: { errors }
   } = useFormContext()
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'questions'
-  })
 
-  const addQuestion = () => {
-    append({ type: 'text', label: '', description: '', options: '' })
-  }
+  const { fields, append, remove } = useFieldArray({ control, name: 'questions' })
+  const addQuestion = () => append({ type: 'text', label: '', description: '', options: '' })
+
+  const renderTextField = (name: string, label: string, rules = {}) => (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field }) => <TextField {...field} label={label} variant="outlined" fullWidth error={!!errors[name]} helperText={errors[name]?.message as string} />}
+    />
+  )
 
   return (
-    <Box>
+    <Box className="space-y-3">
       <Typography variant="h5" color="primary">
         Questions
       </Typography>
@@ -28,7 +32,7 @@ const QuestionSettings: FC = () => {
         const questionType = watch(`questions.${idx}.type`)
 
         return (
-          <Box key={item.id} className="mb-4 space-y-4 rounded border p-4">
+          <Box key={item.id} className="mb-3 space-y-3 rounded border p-4">
             <Box className="flex items-center justify-between">
               <Typography variant="h6">Question {idx + 1}</Typography>
               {fields.length > 1 && (
@@ -43,68 +47,31 @@ const QuestionSettings: FC = () => {
               control={control}
               defaultValue="text"
               render={({ field }) => (
-                <Select {...field} fullWidth>
-                  {['text', 'number', 'select', 'checkbox', 'radio', 'tags'].map((i) => (
-                    <MenuItem key={i} value={i}>
-                      {i}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <FormControl fullWidth>
+                  <InputLabel>Question type</InputLabel>
+                  <Select {...field} label="Question type">
+                    {['text', 'number', 'select', 'checkbox', 'radio', 'tags'].map((item) => (
+                      <MenuItem key={item} value={item}>
+                        {item.charAt(0).toUpperCase() + item.slice(1)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               )}
             />
 
-            <Controller
-              name={`questions.${idx}.label`}
-              control={control}
-              defaultValue=""
-              rules={{ required: 'Title is required!' }}
-              render={({ field }) => (
-                <TextField
-                  label="Question title"
-                  variant="outlined"
-                  fullWidth
-                  error={!!errors?.questions?.[idx]?.label}
-                  helperText={errors?.questions?.[idx]?.label?.message}
-                  {...field}
-                />
-              )}
-            />
+            {renderTextField(`questions.${idx}.label`, 'Question title', { required: 'Title is required!' })}
+            {renderTextField(`questions.${idx}.description`, 'Question description')}
 
-            <Controller
-              name={`questions.${idx}.description`}
-              control={control}
-              defaultValue=""
-              render={({ field }) => <TextField label="Question description" variant="outlined" fullWidth {...field} />}
-            />
-
-            {(questionType === 'select' || questionType === 'checkbox' || questionType === 'radio') && (
-              <Controller
-                name={`questions.${idx}.options`}
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Options are required!' }}
-                render={({ field }) => (
-                  <TextField
-                    label="Options (comma-separated)"
-                    variant="outlined"
-                    fullWidth
-                    placeholder="Option1, Option2, Option3"
-                    error={!!errors?.questions?.[idx]?.options}
-                    helperText={errors?.questions?.[idx]?.options?.message}
-                    {...field}
-                  />
-                )}
-              />
-            )}
+            {(questionType === 'select' || questionType === 'checkbox' || questionType === 'radio') &&
+              renderTextField(`questions.${idx}.options`, 'Options (comma-separated)', { required: 'Options are required!' })}
           </Box>
         )
       })}
 
-      <Box className="flex gap-3">
-        <Button variant="outlined" color="primary" onClick={addQuestion} disableElevation startIcon={<AddCircle />}>
-          Add Question
-        </Button>
-      </Box>
+      <Button variant="outlined" color="primary" onClick={addQuestion} disableElevation startIcon={<AddCircle />}>
+        Add Question
+      </Button>
     </Box>
   )
 }

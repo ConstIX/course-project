@@ -10,14 +10,13 @@ import { useGetUserByIdQuery } from '../redux/services/users'
 const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) => {
   const { id } = useParams()
   const userId = localStorage.getItem('userID')
-  const { data: template } = useGetTemplateByIdQuery(id as string)
-  const { data: user } = useGetUserByIdQuery(userId as string)
+  const { data: template } = useGetTemplateByIdQuery(id!)
+  const { data: user } = useGetUserByIdQuery(userId!)
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
     reset
   } = useForm()
   const [createResults, { isLoading }] = useCreateResultsMutation()
@@ -26,11 +25,11 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
   const navigate = useNavigate()
 
   const submitHandler = async (data: any) => {
-    const response: any = {
+    const response = {
       authorId: template?.authorId,
       templateId: template?.id,
       userId,
-      userData: { name: user.username, email: user.email },
+      userData: { name: user!.username, email: user!.email },
       templateTitle: template?.title,
       answers: data
     }
@@ -45,7 +44,7 @@ const FillForm: FC<any> = ({ readOnly = false, currentResponse, handleClose }) =
         await updateResults({ id: currentResponse.id, body: newData }).unwrap()
         handleClose()
       } else {
-        await createResults(response).unwrap()
+        await createResults(response as any).unwrap()
         await incrementFills({ id: template?.id, filledBy: [...template!.filledBy, userId] }).unwrap()
         navigate('/')
       }
