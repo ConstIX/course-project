@@ -45,7 +45,7 @@ const Templates: FC = () => {
 
       <Box className="space-y-5">
         {templates?.items.length ? (
-          <Box>{templates?.items.map((obj) => <TemplateCard key={obj.id} {...obj} setSnackbarState={setSnackbarState} />)}</Box>
+          <Box className="grid grid-cols-3 gap-4 md2:grid-cols-2 md3:grid-cols-1">{templates?.items.map((obj) => <TemplateCard key={obj.id} {...obj} setSnackbarState={setSnackbarState} />)}</Box>
         ) : (
           <Typography color="textSecondary" variant="h6" sx={{ padding: 5, textAlign: 'center' }}>
             No Templates...

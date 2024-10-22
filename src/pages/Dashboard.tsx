@@ -1,9 +1,8 @@
 import { Alert, Box, Snackbar } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { FC, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { FC, useState } from 'react'
 import UserActions from '../components/dashboard/UserActions'
-import { useGetUserByIdQuery, useGetUsersQuery } from '../redux/services/users'
+import { useGetUsersQuery } from '../redux/services/users'
 
 const Dashboard: FC = () => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
@@ -13,11 +12,7 @@ const Dashboard: FC = () => {
     severity: 'success' as 'success' | 'error'
   })
 
-  const userId = localStorage.getItem('userID')
-  const navigate = useNavigate()
-
   const { data: users, isLoading } = useGetUsersQuery()
-  const { data: user } = useGetUserByIdQuery(userId!)
 
   const columns: GridColDef[] = [
     { field: 'username', headerName: 'Name', width: 250 },
@@ -27,10 +22,6 @@ const Dashboard: FC = () => {
     { field: 'status', headerName: 'Status', width: 100, sortable: false },
     { field: 'role', headerName: 'Role', width: 100, sortable: false }
   ]
-
-  useEffect(() => {
-    if (user && user.role !== 'admin') navigate('/')
-  }, [user, navigate])
 
   return (
     <Box className="custom-container">

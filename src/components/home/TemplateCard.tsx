@@ -1,24 +1,19 @@
-import { Comment, ThumbUp } from '@mui/icons-material'
-import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
+import { Comment, Delete, Edit, ThumbUp } from '@mui/icons-material'
+import { Box, Button, Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@mui/material'
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDeleteTemplate } from '../../hooks/useDeleteTemplate'
 import { useIsAdminOrAuthor } from '../../hooks/useIsAdminOrAuthor'
 import { useLikeMutation } from '../../redux/services/templates'
-import { IComment } from '../../types/templates.types'
+import { ITemplate } from '../../types/templates.types'
+import DropdownMenu from '../Menu'
 import CommentsModal from './CommentsModal'
 
-interface ITemplateCard {
-  id: number
-  authorId: number
-  title: string
-  description?: string
-  likedBy: string[]
-  comments: IComment[]
+interface ITemplateCard extends ITemplate {
   setSnackbarState: (obj: { message: string; open: boolean; severity: 'success' | 'error' }) => void
 }
 
-const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, likedBy, comments, setSnackbarState }) => {
+const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, date, access, likedBy, comments, setSnackbarState }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const userId = localStorage.getItem('userID')
   const token = localStorage.getItem('token')
@@ -28,7 +23,8 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
   const [deleteTemplateWithResults] = useDeleteTemplate()
   const [isAdminOrAuthor] = useIsAdminOrAuthor(authorId)
 
-  const handleLikeTemplate = async () => {
+  const handleLikeTemplate = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     if (userId && likedBy.includes(userId)) return
 
     try {
@@ -48,52 +44,62 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, lik
     }
   }
 
+  const handleAction = (e: React.MouseEvent<HTMLButtonElement>, actionType: 'navigate' | 'openModal', path?: string) => {
+    e.stopPropagation()
+    if (actionType === 'navigate' && path && token) navigate(path)
+    else if (actionType === 'openModal') setModalOpen(true)
+    else setSnackbarState({ message: 'You are not authorized!', open: true, severity: 'error' })
+  }
+
+  const actions = [
+    { label: 'Edit', icon: <Edit color="primary" fontSize="small" />, function: () => navigate(`/edit-template/${id}`) },
+    { label: 'Delete', icon: <Delete color="error" fontSize="small" />, function: () => handleDeleteTemplate(id) }
+  ]
+
   return (
-    <Paper className="p-5">
-      <Typography variant="h6" color="textPrimary">
-        {title}
-      </Typography>
-      <Typography color="textSecondary">{description}</Typography>
+    <Card
+      onClick={() => navigate(`view-form/${id}`)}
+      sx={{ display: 'flex', height: '100%', cursor: 'pointer', flexDirection: 'column', transition: 'all 0.3s ease 0s', '&:hover': { transform: 'translateY(-0.5rem)' } }}>
+      <CardHeader title={title} action={isAdminOrAuthor ? <DropdownMenu actions={actions} isHeader={false} /> : null} sx={{ paddingBottom: 0 }} />
 
-      <Box className="mt-5 flex gap-3">
-        <Button onClick={() => navigate(`/view-form/${id}`)} variant="outlined" color="secondary">
-          View Form
+      <CardContent sx={{ flexGrow: 1, paddingTop: 0 }}>
+        <Box className="mb-10 flex justify-between">
+          <Typography variant="subtitle2" color="textSecondary">
+            Last update: {date.slice(0, 10)}
+          </Typography>
+          <Typography variant="subtitle2" color="textSecondary">
+            {access}
+          </Typography>
+        </Box>
+        <Typography color="textSecondary">{description}</Typography>
+      </CardContent>
+
+      <CardActions>
+        <Button onClick={(e) => handleAction(e, 'navigate', `/fill-form/${id}`)} variant="outlined" color="primary" fullWidth>
+          Fill Form
         </Button>
-        {token && (
-          <>
-            <Button onClick={() => navigate(`/fill-form/${id}`)} variant="outlined" color="primary">
-              Fill Form
-            </Button>
-            <Button onClick={() => navigate(`/view-results/${id}`)} variant="outlined" color="success">
-              View Results
-            </Button>
-            {isAdminOrAuthor && (
-              <>
-                <Button onClick={() => navigate(`/edit-template/${id}`)}>Edit</Button>
-                <Button onClick={() => handleDeleteTemplate(id)}>Delete</Button>
-              </>
-            )}
-          </>
-        )}
-      </Box>
+        <Button onClick={(e) => handleAction(e, 'navigate', `/view-results/${id}`)} variant="outlined" color="success" fullWidth>
+          View Results
+        </Button>
+      </CardActions>
 
-      <Box className="mt-5 flex gap-3">
+      <CardActions className="flex gap-3">
         <Box className="flex items-center gap-1">
-          <IconButton color="primary" size="small" onClick={() => setModalOpen(true)}>
+          <IconButton color="primary" size="small" onClick={(e) => handleAction(e, 'openModal')}>
             <Comment fontSize="small" />
           </IconButton>
           <Typography color="textSecondary">{comments.length}</Typography>
         </Box>
         <Box className="flex items-center gap-1">
-          <IconButton onClick={handleLikeTemplate} color="primary" size="small" disabled={!token}>
+          <IconButton onClick={(e) => handleLikeTemplate(e)} color="primary" size="small" disabled={!token}>
             <ThumbUp fontSize="small" />
           </IconButton>
           <Typography color="textSecondary">{likedBy.length}</Typography>
         </Box>
-      </Box>
+      </CardActions>
 
       <CommentsModal open={modalOpen} onClose={() => setModalOpen(false)} templateId={id} comments={comments} />
-    </Paper>
+    </Card>
   )
 }
 

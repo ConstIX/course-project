@@ -49,45 +49,47 @@ const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments
   }, [open, comments])
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <Box className="flex justify-between">
-        <DialogTitle color="primary">Comments</DialogTitle>
-        <IconButton onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
-          <Close />
-        </IconButton>
-      </Box>
+    <Box onClick={(e) => e.stopPropagation()}>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+        <Box className="flex justify-between">
+          <DialogTitle color="primary">Comments</DialogTitle>
+          <IconButton onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
+            <Close />
+          </IconButton>
+        </Box>
 
-      <DialogContent ref={commentsRef} className="max-h-72 space-y-3 overflow-auto">
-        {comments.length ? (
-          comments.map((comment, index) => (
-            <Box key={index} className="space-y-3">
-              <Box className="flex items-center gap-3">
-                <PersonPin fontSize="large" color="disabled" />
-                <Box>
-                  <Typography>{comment.username}</Typography>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    {comment.email}
-                  </Typography>
+        <DialogContent ref={commentsRef} className="max-h-72 space-y-3 overflow-auto">
+          {comments.length ? (
+            comments.map((comment, index) => (
+              <Box key={index} className="space-y-3">
+                <Box className="flex items-center gap-3">
+                  <PersonPin fontSize="large" color="disabled" />
+                  <Box>
+                    <Typography>{comment.username}</Typography>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      {comment.email}
+                    </Typography>
+                  </Box>
                 </Box>
+                <Typography sx={{ marginLeft: 6 }}>{comment.comment}</Typography>
+                <Divider />
               </Box>
-              <Typography sx={{ marginLeft: 6 }}>{comment.comment}</Typography>
-              <Divider />
-            </Box>
-          ))
-        ) : (
-          <Typography sx={{ textAlign: 'center' }} color="textSecondary">
-            No comments...
-          </Typography>
-        )}
-      </DialogContent>
+            ))
+          ) : (
+            <Typography sx={{ textAlign: 'center' }} color="textSecondary">
+              No comments...
+            </Typography>
+          )}
+        </DialogContent>
 
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-3 p-4">
-        <TextField label="Message..." size="small" fullWidth {...register('comment', { required: 'Comment is required' })} error={!!errors.comment} disabled={!token} />
-        <IconButton type="submit" color="primary" disabled={!token}>
-          <Send />
-        </IconButton>
-      </Box>
-    </Dialog>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-3 p-4">
+          <TextField label="Message..." size="small" fullWidth {...register('comment', { required: 'Comment is required' })} error={!!errors.comment} disabled={!token} />
+          <IconButton type="submit" color="primary" disabled={!token}>
+            <Send />
+          </IconButton>
+        </Box>
+      </Dialog>
+    </Box>
   )
 }
 
