@@ -12,7 +12,7 @@ const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> =
 
   const token = localStorage.getItem('token')
   const userId = localStorage.getItem('userID')
-  const { data: user } = useGetUserByIdQuery(userId!)
+  const { data: user } = useGetUserByIdQuery(userId || '')
 
   const actions = [
     { label: 'Profile', icon: <Person fontSize="small" />, function: () => navigate('/profile') },

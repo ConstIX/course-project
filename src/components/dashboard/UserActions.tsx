@@ -2,8 +2,8 @@ import { AdminPanelSettings, Delete, Lock, LockOpen } from '@mui/icons-material'
 import { Button, IconButton } from '@mui/material'
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { resultsApi, useDeleteResultsMutation } from '../../redux/services/results'
-import { useDeleteUserMutation, useUpdateUserMutation } from '../../redux/services/users'
+import { useDeleteUser } from '../../hooks/useDeleteUser'
+import { useUpdateUserMutation } from '../../redux/services/users'
 import { IUser } from '../../types/user.types'
 
 interface IUserActions {
@@ -17,11 +17,8 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
   const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
 
-  const [getResultsByUserId] = resultsApi.useLazyGetResultsByUserIdQuery()
-
-  const [deleteUser] = useDeleteUserMutation()
   const [updateUser] = useUpdateUserMutation()
-  const [deleteResults] = useDeleteResultsMutation()
+  const [deleteUserWithResults] = useDeleteUser()
 
   const handleAction = async (status: 'block' | 'active') => {
     try {
@@ -62,20 +59,7 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
 
   const handleDelete = async () => {
     try {
-      for (const id of selectedUsers) {
-        await deleteUser(id).unwrap()
-
-        const userResults = await getResultsByUserId(id).unwrap()
-        for (const results of userResults) {
-          await deleteResults(results.id).unwrap()
-        }
-      }
-
-      if (selectedUsers.includes(+userId!)) {
-        localStorage.clear()
-        navigate('/auth')
-      }
-
+      await deleteUserWithResults(selectedUsers)
       onUserDeleted()
       setSnackbarState({ message: 'Action completed successfuly.', open: true, severity: 'success' })
     } catch (error) {

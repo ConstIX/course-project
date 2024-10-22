@@ -15,6 +15,7 @@ const Dashboard: FC = () => {
   const { data: users, isLoading } = useGetUsersQuery()
 
   const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 100 },
     { field: 'username', headerName: 'Name', width: 250 },
     { field: 'email', headerName: 'E-Mail', width: 250, sortable: false },
     { field: 'registrationDate', headerName: 'Registration date', width: 200 },
@@ -37,6 +38,7 @@ const Dashboard: FC = () => {
           checkboxSelection
           disableRowSelectionOnClick
           onRowSelectionModelChange={(newSelection) => setSelectedUsers(newSelection as number[])}
+          rowSelectionModel={selectedUsers}
           sx={{ '& .MuiDataGrid-columnHeaderTitle': { fontWeight: 'bold' } }}
         />
       </Box>
