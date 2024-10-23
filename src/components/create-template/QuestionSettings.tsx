@@ -1,5 +1,5 @@
 import { AddCircle, Delete } from '@mui/icons-material'
-import { Box, Button, IconButton, Typography } from '@mui/material'
+import { Box, Button, IconButton, Typography, useMediaQuery } from '@mui/material'
 import { FC } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import RHFSelect from '../ui/RHFSelect'
@@ -8,6 +8,8 @@ import RHFTextField from '../ui/RHFTextField'
 const QuestionSettings: FC = () => {
   const { control, watch } = useFormContext()
   const { fields, append, remove } = useFieldArray({ control, name: 'questions' })
+  const isMobile = useMediaQuery('(max-width: 600px)')
+
   const addQuestion = () => append({ type: 'text', label: '', description: '', options: '' })
 
   return (
@@ -30,7 +32,7 @@ const QuestionSettings: FC = () => {
               )}
             </Box>
 
-            <RHFSelect name={`questions.${idx}.type`} label="Question type" control={control} options={['text', 'number', 'select', 'checkbox', 'radio', 'tags']} />
+            <RHFSelect name={`questions.${idx}.type`} label="Question type" control={control} options={['text', 'number', 'select', 'checkbox', 'radio', 'tags']} defaultValue="text" />
 
             <RHFTextField name={`questions.${idx}.label`} label="Question title" control={control} rules={{ required: 'Title is required!' }} />
             <RHFTextField name={`questions.${idx}.description`} label="Question description" control={control} />
@@ -42,7 +44,7 @@ const QuestionSettings: FC = () => {
         )
       })}
 
-      <Button variant="outlined" color="primary" onClick={addQuestion} disableElevation startIcon={<AddCircle />}>
+      <Button variant="outlined" color="primary" onClick={addQuestion} disableElevation fullWidth={isMobile} startIcon={<AddCircle />}>
         Add Question
       </Button>
     </Box>

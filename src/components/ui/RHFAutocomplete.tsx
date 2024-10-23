@@ -4,14 +4,16 @@ import { Controller } from 'react-hook-form'
 
 interface IAutocomplete {
   name: string
-  label: string
+  label?: string
   control: any
-  options: string[]
-  placeholder: string
+  options?: string[]
+  placeholder?: string
   rules?: { required: string }
+  freeSolo?: boolean
+  disabled?: boolean
 }
 
-const RHFAutocomplete: FC<IAutocomplete> = ({ name, label, control, options, placeholder, rules }) => (
+const RHFAutocomplete: FC<IAutocomplete> = ({ name, label = '', control, options = [], placeholder, rules, freeSolo = false, disabled = false }) => (
   <Controller
     name={name}
     control={control}
@@ -19,7 +21,9 @@ const RHFAutocomplete: FC<IAutocomplete> = ({ name, label, control, options, pla
     rules={rules}
     render={({ field: { onChange, value }, fieldState: { error } }) => (
       <Autocomplete
+        disabled={disabled}
         multiple
+        freeSolo={freeSolo}
         options={options}
         value={value}
         onChange={(_, newValue) => onChange(newValue)}

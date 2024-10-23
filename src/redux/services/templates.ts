@@ -22,7 +22,7 @@ export const templatesApi = createApi({
       query: (userId) => `/templates?authorId=${userId}`,
       providesTags: ['Templates']
     }),
-    createTemplate: builder.mutation<void, ITemplate>({
+    createTemplate: builder.mutation<void, Partial<ITemplate>>({
       query: (body) => ({
         url: '/templates',
         method: 'POST',
@@ -30,7 +30,7 @@ export const templatesApi = createApi({
       }),
       invalidatesTags: ['Templates']
     }),
-    updateTemplate: builder.mutation<void, ITemplate>({
+    updateTemplate: builder.mutation<void, Partial<ITemplate>>({
       query: ({ id, ...patch }) => ({
         url: `/templates/${id}`,
         method: 'PATCH',
@@ -54,7 +54,7 @@ export const templatesApi = createApi({
       }),
       invalidatesTags: ['Templates']
     }),
-    incrementFills: builder.mutation<void, { id: number; filledBy: string[] }>({
+    fill: builder.mutation<void, { id: string | number; filledBy: string[] }>({
       query: ({ id, filledBy }) => ({
         url: `/templates/${id}`,
         method: 'PATCH',
@@ -82,6 +82,6 @@ export const {
   useDeleteTemplateMutation,
   useUpdateTemplateMutation,
   useLikeMutation,
-  useIncrementFillsMutation,
+  useFillMutation,
   useCreateCommentMutation
 } = templatesApi

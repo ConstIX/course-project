@@ -1,8 +1,8 @@
-export interface Result {
-  id: number
+export interface IResult {
+  id?: number
   templateId: number
   authorId: number
-  userId: string
+  userId: string | null
   userData: { name: string; email: string }
   templateTitle: string
   answers: {

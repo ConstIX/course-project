@@ -5,25 +5,31 @@ import ResultsEditModal from '../components/view-results/ResultsEditModal'
 import ResultsTable from '../components/view-results/ResultsTable'
 import { useGetTemplateByIdQuery } from '../redux/services/templates'
 
+interface ICurrentResponse {
+  id: number
+  userData: { name: string; email: string }
+  [key: string]: string | number | { name: string; email: string }
+}
+
 const ViewResults: FC = () => {
-  const { id } = useParams<{ id: string }>()
+  const { id } = useParams()
   const { data: template } = useGetTemplateByIdQuery(id!)
 
   const [open, setOpen] = useState(false)
-  const [currentResponse, setCurrentResponse] = useState<any>(null)
+  const [currentResponse, setCurrentResponse] = useState<ICurrentResponse | null>(null)
 
-  const handleOpen = (response: any) => {
+  const handleOpen = (response: ICurrentResponse) => {
     setCurrentResponse(response)
     setOpen(true)
   }
 
   const handleClose = () => {
-    setOpen(false)
     setCurrentResponse(null)
+    setOpen(false)
   }
 
   return (
-    <Box className="mx-auto mt-32 w-full max-w-7xl px-3 md3:mt-24">
+    <Box className="custom-container">
       <Typography variant="h4" color="primary">
         Analysis of responses for <br /> "{template?.title}"
       </Typography>

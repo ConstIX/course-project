@@ -13,7 +13,7 @@ const GeneralSettings: FC = () => {
       <RHFTextField name="title" label="Title" control={control} rules={{ required: 'Title is required!' }} />
       <RHFTextField name="description" label="Description" control={control} multiline rows={3} />
 
-      <RHFSelect name="theme" label="Theme" control={control} options={['quiz', 'exam', 'test', 'other']} />
+      <RHFSelect name="theme" label="Theme" control={control} options={['quiz', 'exam', 'test', 'other']} defaultValue="quiz" />
 
       {themeType === 'other' && <RHFTextField name="customTheme" label="Custom theme" control={control} rules={{ required: 'Theme is required!' }} />}
     </Box>

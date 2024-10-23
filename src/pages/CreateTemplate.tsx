@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Typography, useMediaQuery } from '@mui/material'
 import moment from 'moment'
 import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -26,6 +26,7 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
   })
 
   const userId = localStorage.getItem('userID')
+  const isMobile = useMediaQuery('(max-width: 600px)')
   const navigate = useNavigate()
 
   const { data: user } = useGetUserByIdQuery(userId!)
@@ -99,11 +100,11 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
           <AccessSettings />
           <QuestionSettings />
 
-          <Box className="flex justify-end gap-3">
-            <Button variant="outlined" onClick={() => navigate('/')} color="error">
+          <Box className="mt-10 flex justify-end gap-3">
+            <Button variant="outlined" onClick={() => navigate('/')} color="error" fullWidth={isMobile}>
               Cancel
             </Button>
-            <Button type="submit" variant="contained" color="primary" disableElevation disabled={createLoading || updateLoading}>
+            <Button type="submit" variant="contained" color="primary" disableElevation disabled={createLoading || updateLoading} fullWidth={isMobile}>
               {templateData ? 'Update Template' : 'Create Template'}
             </Button>
           </Box>

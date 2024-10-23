@@ -2,7 +2,17 @@ import { Dialog, DialogContent } from '@mui/material'
 import { FC } from 'react'
 import FillForm from '../../pages/FillForm'
 
-const ResultsEditModal: FC<any> = ({ open, handleClose, currentResponse }) => {
+interface IResultsEditModal {
+  open: boolean
+  currentResponse: {
+    id: number
+    userData: { name: string; email: string }
+    [key: string]: string | number | { name: string; email: string }
+  } | null
+  handleClose: () => void
+}
+
+const ResultsEditModal: FC<IResultsEditModal> = ({ open, handleClose, currentResponse }) => {
   return (
     <Dialog open={open} onClose={handleClose} fullWidth>
       <DialogContent>

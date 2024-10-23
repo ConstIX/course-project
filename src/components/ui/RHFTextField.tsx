@@ -5,20 +5,22 @@ import { Controller } from 'react-hook-form'
 interface ITextField {
   type?: string
   name: string
-  label: string
+  label?: string
   control: any
   multiline?: boolean
   rows?: number
   rules?: { required: string }
+  disabled?: boolean
 }
 
-const RHFTextField: FC<ITextField> = ({ type = 'text', name, label, control, multiline = false, rows = 1, rules = {} }) => (
+const RHFTextField: FC<ITextField> = ({ type = 'text', name, label = '', control, multiline = false, rows = 1, rules = {}, disabled = false }) => (
   <Controller
     name={name}
     control={control}
+    defaultValue=""
     rules={rules}
     render={({ field, fieldState: { error } }) => (
-      <TextField type={type} label={label} variant="outlined" fullWidth multiline={multiline} rows={rows} error={!!error} helperText={error ? error.message : ''} {...field} />
+      <TextField type={type} label={label} variant="outlined" fullWidth multiline={multiline} rows={rows} error={!!error} helperText={error ? error.message : ''} {...field} disabled={disabled} />
     )}
   />
 )

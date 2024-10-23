@@ -14,7 +14,7 @@ interface ITemplateCard extends ITemplate {
   setSnackbarState: (state: { message: string; open: boolean; severity: 'success' | 'error' }) => void
 }
 
-const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, date, access, selectedUsers, likedBy, comments, setSnackbarState }) => {
+const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, theme, customTheme, date, access, selectedUsers, likedBy, comments, setSnackbarState }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const userId = localStorage.getItem('userID')
   const token = localStorage.getItem('token')
@@ -30,7 +30,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, dat
     if (likedBy.includes(userId!)) return
 
     try {
-      if (userId) await like({ id, likedBy: [...likedBy, userId] }).unwrap()
+      if (userId) await like({ id: id!, likedBy: [...likedBy, userId] }).unwrap()
     } catch (err) {
       console.error('Failed to like template:', err)
     }
@@ -38,7 +38,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, dat
 
   const handleDeleteTemplate = async () => {
     try {
-      await deleteTemplateWithResults(id)
+      await deleteTemplateWithResults(id!)
       setSnackbarState({ message: 'Template deleted successfuly.', open: true, severity: 'success' })
     } catch (err) {
       setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
@@ -61,7 +61,12 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, dat
     <Card
       onClick={() => navigate(`view-form/${id}`)}
       sx={{ display: 'flex', height: '100%', cursor: 'pointer', flexDirection: 'column', transition: 'all 0.3s ease 0s', '&:hover': { transform: 'translateY(-0.5rem)' } }}>
-      <CardHeader title={title} action={isAdminOrAuthor ? <DropdownMenu actions={actions} isHeader={false} /> : null} sx={{ paddingBottom: 0 }} />
+      <CardHeader
+        title={title}
+        subheader={`Theme: ${theme === 'other' ? customTheme?.toLocaleLowerCase() : theme}`}
+        action={isAdminOrAuthor ? <DropdownMenu actions={actions} isHeader={false} /> : null}
+        sx={{ paddingBottom: 1 }}
+      />
 
       <CardContent sx={{ flexGrow: 1, paddingTop: 0 }}>
         <Box className="mb-10 flex justify-between">
@@ -99,7 +104,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, dat
         </Box>
       </CardActions>
 
-      <CommentsModal open={modalOpen} onClose={() => setModalOpen(false)} templateId={id} comments={comments} />
+      <CommentsModal open={modalOpen} onClose={() => setModalOpen(false)} templateId={id!} comments={comments} />
     </Card>
   )
 }
