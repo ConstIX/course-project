@@ -1,26 +1,14 @@
 import { AddCircle, Delete } from '@mui/icons-material'
-import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, IconButton, Typography } from '@mui/material'
 import { FC } from 'react'
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import RHFSelect from '../ui/RHFSelect'
+import RHFTextField from '../ui/RHFTextField'
 
 const QuestionSettings: FC = () => {
-  const {
-    control,
-    watch,
-    formState: { errors }
-  } = useFormContext()
-
+  const { control, watch } = useFormContext()
   const { fields, append, remove } = useFieldArray({ control, name: 'questions' })
   const addQuestion = () => append({ type: 'text', label: '', description: '', options: '' })
-
-  const renderTextField = (name: string, label: string, rules = {}) => (
-    <Controller
-      name={name}
-      control={control}
-      rules={rules}
-      render={({ field }) => <TextField {...field} label={label} variant="outlined" fullWidth error={!!errors[name]} helperText={errors[name]?.message as string} />}
-    />
-  )
 
   return (
     <Box className="space-y-3">
@@ -42,29 +30,14 @@ const QuestionSettings: FC = () => {
               )}
             </Box>
 
-            <Controller
-              name={`questions.${idx}.type`}
-              control={control}
-              defaultValue="text"
-              render={({ field }) => (
-                <FormControl fullWidth>
-                  <InputLabel>Question type</InputLabel>
-                  <Select {...field} label="Question type">
-                    {['text', 'number', 'select', 'checkbox', 'radio', 'tags'].map((item) => (
-                      <MenuItem key={item} value={item}>
-                        {item.charAt(0).toUpperCase() + item.slice(1)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            />
+            <RHFSelect name={`questions.${idx}.type`} label="Question type" control={control} options={['text', 'number', 'select', 'checkbox', 'radio', 'tags']} />
 
-            {renderTextField(`questions.${idx}.label`, 'Question title', { required: 'Title is required!' })}
-            {renderTextField(`questions.${idx}.description`, 'Question description')}
+            <RHFTextField name={`questions.${idx}.label`} label="Question title" control={control} rules={{ required: 'Title is required!' }} />
+            <RHFTextField name={`questions.${idx}.description`} label="Question description" control={control} />
 
-            {(questionType === 'select' || questionType === 'checkbox' || questionType === 'radio') &&
-              renderTextField(`questions.${idx}.options`, 'Options (comma-separated)', { required: 'Options are required!' })}
+            {(questionType === 'select' || questionType === 'checkbox' || questionType === 'radio') && (
+              <RHFTextField name={`questions.${idx}.options`} label="Options" control={control} rules={{ required: 'Options are required!' }} />
+            )}
           </Box>
         )
       })}

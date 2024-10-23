@@ -1,50 +1,21 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Box } from '@mui/material'
 import { FC } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-
-const themes = ['quiz', 'exam', 'test', 'other']
+import { useFormContext } from 'react-hook-form'
+import RHFSelect from '../ui/RHFSelect'
+import RHFTextField from '../ui/RHFTextField'
 
 const GeneralSettings: FC = () => {
-  const {
-    control,
-    watch,
-    formState: { errors }
-  } = useFormContext()
+  const { control, watch } = useFormContext()
   const themeType = watch('theme')
-
-  const renderTextField = (name: string, label: string, multiline = false, rows = 1, rules = {}) => (
-    <Controller
-      name={name}
-      control={control}
-      rules={rules}
-      render={({ field }) => <TextField label={label} variant="outlined" fullWidth multiline={multiline} rows={rows} {...field} error={!!errors[name]} helperText={errors[name]?.message as string} />}
-    />
-  )
 
   return (
     <Box className="mb-10 space-y-3">
-      {renderTextField('title', 'Title', false, 1, { required: 'Title is required!' })}
-      {renderTextField('description', 'Description', true, 3)}
+      <RHFTextField name="title" label="Title" control={control} rules={{ required: 'Title is required!' }} />
+      <RHFTextField name="description" label="Description" control={control} multiline rows={3} />
 
-      <Controller
-        name="theme"
-        control={control}
-        defaultValue="quiz"
-        render={({ field }) => (
-          <FormControl fullWidth>
-            <InputLabel>Theme</InputLabel>
-            <Select {...field} label="Theme">
-              {themes.map((item) => (
-                <MenuItem key={item} value={item}>
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-      />
+      <RHFSelect name="theme" label="Theme" control={control} options={['quiz', 'exam', 'test', 'other']} />
 
-      {themeType === 'other' && renderTextField('customTheme', 'Custom Theme', false, 1, { required: 'Theme is required!' })}
+      {themeType === 'other' && <RHFTextField name="customTheme" label="Custom theme" control={control} rules={{ required: 'Theme is required!' }} />}
     </Box>
   )
 }

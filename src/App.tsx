@@ -4,6 +4,7 @@ import { FC, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
 import Header from './components/header/Header'
+import NotFound from './components/NotFound'
 import PrivateRoute from './components/PrivateRoute'
 import Auth from './pages/Auth'
 import CreateTemplate from './pages/CreateTemplate'
@@ -49,6 +50,8 @@ const App: FC = () => {
           <Route path="/view-form/:id" element={<ViewForm />} />
           <Route path="/fill-form/:id" element={<PrivateRoute element={<FillForm />} />} />
           <Route path="/view-results/:id" element={<PrivateRoute element={<ViewResults />} />} />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Box>
     </ThemeProvider>

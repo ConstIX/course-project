@@ -7,7 +7,7 @@ import { useIsAdminOrAuthor } from '../../hooks/useIsAdminOrAuthor'
 import { useTemplateAccess } from '../../hooks/useTemplateAccess'
 import { useLikeMutation } from '../../redux/services/templates'
 import { ITemplate } from '../../types/templates.types'
-import DropdownMenu from '../Menu'
+import DropdownMenu from '../ui/Menu'
 import CommentsModal from './CommentsModal'
 
 interface ITemplateCard extends ITemplate {

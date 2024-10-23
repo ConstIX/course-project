@@ -3,7 +3,7 @@ import { AppBar, Box, Button, Toolbar, useMediaQuery } from '@mui/material'
 import { FC } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useGetUserByIdQuery } from '../../redux/services/users'
-import DropdownMenu from '../Menu'
+import DropdownMenu from '../ui/Menu'
 import ThemeSwitcher from './ThemeSwitcher'
 
 const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> = ({ isDarkMode, setIsDarkMode }) => {

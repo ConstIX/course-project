@@ -17,13 +17,7 @@ const EditTemplate: FC = () => {
     )
   }
 
-  if (error || !template) {
-    return (
-      <Box className="py-32 text-center">
-        <NotFound />
-      </Box>
-    )
-  }
+  if (error || !template) return <NotFound />
 
   return <CreateTemplate templateData={template} />
 }
