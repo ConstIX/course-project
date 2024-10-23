@@ -1,22 +1,20 @@
 import { Dialog, DialogContent } from '@mui/material'
 import { FC } from 'react'
 import FillForm from '../../pages/FillForm'
+import { ICurrentResults } from '../../types/results.types'
 
 interface IResultsEditModal {
   open: boolean
-  currentResponse: {
-    id: number
-    userData: { name: string; email: string }
-    [key: string]: string | number | { name: string; email: string }
-  } | null
+  currentResults: ICurrentResults | null
   handleClose: () => void
+  setSnackbarState: (state: { message: string; open: boolean; severity: 'success' | 'error' }) => void
 }
 
-const ResultsEditModal: FC<IResultsEditModal> = ({ open, handleClose, currentResponse }) => {
+const ResultsEditModal: FC<IResultsEditModal> = ({ open, handleClose, currentResults, setSnackbarState }) => {
   return (
     <Dialog open={open} onClose={handleClose} fullWidth>
       <DialogContent>
-        <FillForm currentResponse={currentResponse} handleClose={handleClose} />
+        <FillForm currentResults={currentResults} handleClose={handleClose} setSnackbarState={setSnackbarState} />
       </DialogContent>
     </Dialog>
   )

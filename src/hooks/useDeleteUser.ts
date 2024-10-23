@@ -15,7 +15,7 @@ export const useDeleteUser = () => {
       for (const id of selectedUsers) {
         const userResults = await getResultsByUserId(id).unwrap()
         for (const results of userResults) {
-          await deleteResults(results.id).unwrap()
+          await deleteResults(results.id!).unwrap()
         }
 
         await deleteUser(id).unwrap()

@@ -22,6 +22,7 @@ const MyResults: FC = () => {
         <Button
           variant="contained"
           color="primary"
+          disableElevation
           startIcon={<Visibility />}
           onClick={(e) => {
             e.stopPropagation()

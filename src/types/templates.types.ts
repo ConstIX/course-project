@@ -14,7 +14,7 @@ export interface IComment {
 }
 
 export interface ITemplate {
-  id?: number
+  id: number
   authorId: number
   author: { name: string; email: string }
   title: string

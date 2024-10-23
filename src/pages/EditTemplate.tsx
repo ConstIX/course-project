@@ -11,7 +11,7 @@ const EditTemplate: FC = () => {
 
   if (isLoading) {
     return (
-      <Box className="py-32 text-center">
+      <Box className="flex flex-1 items-center justify-center py-32 text-center">
         <CircularProgress />
       </Box>
     )

@@ -1,38 +1,45 @@
-import { Box, Button, Typography } from '@mui/material'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { Delete, Edit } from '@mui/icons-material'
+import { Box, Typography } from '@mui/material'
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC } from 'react'
+import { useIsAdminOrAuthor } from '../../hooks/useIsAdminOrAuthor'
 import { useDeleteResultsMutation, useGetResultsByTemplateIdQuery } from '../../redux/services/results'
-import { useGetTemplateByIdQuery } from '../../redux/services/templates'
-import { useGetUserByIdQuery } from '../../redux/services/users'
+import { ICurrentResults } from '../../types/results.types'
+import { ITemplate } from '../../types/templates.types'
 
-const ResultsTable: FC<any> = ({ id, handleOpen }) => {
-  const userId = localStorage.getItem('userID')
-  const { data: template } = useGetTemplateByIdQuery(id!)
-  const { data: results } = useGetResultsByTemplateIdQuery(id!)
-  const { data: user } = useGetUserByIdQuery(userId as string)
+interface IResultsTable {
+  template: ITemplate
+  setSnackbarState: (state: { message: string; open: boolean; severity: 'success' | 'error' }) => void
+  handleOpen: (obj: ICurrentResults) => void
+}
+
+const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarState }) => {
+  const { data: results, isLoading } = useGetResultsByTemplateIdQuery(template.id)
   const [deleteResults] = useDeleteResultsMutation()
+  const [isAdminOrAuthor] = useIsAdminOrAuthor(template.authorId)
 
-  const isAuthor = userId === String(template?.authorId)
-  const isAdmin = user && user.status === 'admin'
+  const userId = localStorage.getItem('userID')
+  const filteredResults = !isAdminOrAuthor ? results?.filter((result) => result.userId === userId) : results
+  const rows = filteredResults && [...filteredResults].map((result) => ({ id: result.id, userData: result.userData, ...result.answers }))
 
-  const filteredResponses = !isAuthor && !isAdmin ? results?.filter((result) => String(result.userId) === userId) : results
-
-  const handleDelete = async (responseId: string) => {
+  const handleDelete = async (responseId: number) => {
     try {
       await deleteResults(responseId).unwrap()
+      setSnackbarState({ message: 'Result deleted successfuly.', open: true, severity: 'success' })
     } catch (error) {
-      console.error('Failed to delete response:', error)
+      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      console.error('Failed to delete result:', error)
     }
   }
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 150 },
+    { field: 'id', headerName: 'ID', width: 100 },
     {
       field: 'userData',
       headerName: 'Author',
       width: 200,
       sortable: false,
-      renderCell: (params: any) => (
+      renderCell: (params: GridRenderCellParams) => (
         <Box>
           <Typography>{params.row.userData.name}</Typography>
           <Typography variant="body2" color="textSecondary">
@@ -41,48 +48,43 @@ const ResultsTable: FC<any> = ({ id, handleOpen }) => {
         </Box>
       )
     },
-    ...(template?.questions.map((q) => ({
+    ...template.questions.map((q) => ({
       field: q.id,
       headerName: q.label,
-      width: `${q.type === 'text' ? 300 : 200}`,
-      sortable: false,
-      renderCell: (params: any) => <Typography variant="body2">{Array.isArray(params.value) ? params.value.join(', ') : params.value || '-'}</Typography>
-    })) || []),
-    (isAuthor || isAdmin) && {
-      field: 'actions',
-      headerName: 'Actions',
       width: 200,
       sortable: false,
-      renderCell: (params: any) => (
-        <>
-          <Button variant="contained" color="primary" onClick={() => handleOpen(params.row)} className="mr-2">
-            Edit
-          </Button>
-          <Button variant="contained" color="secondary" onClick={() => handleDelete(params.row.id)}>
-            Delete
-          </Button>
-        </>
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+          {Array.isArray(params.value) ? params.value.join(', ') : params.value || '-'}
+        </Typography>
       )
-    }
-  ].filter(Boolean)
-
-  const rows =
-    filteredResponses &&
-    [...filteredResponses].map((response) => ({
-      id: response.id,
-      userData: { name: response.userData.name, email: response.userData.email },
-      ...response.answers
     }))
+  ]
+
+  if (isAdminOrAuthor) {
+    columns.push({
+      field: 'actions',
+      type: 'actions',
+      width: 120,
+      getActions: (params: { row: ICurrentResults }) => [
+        <GridActionsCellItem icon={<Edit fontSize="small" color="primary" />} label="Edit" onClick={() => handleOpen(params.row)} showInMenu />,
+        <GridActionsCellItem icon={<Delete fontSize="small" color="error" />} label="Delete" onClick={() => handleDelete(params.row.id)} showInMenu />
+      ]
+    })
+  }
 
   return (
-    <DataGrid
-      rows={rows || []}
-      columns={columns}
-      getRowHeight={() => 'auto'}
-      initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
-      pageSizeOptions={[10]}
-      disableRowSelectionOnClick
-    />
+    <Box className="h-96">
+      <DataGrid
+        rows={rows || []}
+        columns={columns}
+        initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+        pageSizeOptions={[10]}
+        loading={isLoading}
+        disableRowSelectionOnClick
+        sx={{ '& .MuiDataGrid-columnHeaderTitle': { fontWeight: 'bold' } }}
+      />
+    </Box>
   )
 }
 

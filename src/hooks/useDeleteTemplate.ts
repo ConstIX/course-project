@@ -15,7 +15,7 @@ export const useDeleteTemplate = () => {
         const allResults = results.map((obj) => obj.id)
 
         for (const resultId of allResults) {
-          await deleteResults(resultId).unwrap()
+          await deleteResults(resultId!).unwrap()
         }
       }
     } catch (err) {

@@ -1,3 +1,9 @@
+export interface ICurrentResults {
+  id: number
+  userData: { name: string; email: string }
+  [key: string]: string | number | { name: string; email: string }
+}
+
 export interface IResult {
   id?: number
   templateId: number

@@ -1,42 +1,58 @@
-import { Box, Typography } from '@mui/material'
+import { Alert, Box, CircularProgress, Snackbar, Typography } from '@mui/material'
 import { FC, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import NotFound from '../components/NotFound'
 import ResultsEditModal from '../components/view-results/ResultsEditModal'
 import ResultsTable from '../components/view-results/ResultsTable'
 import { useGetTemplateByIdQuery } from '../redux/services/templates'
-
-interface ICurrentResponse {
-  id: number
-  userData: { name: string; email: string }
-  [key: string]: string | number | { name: string; email: string }
-}
+import { ICurrentResults } from '../types/results.types'
 
 const ViewResults: FC = () => {
-  const { id } = useParams()
-  const { data: template } = useGetTemplateByIdQuery(id!)
-
+  const [snackbarState, setSnackbarState] = useState<{ message: string; open: boolean; severity: 'success' | 'error' }>({
+    message: '',
+    open: false,
+    severity: 'success' as 'success' | 'error'
+  })
   const [open, setOpen] = useState(false)
-  const [currentResponse, setCurrentResponse] = useState<ICurrentResponse | null>(null)
+  const [currentResults, setCurrentResults] = useState<ICurrentResults | null>(null)
 
-  const handleOpen = (response: ICurrentResponse) => {
-    setCurrentResponse(response)
+  const { id } = useParams()
+  const { data: template, error, isLoading } = useGetTemplateByIdQuery(id!)
+
+  const handleOpen = (response: ICurrentResults) => {
+    setCurrentResults(response)
     setOpen(true)
   }
 
   const handleClose = () => {
-    setCurrentResponse(null)
+    setCurrentResults(null)
     setOpen(false)
   }
 
+  if (isLoading) {
+    return (
+      <Box className="flex flex-1 items-center justify-center py-32 text-center">
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (error || !template) return <NotFound />
+
   return (
     <Box className="custom-container">
-      <Typography variant="h4" color="primary">
-        Analysis of responses for <br /> "{template?.title}"
+      <Typography variant="h4" color="primary" sx={{ marginBottom: 4 }}>
+        Results
       </Typography>
 
-      <ResultsTable id={id} handleOpen={handleOpen} />
+      <ResultsTable template={template} handleOpen={handleOpen} setSnackbarState={setSnackbarState} />
+      <ResultsEditModal open={open} handleClose={handleClose} currentResults={currentResults} setSnackbarState={setSnackbarState} />
 
-      <ResultsEditModal open={open} handleClose={handleClose} currentResponse={currentResponse} />
+      <Snackbar open={snackbarState.open} autoHideDuration={3000} onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert severity={snackbarState.severity} onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}>
+          {snackbarState.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }
