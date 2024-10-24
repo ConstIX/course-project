@@ -20,11 +20,19 @@ const AccessSettings: FC = () => {
         Access
       </Typography>
 
-      <RHFAutocomplete name="tags" label="Tags" control={control} options={tags} placeholder="Start typing..." rules={{ required: 'At least one tag is required!' }} />
+      <RHFAutocomplete name="tags" label="Tags" control={control} options={tags} placeholder="Start typing..." rules={{ required: 'At least one tag is required!' }} required />
       <RHFSelect name="access" label="Access" control={control} options={['public', 'private']} defaultValue="public" />
 
       {accessType === 'private' && (
-        <RHFAutocomplete name="selectedUsers" label="Select users" control={control} options={usersData || []} placeholder="Select users..." rules={{ required: 'At least one user is required!' }} />
+        <RHFAutocomplete
+          name="selectedUsers"
+          label="Select users"
+          control={control}
+          options={usersData || []}
+          placeholder="Select users..."
+          rules={{ required: 'At least one user is required!' }}
+          required
+        />
       )}
     </Box>
   )

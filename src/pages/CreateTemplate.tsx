@@ -18,7 +18,7 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
       description: '',
       theme: 'quiz',
       customTheme: '',
-      questions: [{ type: 'text', label: '', description: '', options: '', required: false }],
+      questions: [{ id: uuidv4(), type: 'text', label: '', description: '', options: '', required: false }],
       tags: [],
       access: 'public',
       selectedUsers: []
@@ -44,10 +44,9 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
       description: data.description,
       theme: data.theme,
       customTheme: data.theme === 'other' ? data.customTheme : '',
-      questions: data.questions.map((obj, index) => {
-        const existingQuestion = templateData?.questions[index]
+      questions: data.questions.map((obj) => {
         return {
-          id: existingQuestion ? existingQuestion.id : uuidv4(),
+          id: obj.id,
           type: obj.type,
           label: obj.label,
           description: obj.description,
@@ -75,18 +74,7 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
   }
 
   useEffect(() => {
-    if (templateData) {
-      methods.reset({
-        title: templateData.title,
-        description: templateData.description,
-        theme: templateData.theme,
-        customTheme: templateData.customTheme,
-        questions: templateData.questions,
-        tags: templateData.tags,
-        access: templateData.access,
-        selectedUsers: templateData.selectedUsers
-      })
-    }
+    if (templateData) methods.reset(templateData)
   }, [templateData, methods])
 
   return (
