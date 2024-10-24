@@ -37,27 +37,20 @@ const PopularTemplates: FC = () => {
       width: 200,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => <Typography sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>{params.row.filledBy.length || 0}</Typography>
-    },
-    {
+    }
+  ]
+
+  if (token) {
+    columns.push({
       field: 'actions',
       type: 'actions',
       width: 120,
       getActions: (params) => [
-        <GridActionsCellItem
-          icon={<EditNote />}
-          label="Fill Form"
-          onClick={() => (token ? navigate(`/fill-form/${params.row.id}`) : setSnackbarState({ message: 'You are not authorized!', open: true, severity: 'error' }))}
-          showInMenu
-        />,
-        <GridActionsCellItem
-          icon={<Visibility />}
-          label="View Results"
-          onClick={() => (token ? navigate(`/view-results/${params.row.id}`) : setSnackbarState({ message: 'You are not authorized!', open: true, severity: 'error' }))}
-          showInMenu
-        />
+        <GridActionsCellItem icon={<EditNote />} label="Fill Form" onClick={() => navigate(`/fill-form/${params.row.id}`)} showInMenu />,
+        <GridActionsCellItem icon={<Visibility />} label="View Results" onClick={() => navigate(`/view-results/${params.row.id}`)} showInMenu />
       ]
-    }
-  ]
+    })
+  }
 
   return (
     <Box className="space-y-5 pb-20">

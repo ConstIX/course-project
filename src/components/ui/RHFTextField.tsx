@@ -11,14 +11,15 @@ interface ITextField {
   rows?: number
   rules?: { required: string }
   disabled?: boolean
+  required?: boolean
 }
 
-const RHFTextField: FC<ITextField> = ({ type = 'text', name, label = '', control, multiline = false, rows = 1, rules = {}, disabled = false }) => (
+const RHFTextField: FC<ITextField> = ({ type = 'text', name, label = '', control, multiline = false, rows = 1, rules = {}, disabled = false, required = false }) => (
   <Controller
     name={name}
     control={control}
     defaultValue=""
-    rules={rules}
+    rules={required ? rules : {}}
     render={({ field, fieldState: { error } }) => (
       <TextField type={type} label={label} variant="outlined" fullWidth multiline={multiline} rows={rows} error={!!error} helperText={error ? error.message : ''} {...field} disabled={disabled} />
     )}

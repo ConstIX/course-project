@@ -10,9 +10,10 @@ interface ISelect {
   defaultValue?: string
   rules?: { required: string }
   disabled?: boolean
+  required?: boolean
 }
 
-const RHFSelect: FC<ISelect> = ({ name, label = '', control, options, defaultValue = '', rules = {}, disabled = false }) => {
+const RHFSelect: FC<ISelect> = ({ name, label = '', control, options, defaultValue = '', rules = {}, disabled = false, required = false }) => {
   const optionsArray = typeof options === 'string' ? options.split(',') : options
 
   return (
@@ -20,7 +21,7 @@ const RHFSelect: FC<ISelect> = ({ name, label = '', control, options, defaultVal
       name={name}
       control={control}
       defaultValue={defaultValue}
-      rules={rules}
+      rules={required ? rules : {}}
       render={({ field, fieldState: { error } }) => (
         <FormControl fullWidth disabled={disabled} error={error ? true : false}>
           <InputLabel>{label}</InputLabel>

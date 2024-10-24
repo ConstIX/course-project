@@ -18,7 +18,7 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
       description: '',
       theme: 'quiz',
       customTheme: '',
-      questions: [{ type: 'text', label: '', description: '', options: '' }],
+      questions: [{ type: 'text', label: '', description: '', options: '', required: false }],
       tags: [],
       access: 'public',
       selectedUsers: []
@@ -51,7 +51,8 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
           type: obj.type,
           label: obj.label,
           description: obj.description,
-          options: Array.isArray(obj.options) ? obj.options : obj.options.split(',').map((i) => i.trim())
+          options: Array.isArray(obj.options) ? obj.options : obj.options.split(',').map((i) => i.trim()),
+          required: obj.required
         }
       }),
       tags: data.tags,
@@ -91,8 +92,8 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
   return (
     <FormProvider {...methods}>
       <Box className="custom-container">
-        <Typography variant="h4" color="primary">
-          {templateData ? 'Editing' : 'Creating'} a form template
+        <Typography variant="h4" color="primary" sx={{ marginBottom: '40px' }}>
+          {templateData ? 'Editing' : 'Creating'} template
         </Typography>
 
         <Box component="form" onSubmit={methods.handleSubmit(submitHandler)} className="mt-4">

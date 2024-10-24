@@ -1,12 +1,12 @@
 import { AddCircle, Delete } from '@mui/icons-material'
-import { Box, Button, IconButton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, IconButton, Typography, useMediaQuery } from '@mui/material'
 import { FC } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import RHFSelect from '../ui/RHFSelect'
 import RHFTextField from '../ui/RHFTextField'
 
 const QuestionSettings: FC = () => {
-  const { control, watch } = useFormContext()
+  const { control, watch, setValue } = useFormContext()
   const { fields, append, remove } = useFieldArray({ control, name: 'questions' })
   const isMobile = useMediaQuery('(max-width: 600px)')
 
@@ -40,6 +40,10 @@ const QuestionSettings: FC = () => {
             {(questionType === 'select' || questionType === 'checkbox' || questionType === 'radio') && (
               <RHFTextField name={`questions.${idx}.options`} label="Options" control={control} rules={{ required: 'Options are required!' }} />
             )}
+            <FormControlLabel
+              control={<Checkbox checked={watch(`questions.${idx}.required`) || false} onChange={(e) => setValue(`questions.${idx}.required`, e.target.checked)} />}
+              label="Question required"
+            />
           </Box>
         )
       })}

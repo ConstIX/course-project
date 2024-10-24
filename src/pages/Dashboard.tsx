@@ -1,6 +1,8 @@
-import { Alert, Box, Snackbar } from '@mui/material'
+import { ArrowBack } from '@mui/icons-material'
+import { Alert, Box, Button, Snackbar, Typography } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { FC, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import UserActions from '../components/dashboard/UserActions'
 import { useGetUsersQuery } from '../redux/services/users'
 
@@ -13,6 +15,7 @@ const Dashboard: FC = () => {
   })
 
   const { data: users, isLoading } = useGetUsersQuery()
+  const navigate = useNavigate()
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -26,6 +29,15 @@ const Dashboard: FC = () => {
 
   return (
     <Box className="custom-container">
+      <Box className="mb-10 flex items-center justify-between gap-5">
+        <Typography variant="h4" color="primary">
+          Dashboard
+        </Typography>
+        <Button onClick={() => navigate('/')} variant="text" color="primary" startIcon={<ArrowBack />}>
+          Back
+        </Button>
+      </Box>
+
       <UserActions selectedUsers={selectedUsers} users={users || []} setSnackbarState={setSnackbarState} onUserDeleted={() => setSelectedUsers([])} />
 
       <Box className="h-96">

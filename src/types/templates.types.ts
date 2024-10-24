@@ -4,6 +4,7 @@ export interface IQuestion {
   label: string
   description?: string
   options: string | string[]
+  required: boolean
 }
 
 export interface IComment {

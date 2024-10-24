@@ -33,7 +33,7 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
-  const { data: user } = useGetUserByIdQuery(userId!)
+  const { data: user } = useGetUserByIdQuery(userId || '')
   const [createResults, { isLoading: createLoading }] = useCreateResultsMutation()
   const [updateResults, { isLoading: updateLoading }] = useUpdateResultsMutation()
   const [fill] = useFillMutation()
@@ -73,19 +73,19 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
   return (
     <Box component="form" onSubmit={handleSubmit(submitHandler)} className="mt-10">
       <Box className="mb-10 space-y-4">
-        {template?.questions.map(({ id, label, description, type, options }) => (
+        {template?.questions.map(({ id, label, description, type, options, required }) => (
           <Box key={id}>
             <Typography color="textSecondary">{label}</Typography>
             {description && <Typography color="textSecondary">{description}</Typography>}
-            {type === 'text' && <RHFTextField name={id} control={control} rules={{ required: 'This field is required!' }} disabled={readOnly} />}
-            {type === 'number' && <RHFTextField type="number" name={id} control={control} rules={{ required: 'This field is required!' }} disabled={readOnly} />}
-            {type === 'tags' && <RHFAutocomplete name={id} control={control} rules={{ required: 'This field is required!' }} freeSolo disabled={readOnly} />}
-            {type === 'select' && <RHFSelect name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} />}
-            {type === 'radio' && <RHFRadioGroup name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} />}
-            {type === 'checkbox' && <RHFCheckboxGroup name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} />}
+            {type === 'text' && <RHFTextField name={id} control={control} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
+            {type === 'number' && <RHFTextField type="number" name={id} control={control} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
+            {type === 'tags' && <RHFAutocomplete name={id} control={control} rules={{ required: 'This field is required!' }} freeSolo disabled={readOnly} required={required} />}
+            {type === 'select' && <RHFSelect name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
+            {type === 'radio' && <RHFRadioGroup name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
+            {type === 'checkbox' && <RHFCheckboxGroup name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
           </Box>
         ))}
-        <FormControlLabel control={<Checkbox checked={sendToEmail} onChange={() => setSendToEmail(!sendToEmail)} />} label="Send results by email" />
+        {pathname.startsWith('/fill-form') && <FormControlLabel control={<Checkbox checked={sendToEmail} onChange={() => setSendToEmail(!sendToEmail)} />} label="Send results by email" />}
       </Box>
 
       <Box className="flex justify-end gap-3">

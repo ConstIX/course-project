@@ -11,14 +11,15 @@ interface IAutocomplete {
   rules?: { required: string }
   freeSolo?: boolean
   disabled?: boolean
+  required?: boolean
 }
 
-const RHFAutocomplete: FC<IAutocomplete> = ({ name, label = '', control, options = [], placeholder, rules, freeSolo = false, disabled = false }) => (
+const RHFAutocomplete: FC<IAutocomplete> = ({ name, label = '', control, options = [], placeholder, rules = {}, freeSolo = false, disabled = false, required = false }) => (
   <Controller
     name={name}
     control={control}
     defaultValue={[]}
-    rules={rules}
+    rules={required ? rules : {}}
     render={({ field: { onChange, value }, fieldState: { error } }) => (
       <Autocomplete
         disabled={disabled}

@@ -35,10 +35,12 @@ const FillForm: FC<IFillForm> = ({ readOnly = false, currentResults, handleClose
   return (
     <FormProvider {...methods}>
       <Box className={`${pathname.startsWith('/view-results') ? '' : 'custom-container'}`}>
-        <Typography variant="h4" color="primary">
-          {template?.title}
-        </Typography>
-        {template?.description && <Typography color="textSecondary">{template.description}</Typography>}
+        <Box className="mb-10">
+          <Typography variant="h4" color="primary">
+            {template?.title}
+          </Typography>
+          {template?.description && <Typography color="textSecondary">{template.description}</Typography>}
+        </Box>
 
         <QuestionForm template={template} currentResults={currentResults} readOnly={readOnly} handleClose={handleClose} setSnackbarState={setSnackbarState} />
       </Box>

@@ -8,9 +8,10 @@ interface ICheckboxGroup {
   options: string | string[]
   rules?: { required: string }
   disabled?: boolean
+  required?: boolean
 }
 
-const RHFCheckboxGroup: FC<ICheckboxGroup> = ({ name, control, options, rules, disabled = false }) => {
+const RHFCheckboxGroup: FC<ICheckboxGroup> = ({ name, control, options, rules = {}, disabled = false, required = false }) => {
   const optionsArray = typeof options === 'string' ? options.split(',') : options
 
   return (
@@ -18,7 +19,7 @@ const RHFCheckboxGroup: FC<ICheckboxGroup> = ({ name, control, options, rules, d
       name={name}
       control={control}
       defaultValue={[]}
-      rules={rules}
+      rules={required ? rules : {}}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <Box>
           {optionsArray.map((option, idx) => (

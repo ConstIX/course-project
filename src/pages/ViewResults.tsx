@@ -1,6 +1,7 @@
-import { Alert, Box, CircularProgress, Snackbar, Typography } from '@mui/material'
+import { ArrowBack } from '@mui/icons-material'
+import { Alert, Box, Button, CircularProgress, Snackbar, Typography } from '@mui/material'
 import { FC, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import NotFound from '../components/NotFound'
 import ResultsEditModal from '../components/view-results/ResultsEditModal'
 import ResultsTable from '../components/view-results/ResultsTable'
@@ -17,6 +18,7 @@ const ViewResults: FC = () => {
   const [currentResults, setCurrentResults] = useState<ICurrentResults | null>(null)
 
   const { id } = useParams()
+  const navigate = useNavigate()
   const { data: template, error, isLoading } = useGetTemplateByIdQuery(id!)
 
   const handleOpen = (response: ICurrentResults) => {
@@ -41,9 +43,14 @@ const ViewResults: FC = () => {
 
   return (
     <Box className="custom-container">
-      <Typography variant="h4" color="primary" sx={{ marginBottom: 4 }}>
-        Results
-      </Typography>
+      <Box className="mb-10 flex items-center justify-between gap-5">
+        <Typography variant="h4" color="primary">
+          Results
+        </Typography>
+        <Button onClick={() => navigate('/')} variant="text" color="primary" startIcon={<ArrowBack />}>
+          Back
+        </Button>
+      </Box>
 
       <ResultsTable template={template} handleOpen={handleOpen} setSnackbarState={setSnackbarState} />
       <ResultsEditModal open={open} handleClose={handleClose} currentResults={currentResults} setSnackbarState={setSnackbarState} />

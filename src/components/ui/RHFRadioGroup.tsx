@@ -8,9 +8,10 @@ interface IRadioGroup {
   options: string | string[]
   rules?: { required: string }
   disabled?: boolean
+  required?: boolean
 }
 
-const RHFRadioGroup: FC<IRadioGroup> = ({ name, control, options, rules, disabled = false }) => {
+const RHFRadioGroup: FC<IRadioGroup> = ({ name, control, options, rules, disabled = false, required = false }) => {
   const optionsArray = typeof options === 'string' ? options.split(',') : options
 
   return (
@@ -18,7 +19,7 @@ const RHFRadioGroup: FC<IRadioGroup> = ({ name, control, options, rules, disable
       name={name}
       control={control}
       defaultValue=""
-      rules={rules}
+      rules={required ? rules : {}}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <Box>
           <RadioGroup row>

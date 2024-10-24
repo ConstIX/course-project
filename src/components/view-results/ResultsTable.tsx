@@ -56,7 +56,7 @@ const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarStat
       sortable: false,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-          {Array.isArray(params.value) ? params.value.join(', ') : params.value || '-'}
+          {params.value.length === 0 ? '-' : Array.isArray(params.value) ? params.value.join(', ') : params.value}
         </Typography>
       )
     }))
