@@ -1,9 +1,10 @@
 import { ArrowBack, Send } from '@mui/icons-material'
-import { Box, Button, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, Typography, useMediaQuery } from '@mui/material'
 import moment from 'moment'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useMailTo } from '../../hooks/useMailTo'
 import { useCreateResultsMutation, useUpdateResultsMutation } from '../../redux/services/results'
 import { useFillMutation } from '../../redux/services/templates'
 import { useGetUserByIdQuery } from '../../redux/services/users'
@@ -25,6 +26,7 @@ interface IQuestionForm {
 
 const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, handleClose, setSnackbarState }) => {
   const { control, handleSubmit } = useFormContext<ICurrentResults>()
+  const [sendToEmail, setSendToEmail] = useState<boolean>(false)
 
   const userId = localStorage.getItem('userID')
   const isMobile = useMediaQuery('(max-width: 450px)')
@@ -35,6 +37,7 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
   const [createResults, { isLoading: createLoading }] = useCreateResultsMutation()
   const [updateResults, { isLoading: updateLoading }] = useUpdateResultsMutation()
   const [fill] = useFillMutation()
+  const [sendMessage] = useMailTo()
 
   const submitHandler = async (data: ICurrentResults) => {
     const response = {
@@ -57,6 +60,8 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
       } else {
         await createResults(response).unwrap()
         await fill({ id: template!.id!, filledBy: [...template!.filledBy, userId!] }).unwrap()
+        if (sendToEmail) await sendMessage(data, template, user)
+
         navigate('/')
       }
     } catch (error) {
@@ -80,6 +85,7 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
             {type === 'checkbox' && <RHFCheckboxGroup name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} />}
           </Box>
         ))}
+        <FormControlLabel control={<Checkbox checked={sendToEmail} onChange={() => setSendToEmail(!sendToEmail)} />} label="Send results by email" />
       </Box>
 
       <Box className="flex justify-end gap-3">
