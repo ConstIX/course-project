@@ -16,11 +16,11 @@ interface IResultsTable {
 const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarState }) => {
   const { data: results, isLoading } = useGetResultsByTemplateIdQuery(template.id)
   const [deleteResults] = useDeleteResultsMutation()
-  const [isAdminOrAuthor] = useIsAdminOrAuthor(template.authorId)
+  const [isAdminOrAuthor, isAdmin] = useIsAdminOrAuthor(template.authorId)
 
   const userId = localStorage.getItem('userID')
   const filteredResults = !isAdminOrAuthor ? results?.filter((result) => result.userId === userId) : results
-  const rows = filteredResults && [...filteredResults].map((result) => ({ id: result.id, userData: result.userData, ...result.answers }))
+  const rows = filteredResults && [...filteredResults].map((result) => ({ id: result.id, userData: result.userData, date: result.date, ...result.answers }))
 
   const handleDelete = async (responseId: number) => {
     try {
@@ -48,6 +48,7 @@ const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarStat
         </Box>
       )
     },
+    { field: 'date', headerName: 'Date', width: 200 },
     ...template.questions.map((q) => ({
       field: q.id,
       headerName: q.label,
@@ -61,7 +62,7 @@ const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarStat
     }))
   ]
 
-  if (isAdminOrAuthor) {
+  if (isAdmin) {
     columns.push({
       field: 'actions',
       type: 'actions',

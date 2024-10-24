@@ -1,5 +1,6 @@
 import { ArrowBack, Send } from '@mui/icons-material'
 import { Box, Button, Typography, useMediaQuery } from '@mui/material'
+import moment from 'moment'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -42,6 +43,7 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
       userId,
       userData: { name: user!.username, email: user!.email },
       templateTitle: template!.title,
+      date: moment().format('DD/MM/YYYY HH:mm'),
       answers: data
     }
 

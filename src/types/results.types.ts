@@ -11,6 +11,7 @@ export interface IResult {
   userId: string | null
   userData: { name: string; email: string }
   templateTitle: string
+  date: string
   answers: {
     [questionId: string]: any
   }

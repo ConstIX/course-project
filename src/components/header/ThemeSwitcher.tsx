@@ -7,11 +7,11 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   height: 30,
   padding: 7,
   '& .MuiSwitch-switchBase': {
-    margin: -0.5,
+    margin: 0.5,
     padding: 0,
     transform: 'translateX(6px)',
     '&.Mui-checked': {
-      transform: 'translateX(24px)',
+      transform: 'translateX(27px)',
       '& .MuiSwitch-thumb:before': {
         backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
           '#fff'
@@ -20,8 +20,8 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     }
   },
   '& .MuiSwitch-thumb': {
-    width: 30,
-    height: 30,
+    width: 28,
+    height: 28,
     '&::before': {
       content: "''",
       position: 'absolute',
