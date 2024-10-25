@@ -6,6 +6,7 @@ import App from './App.tsx'
 import { store } from './redux/store.ts'
 
 import './main.scss'
+import './utils/i18n.ts'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>

@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useGetUsersQuery } from '../../redux/services/users'
 import RHFAutocomplete from '../ui/RHFAutocomplete'
 import RHFSelect from '../ui/RHFSelect'
@@ -9,6 +10,7 @@ const tags = ['Technology', 'Science', 'Education', 'Health', 'Art', 'Business',
 
 const AccessSettings: FC = () => {
   const { control, watch } = useFormContext()
+  const { t } = useTranslation(['field', 'title', 'error'])
   const accessType = watch('access')
 
   const { data: users } = useGetUsersQuery()
@@ -17,22 +19,14 @@ const AccessSettings: FC = () => {
   return (
     <Box className="mb-10 space-y-3">
       <Typography variant="h5" color="primary">
-        Access
+        {t('title.access', { ns: 'title' })}
       </Typography>
 
-      <RHFAutocomplete name="tags" label="Tags" control={control} options={tags} placeholder="Start typing..." rules={{ required: 'At least one tag is required!' }} required />
-      <RHFSelect name="access" label="Access" control={control} options={['public', 'private']} defaultValue="public" />
+      <RHFAutocomplete name="tags" label={t('field.chooseTag')} control={control} options={tags} rules={{ required: t('error.tagRequired', { ns: 'error' }) }} required />
+      <RHFSelect name="access" label={t('field.access')} control={control} options={['public', 'private']} defaultValue="public" />
 
       {accessType === 'private' && (
-        <RHFAutocomplete
-          name="selectedUsers"
-          label="Select users"
-          control={control}
-          options={usersData || []}
-          placeholder="Select users..."
-          rules={{ required: 'At least one user is required!' }}
-          required
-        />
+        <RHFAutocomplete name="selectedUsers" label={t('field.selectUsers')} control={control} options={usersData || []} rules={{ required: t('error.userRequired', { ns: 'error' }) }} required />
       )}
     </Box>
   )

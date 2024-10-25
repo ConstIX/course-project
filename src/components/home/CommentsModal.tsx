@@ -2,6 +2,7 @@ import { Close, PersonPin, Send } from '@mui/icons-material'
 import { Box, Dialog, DialogContent, DialogTitle, Divider, IconButton, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useCreateCommentMutation } from '../../redux/services/templates'
 import { useGetUserByIdQuery } from '../../redux/services/users'
 import { IComment } from '../../types/templates.types'
@@ -24,6 +25,7 @@ const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments
   const userId = localStorage.getItem('userID')
   const token = localStorage.getItem('token')
   const commentsRef = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation(['title', 'field'])
 
   const { data: user } = useGetUserByIdQuery(userId || '')
   const [createComment] = useCreateCommentMutation()
@@ -52,7 +54,7 @@ const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments
     <Box onClick={(e) => e.stopPropagation()}>
       <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
         <Box className="flex justify-between">
-          <DialogTitle color="primary">Comments</DialogTitle>
+          <DialogTitle color="primary">{t('title.comments')}</DialogTitle>
           <IconButton onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
             <Close />
           </IconButton>
@@ -77,13 +79,13 @@ const CommentsModal: FC<ICommentsModal> = ({ open, onClose, templateId, comments
             ))
           ) : (
             <Typography sx={{ textAlign: 'center' }} color="textSecondary">
-              No comments...
+              {t('title.noComments')}
             </Typography>
           )}
         </DialogContent>
 
         <Box component="form" onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-3 p-4">
-          <TextField label="Message..." size="small" fullWidth {...register('comment', { required: 'Comment is required' })} error={!!errors.comment} disabled={!token} />
+          <TextField label={t('field.message', { ns: 'field' })} size="small" fullWidth {...register('comment', { required: 'Comment is required' })} error={!!errors.comment} disabled={!token} />
           <IconButton type="submit" color="primary" disabled={!token}>
             <Send />
           </IconButton>

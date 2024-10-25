@@ -1,6 +1,7 @@
 import { AdminPanelSettings, Delete, Lock, LockOpen } from '@mui/icons-material'
 import { Button, IconButton } from '@mui/material'
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useDeleteUser } from '../../hooks/useDeleteUser'
 import { useUpdateUserMutation } from '../../redux/services/users'
@@ -16,6 +17,7 @@ interface IUserActions {
 const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState, onUserDeleted }) => {
   const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
+  const { t } = useTranslation(['toaster', 'button'])
 
   const [updateUser] = useUpdateUserMutation()
   const [deleteUserWithResults] = useDeleteUser()
@@ -31,9 +33,9 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
         navigate('/auth')
       }
 
-      setSnackbarState({ message: 'Action completed successfuly.', open: true, severity: 'success' })
+      setSnackbarState({ message: t('toaster.actionCompleted'), open: true, severity: 'success' })
     } catch (error) {
-      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      setSnackbarState({ message: t('toaster.error'), open: true, severity: 'error' })
       console.error(`Error updating users:`, error)
     }
   }
@@ -50,9 +52,9 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
           navigate('/auth')
         }
       }
-      setSnackbarState({ message: 'Action completed successfuly.', open: true, severity: 'success' })
+      setSnackbarState({ message: t('toaster.actionCompleted'), open: true, severity: 'success' })
     } catch (error) {
-      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      setSnackbarState({ message: t('toaster.error'), open: true, severity: 'error' })
       console.error('Error toggling admin role:', error)
     }
   }
@@ -61,9 +63,9 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
     try {
       await deleteUserWithResults(selectedUsers)
       onUserDeleted()
-      setSnackbarState({ message: 'Action completed successfuly.', open: true, severity: 'success' })
+      setSnackbarState({ message: t('toaster.actionCompleted'), open: true, severity: 'success' })
     } catch (error) {
-      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      setSnackbarState({ message: t('toaster.error'), open: true, severity: 'error' })
       console.error('Error deleting users, templates, and results:', error)
     }
   }
@@ -71,7 +73,7 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
   return (
     <div className="mb-5 flex gap-3">
       <Button onClick={() => handleAction('block')} variant="contained" disableElevation disabled={!selectedUsers.length} startIcon={<Lock />} sx={{ textTransform: 'none' }}>
-        Block
+        {t('button.block', { ns: 'button' })}
       </Button>
       <IconButton onClick={() => handleAction('active')} color="primary" disabled={!selectedUsers.length}>
         <LockOpen />

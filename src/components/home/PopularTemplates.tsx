@@ -2,6 +2,7 @@ import { EditNote, Visibility } from '@mui/icons-material'
 import { Alert, Box, Snackbar, Typography } from '@mui/material'
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useGetPopularTemplatesQuery } from '../../redux/services/templates'
 
@@ -11,8 +12,10 @@ const PopularTemplates: FC = () => {
     open: false,
     severity: 'success' as 'success' | 'error'
   })
+
   const token = localStorage.getItem('token')
   const navigate = useNavigate()
+  const { t } = useTranslation(['table', 'button', 'title'])
 
   const { data: templates, isLoading } = useGetPopularTemplatesQuery()
 
@@ -20,7 +23,7 @@ const PopularTemplates: FC = () => {
     { field: 'id', headerName: 'ID', width: 100, sortable: false },
     {
       field: 'author',
-      headerName: 'Author',
+      headerName: t('table.author'),
       width: 200,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => (
@@ -30,10 +33,10 @@ const PopularTemplates: FC = () => {
         </Box>
       )
     },
-    { field: 'title', headerName: 'Template title', width: 250, sortable: false },
+    { field: 'title', headerName: t('table.templateTitle'), width: 250, sortable: false },
     {
       field: 'filledBy',
-      headerName: 'Number of fillings',
+      headerName: t('table.numberOfFillings'),
       width: 200,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => <Typography sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>{params.row.filledBy.length || 0}</Typography>
@@ -46,8 +49,8 @@ const PopularTemplates: FC = () => {
       type: 'actions',
       width: 120,
       getActions: (params) => [
-        <GridActionsCellItem icon={<EditNote />} label="Fill Form" onClick={() => navigate(`/fill-form/${params.row.id}`)} showInMenu />,
-        <GridActionsCellItem icon={<Visibility />} label="View Results" onClick={() => navigate(`/view-results/${params.row.id}`)} showInMenu />
+        <GridActionsCellItem icon={<EditNote />} label={t('button.fillForm', { ns: 'button' })} onClick={() => navigate(`/fill-form/${params.row.id}`)} showInMenu />,
+        <GridActionsCellItem icon={<Visibility />} label={t('button.viewResults', { ns: 'button' })} onClick={() => navigate(`/view-results/${params.row.id}`)} showInMenu />
       ]
     })
   }
@@ -55,7 +58,7 @@ const PopularTemplates: FC = () => {
   return (
     <Box className="space-y-10 pb-20">
       <Typography color="primary" variant="h4">
-        Popular Templates
+        {t('title.popularTemplates', { ns: 'title' })}
       </Typography>
 
       <Box className="h-[370px]">

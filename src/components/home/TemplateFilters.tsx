@@ -1,5 +1,6 @@
 import { Autocomplete, Box, TextField, useMediaQuery } from '@mui/material'
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ITemplate } from '../../types/templates.types'
 
 interface ITemplateFilters {
@@ -10,6 +11,7 @@ interface ITemplateFilters {
 
 const TemplateFilters: FC<ITemplateFilters> = ({ templates, filters, handleInputChange }) => {
   const isTablet = useMediaQuery('(max-width: 767.98px)')
+  const { t } = useTranslation(['field'])
 
   const tagOptions = ['All', 'Technology', 'Science', 'Education', 'Health', 'Art', 'Business', 'Sports']
   const searchByOptions = ['Title', 'Description', 'Theme', 'Access', 'Id']
@@ -29,9 +31,9 @@ const TemplateFilters: FC<ITemplateFilters> = ({ templates, filters, handleInput
 
   return (
     <Box className="mb-10 flex gap-5 md3:w-full md3:flex-col-reverse md3:gap-3">
-      {renderAutocomplete(searchOptions, 'Search...', filters.searchValue, false, false, true)}
-      {renderAutocomplete(searchByOptions, 'Search by', filters.searchBy, false, true)}
-      {renderAutocomplete(tagOptions, 'Tag', filters.selectedTag, true, false)}
+      {renderAutocomplete(searchOptions, t('field.search'), filters.searchValue, false, false, true)}
+      {renderAutocomplete(searchByOptions, t('field.searchBy'), filters.searchBy, false, true)}
+      {renderAutocomplete(tagOptions, t('field.tag'), filters.selectedTag, true, false)}
     </Box>
   )
 }

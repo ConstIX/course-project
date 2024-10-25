@@ -1,6 +1,7 @@
 import { ArrowBack } from '@mui/icons-material'
 import { Alert, Box, Button, CircularProgress, Snackbar, Typography } from '@mui/material'
 import { FC, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import NotFound from '../components/NotFound'
 import ResultsEditModal from '../components/view-results/ResultsEditModal'
@@ -19,6 +20,7 @@ const ViewResults: FC = () => {
 
   const { id } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation(['title', 'button'])
   const { data: template, error, isLoading } = useGetTemplateByIdQuery(id!)
 
   const handleOpen = (response: ICurrentResults) => {
@@ -45,10 +47,10 @@ const ViewResults: FC = () => {
     <Box className="custom-container">
       <Box className="mb-10 flex items-center justify-between gap-5">
         <Typography variant="h4" color="primary">
-          Results
+          {t('title.results')}
         </Typography>
         <Button onClick={() => navigate('/')} variant="text" color="primary" startIcon={<ArrowBack />}>
-          Back
+          {t('button.back', { ns: 'button' })}
         </Button>
       </Box>
 

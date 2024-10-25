@@ -1,19 +1,21 @@
-import { AccountCircle, MoreVert } from '@mui/icons-material'
 import { Box, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material'
 import { FC, useState } from 'react'
 
 interface IDropdownMenu {
-  actions: { label: string; icon: JSX.Element; function: () => void }[]
-  isHeader: boolean
+  actions: { label: string; icon?: JSX.Element; function: () => void }[]
+  icon: JSX.Element
+  isHeader?: boolean
+  selected?: boolean
 }
 
-const DropdownMenu: FC<IDropdownMenu> = ({ actions, isHeader = false }) => {
+const DropdownMenu: FC<IDropdownMenu> = ({ actions, icon, isHeader = false, selected = false }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [selectedIndex, setSelectedIndex] = useState<number>(0)
 
   return (
     <Box onClick={(e) => e.stopPropagation()}>
       <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ padding: 0 }}>
-        {isHeader ? <AccountCircle fontSize="large" sx={{ color: '#fff' }} /> : <MoreVert />}
+        {icon}
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -45,14 +47,16 @@ const DropdownMenu: FC<IDropdownMenu> = ({ actions, isHeader = false }) => {
             }
           }
         }}>
-        {actions.map((obj) => (
+        {actions.map((obj, idx) => (
           <MenuItem
             key={obj.label}
+            selected={selected && idx === selectedIndex}
             onClick={() => {
               obj.function()
+              setSelectedIndex(idx)
               setAnchorEl(null)
             }}>
-            <ListItemIcon>{obj.icon}</ListItemIcon>
+            {obj.icon && <ListItemIcon>{obj.icon}</ListItemIcon>}
             {obj.label}
           </MenuItem>
         ))}

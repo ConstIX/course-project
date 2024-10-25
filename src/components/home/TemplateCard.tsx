@@ -1,6 +1,7 @@
-import { Comment, Delete, Edit, ThumbUp } from '@mui/icons-material'
+import { Comment, Delete, Edit, MoreVert, ThumbUp } from '@mui/icons-material'
 import { Box, Button, Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@mui/material'
 import { FC, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useDeleteTemplate } from '../../hooks/useDeleteTemplate'
 import { useIsAdminOrAuthor } from '../../hooks/useIsAdminOrAuthor'
@@ -16,9 +17,11 @@ interface ITemplateCard extends ITemplate {
 
 const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, theme, customTheme, date, access, selectedUsers, likedBy, comments, setSnackbarState }) => {
   const [modalOpen, setModalOpen] = useState(false)
+
   const userId = localStorage.getItem('userID')
   const token = localStorage.getItem('token')
   const navigate = useNavigate()
+  const { t } = useTranslation(['toaster', 'button', 'template'])
 
   const [like] = useLikeMutation()
   const [deleteTemplateWithResults] = useDeleteTemplate()
@@ -39,9 +42,9 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, the
   const handleDeleteTemplate = async () => {
     try {
       await deleteTemplateWithResults(id!)
-      setSnackbarState({ message: 'Template deleted successfuly.', open: true, severity: 'success' })
+      setSnackbarState({ message: t('toaster.deleteTemplate'), open: true, severity: 'success' })
     } catch (err) {
-      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      setSnackbarState({ message: t('toaster.error'), open: true, severity: 'error' })
       console.error('Failed to delete template:', err)
     }
   }
@@ -53,8 +56,8 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, the
   }
 
   const actions = [
-    { label: 'Edit', icon: <Edit color="primary" fontSize="small" />, function: () => navigate(`/edit-template/${id}`) },
-    { label: 'Delete', icon: <Delete color="error" fontSize="small" />, function: () => handleDeleteTemplate() }
+    { label: t('button.edit', { ns: 'button' }), icon: <Edit color="primary" fontSize="small" />, function: () => navigate(`/edit-template/${id}`) },
+    { label: t('button.delete', { ns: 'button' }), icon: <Delete color="error" fontSize="small" />, function: () => handleDeleteTemplate() }
   ]
 
   return (
@@ -63,18 +66,18 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, the
       sx={{ display: 'flex', height: '100%', cursor: 'pointer', flexDirection: 'column', transition: 'all 0.3s ease 0s', '&:hover': { transform: 'translateY(-0.5rem)' } }}>
       <CardHeader
         title={title}
-        subheader={`Theme: ${theme === 'other' ? customTheme?.toLocaleLowerCase() : theme}`}
-        action={isAdminOrAuthor ? <DropdownMenu actions={actions} isHeader={false} /> : null}
+        subheader={`${t('template.theme', { ns: 'template' })}: ${theme === 'other' ? customTheme?.toLocaleLowerCase() : theme}`}
+        action={isAdminOrAuthor ? <DropdownMenu actions={actions} icon={<MoreVert />} /> : null}
         sx={{ paddingBottom: 1 }}
       />
 
       <CardContent sx={{ flexGrow: 1, paddingTop: 0 }}>
-        <Box className="mb-10 flex justify-between">
+        <Box className="mb-10 flex justify-between gap-5">
           <Typography variant="subtitle2" color="textSecondary">
-            Last update: {date.slice(0, 10)}
+            {t('template.lastUpdate', { ns: 'template' })}: {date.slice(0, 10)}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary">
-            {access}
+            {t(`template.${access}`, { ns: 'template' })}
           </Typography>
         </Box>
         <Typography color="textSecondary">{description}</Typography>
@@ -82,10 +85,10 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, the
 
       <CardActions>
         <Button onClick={(e) => handleAction(e, 'navigate', `/fill-form/${id}`)} variant="outlined" color="primary" fullWidth disabled={!hasAccess || !token}>
-          Fill Form
+          {t('button.fillForm', { ns: 'button' })}
         </Button>
         <Button onClick={(e) => handleAction(e, 'navigate', `/view-results/${id}`)} variant="outlined" color="success" fullWidth disabled={!hasAccess || !token}>
-          View Results
+          {t('button.viewResults', { ns: 'button' })}
         </Button>
       </CardActions>
 

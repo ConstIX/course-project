@@ -2,6 +2,7 @@ import { Add, Delete, Edit, EditNote, Visibility } from '@mui/icons-material'
 import { Alert, Box, Button, Snackbar, Typography } from '@mui/material'
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useDeleteTemplate } from '../../hooks/useDeleteTemplate'
 import { useGetTemplatesByUserIdQuery } from '../../redux/services/templates'
@@ -12,8 +13,10 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
     open: false,
     severity: 'success' as 'success' | 'error'
   })
+
   const navigate = useNavigate()
   const userId = localStorage.getItem('userID')
+  const { t } = useTranslation(['table', 'button', 'toaster'])
 
   const { data: templates, isLoading } = useGetTemplatesByUserIdQuery(userId!)
   const [deleteTemplateWithResults] = useDeleteTemplate()
@@ -21,19 +24,19 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
   const handleDeleteTemplate = async (templateId: number) => {
     try {
       await deleteTemplateWithResults(templateId)
-      setSnackbarState({ message: 'Template deleted successfuly.', open: true, severity: 'success' })
+      setSnackbarState({ message: t('toaster.deleteTemplate', { ns: 'toaster' }), open: true, severity: 'success' })
     } catch (error) {
-      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      setSnackbarState({ message: t('toaster.error', { ns: 'toaster' }), open: true, severity: 'error' })
       console.error('Error deleting template and results:', error)
     }
   }
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'title', headerName: 'Template title', width: 250 },
+    { field: 'title', headerName: t('table.templateTitle'), width: 250 },
     {
       field: 'filledBy',
-      headerName: 'Number of fillings',
+      headerName: t('table.numberOfFillings'),
       width: 200,
       renderCell: (params: GridRenderCellParams) => <Typography sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>{params.row.filledBy.length || 0}</Typography>
     },
@@ -42,10 +45,10 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
       type: 'actions',
       width: 120,
       getActions: (params) => [
-        <GridActionsCellItem icon={<Edit color="primary" />} label="Edit" onClick={() => navigate(`/edit-template/${params.row.id}`)} />,
-        <GridActionsCellItem icon={<Delete color="error" />} label="Delete" onClick={() => handleDeleteTemplate(params.row.id)} />,
-        <GridActionsCellItem icon={<EditNote />} label="Fill Form" onClick={() => navigate(`/fill-form/${params.row.id}`)} showInMenu />,
-        <GridActionsCellItem icon={<Visibility />} label="View Results" onClick={() => navigate(`/view-results/${params.row.id}`)} showInMenu />
+        <GridActionsCellItem icon={<Edit color="primary" />} label="" onClick={() => navigate(`/edit-template/${params.row.id}`)} />,
+        <GridActionsCellItem icon={<Delete color="error" />} label="" onClick={() => handleDeleteTemplate(params.row.id)} />,
+        <GridActionsCellItem icon={<EditNote />} label={t('button.fillForm', { ns: 'button' })} onClick={() => navigate(`/fill-form/${params.row.id}`)} showInMenu />,
+        <GridActionsCellItem icon={<Visibility />} label={t('button.viewResults', { ns: 'button' })} onClick={() => navigate(`/view-results/${params.row.id}`)} showInMenu />
       ]
     }
   ]
@@ -53,7 +56,7 @@ const MyTemplates: FC<{ isMobile: boolean }> = ({ isMobile }) => {
   return (
     <Box>
       <Button onClick={() => navigate('/create-template')} variant="contained" color="primary" disableElevation startIcon={<Add />} sx={{ marginBottom: 2, width: `${isMobile ? '100%' : 'auto'}` }}>
-        New template
+        {t('button.newTemplate', { ns: 'button' })}
       </Button>
 
       <Box className="h-96">

@@ -3,6 +3,7 @@ import { Box, Button, Checkbox, FormControlLabel, Typography, useMediaQuery } fr
 import moment from 'moment'
 import { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useMailTo } from '../../hooks/useMailTo'
 import { useCreateResultsMutation, useUpdateResultsMutation } from '../../redux/services/results'
@@ -27,6 +28,7 @@ interface IQuestionForm {
 const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, handleClose, setSnackbarState }) => {
   const { control, handleSubmit } = useFormContext<ICurrentResults>()
   const [sendToEmail, setSendToEmail] = useState<boolean>(false)
+  const { t } = useTranslation(['button', 'toaster', 'error'])
 
   const userId = localStorage.getItem('userID')
   const isMobile = useMediaQuery('(max-width: 450px)')
@@ -56,7 +58,7 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
       if (currentResults) {
         await updateResults({ id: currentResults.id, body: newData }).unwrap()
         if (handleClose) handleClose()
-        if (setSnackbarState) setSnackbarState({ message: 'Result edited successfuly.', open: true, severity: 'success' })
+        if (setSnackbarState) setSnackbarState({ message: t('toaster.resultEdited', { ns: 'toaster' }), open: true, severity: 'success' })
       } else {
         await createResults(response).unwrap()
         await fill({ id: template!.id!, filledBy: [...template!.filledBy, userId!] }).unwrap()
@@ -65,7 +67,7 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
         navigate('/')
       }
     } catch (error) {
-      if (setSnackbarState) setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      if (setSnackbarState) setSnackbarState({ message: t('toaster.error', { ns: 'toaster' }), open: true, severity: 'error' })
       console.error('Failed to edit result:', error)
     }
   }
@@ -77,21 +79,25 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
           <Box key={id}>
             <Typography color="textSecondary">{label}</Typography>
             {description && <Typography color="textSecondary">{description}</Typography>}
-            {type === 'text' && <RHFTextField name={id} control={control} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
-            {type === 'number' && <RHFTextField type="number" name={id} control={control} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
-            {type === 'tags' && <RHFAutocomplete name={id} control={control} rules={{ required: 'This field is required!' }} freeSolo disabled={readOnly} required={required} />}
-            {type === 'select' && <RHFSelect name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
-            {type === 'radio' && <RHFRadioGroup name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
-            {type === 'checkbox' && <RHFCheckboxGroup name={id} control={control} options={options} rules={{ required: 'This field is required!' }} disabled={readOnly} required={required} />}
+            {type === 'text' && <RHFTextField name={id} control={control} rules={{ required: t('error.fieldRequired', { ns: 'error' }) }} disabled={readOnly} required={required} />}
+            {type === 'number' && <RHFTextField type="number" name={id} control={control} rules={{ required: t('error.fieldRequired', { ns: 'error' }) }} disabled={readOnly} required={required} />}
+            {type === 'tags' && <RHFAutocomplete name={id} control={control} rules={{ required: t('error.fieldRequired', { ns: 'error' }) }} freeSolo disabled={readOnly} required={required} />}
+            {type === 'select' && <RHFSelect name={id} control={control} options={options} rules={{ required: t('error.fieldRequired', { ns: 'error' }) }} disabled={readOnly} required={required} />}
+            {type === 'radio' && (
+              <RHFRadioGroup name={id} control={control} options={options} rules={{ required: t('error.fieldRequired', { ns: 'error' }) }} disabled={readOnly} required={required} />
+            )}
+            {type === 'checkbox' && (
+              <RHFCheckboxGroup name={id} control={control} options={options} rules={{ required: t('error.fieldRequired', { ns: 'error' }) }} disabled={readOnly} required={required} />
+            )}
           </Box>
         ))}
-        {pathname.startsWith('/fill-form') && <FormControlLabel control={<Checkbox checked={sendToEmail} onChange={() => setSendToEmail(!sendToEmail)} />} label="Send results by email" />}
+        {pathname.startsWith('/fill-form') && <FormControlLabel control={<Checkbox checked={sendToEmail} onChange={() => setSendToEmail(!sendToEmail)} />} label={t('button.sendByEmail')} />}
       </Box>
 
       <Box className="flex justify-end gap-3">
         {readOnly ? (
           <Button onClick={() => navigate('/')} variant="contained" color="primary" disableElevation fullWidth={isMobile} startIcon={<ArrowBack />}>
-            Back
+            {t('button.back')}
           </Button>
         ) : (
           <>
@@ -103,10 +109,10 @@ const QuestionForm: FC<IQuestionForm> = ({ template, currentResults, readOnly, h
               variant="outlined"
               color="error"
               fullWidth={isMobile}>
-              Cancel
+              {t('button.cancel')}
             </Button>
             <Button type="submit" variant="contained" color="primary" disabled={createLoading || updateLoading} disableElevation fullWidth={isMobile} endIcon={<Send />}>
-              {createLoading || updateLoading ? 'Send...' : 'Send'}
+              {t('button.send')}
             </Button>
           </>
         )}

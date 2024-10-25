@@ -2,6 +2,7 @@ import { Delete, Edit } from '@mui/icons-material'
 import { Box, Typography } from '@mui/material'
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useIsAdminOrAuthor } from '../../hooks/useIsAdminOrAuthor'
 import { useDeleteResultsMutation, useGetResultsByTemplateIdQuery } from '../../redux/services/results'
 import { ICurrentResults } from '../../types/results.types'
@@ -19,15 +20,17 @@ const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarStat
   const [isAdminOrAuthor, isAdmin] = useIsAdminOrAuthor(template.authorId)
 
   const userId = localStorage.getItem('userID')
+  const { t } = useTranslation(['table', 'button', 'toaster'])
+
   const filteredResults = !isAdminOrAuthor ? results?.filter((result) => result.userId === userId) : results
   const rows = filteredResults && [...filteredResults].map((result) => ({ id: result.id, userData: result.userData, date: result.date, ...result.answers }))
 
   const handleDelete = async (responseId: number) => {
     try {
       await deleteResults(responseId).unwrap()
-      setSnackbarState({ message: 'Result deleted successfuly.', open: true, severity: 'success' })
+      setSnackbarState({ message: t('toaster.resultDeleted', { ns: 'toaster' }), open: true, severity: 'success' })
     } catch (error) {
-      setSnackbarState({ message: 'Something went wrong.', open: true, severity: 'error' })
+      setSnackbarState({ message: t('toaster.error', { ns: 'toaster' }), open: true, severity: 'error' })
       console.error('Failed to delete result:', error)
     }
   }
@@ -36,7 +39,7 @@ const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarStat
     { field: 'id', headerName: 'ID', width: 100 },
     {
       field: 'userData',
-      headerName: 'Author',
+      headerName: t('table.author'),
       width: 200,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => (
@@ -48,7 +51,7 @@ const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarStat
         </Box>
       )
     },
-    { field: 'date', headerName: 'Date', width: 200 },
+    { field: 'date', headerName: t('table.date'), width: 200 },
     ...template.questions.map((q) => ({
       field: q.id,
       headerName: q.label,
@@ -68,8 +71,8 @@ const ResultsTable: FC<IResultsTable> = ({ template, handleOpen, setSnackbarStat
       type: 'actions',
       width: 120,
       getActions: (params: { row: ICurrentResults }) => [
-        <GridActionsCellItem icon={<Edit fontSize="small" color="primary" />} label="Edit" onClick={() => handleOpen(params.row)} showInMenu />,
-        <GridActionsCellItem icon={<Delete fontSize="small" color="error" />} label="Delete" onClick={() => handleDelete(params.row.id)} showInMenu />
+        <GridActionsCellItem icon={<Edit fontSize="small" color="primary" />} label={t('button.edit', { ns: 'button' })} onClick={() => handleOpen(params.row)} showInMenu />,
+        <GridActionsCellItem icon={<Delete fontSize="small" color="error" />} label={t('button.delete', { ns: 'button' })} onClick={() => handleDelete(params.row.id)} showInMenu />
       ]
     })
   }

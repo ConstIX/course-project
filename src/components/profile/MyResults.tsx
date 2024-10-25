@@ -2,17 +2,21 @@ import { Visibility } from '@mui/icons-material'
 import { Box, Button } from '@mui/material'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useGetResultsByUserIdQuery } from '../../redux/services/results'
 
 const MyResults: FC = () => {
   const userId = localStorage.getItem('userID')
   const navigate = useNavigate()
+  const { t } = useTranslation(['table', 'button'])
+
   const { data: results, isLoading } = useGetResultsByUserIdQuery(userId!)
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'templateTitle', headerName: 'Template title', width: 250 },
+    { field: 'templateTitle', headerName: t('table.templateTitle'), width: 250 },
+    { field: 'date', headerName: t('table.date'), width: 200 },
     {
       field: 'actions',
       type: 'actions',
@@ -28,7 +32,7 @@ const MyResults: FC = () => {
             e.stopPropagation()
             navigate(`/view-results/${params.row.templateId}`)
           }}>
-          View Results
+          {t('button.viewResults', { ns: 'button' })}
         </Button>
       )
     }

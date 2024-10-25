@@ -2,6 +2,7 @@ import { Box, Button, Typography, useMediaQuery } from '@mui/material'
 import moment from 'moment'
 import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import AccessSettings from '../components/create-template/AccessSettings'
@@ -28,6 +29,7 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
   const userId = localStorage.getItem('userID')
   const isMobile = useMediaQuery('(max-width: 600px)')
   const navigate = useNavigate()
+  const { t } = useTranslation(['button', 'title'])
 
   const { data: user } = useGetUserByIdQuery(userId!)
   const [createTemplate, { isLoading: createLoading }] = useCreateTemplateMutation()
@@ -81,7 +83,7 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
     <FormProvider {...methods}>
       <Box className="custom-container">
         <Typography variant="h4" color="primary" sx={{ marginBottom: '40px' }}>
-          {templateData ? 'Editing' : 'Creating'} template
+          {templateData ? t('title.editTemplate', { ns: 'title' }) : t('title.createTemplate', { ns: 'title' })}
         </Typography>
 
         <Box component="form" onSubmit={methods.handleSubmit(submitHandler)} className="mt-4">
@@ -91,10 +93,10 @@ const CreateTemplate: FC<{ templateData?: ITemplate }> = ({ templateData }) => {
 
           <Box className="mt-10 flex justify-end gap-3">
             <Button variant="outlined" onClick={() => navigate('/')} color="error" fullWidth={isMobile}>
-              Cancel
+              {t('button.cancel')}
             </Button>
             <Button type="submit" variant="contained" color="primary" disableElevation disabled={createLoading || updateLoading} fullWidth={isMobile}>
-              {templateData ? 'Update Template' : 'Create Template'}
+              {templateData ? t('button.editTemplate') : t('button.createTemplate')}
             </Button>
           </Box>
         </Box>
