@@ -19,7 +19,7 @@ const tableTranslations = {
       templateTitle: 'Название шаблона',
       numberOfFillings: 'Количество заполнений',
       date: 'Дата',
-      name: 'Имя',
+      name: 'Имя пользователя',
       email: 'E-Mail',
       regDate: 'Дата регистрации',
       logDate: 'Последний вход',

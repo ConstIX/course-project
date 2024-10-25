@@ -13,7 +13,11 @@ const titleTranslations = {
       noTemplates: 'Templates not found...',
       access: 'Access',
       questions: 'Questions',
-      question: 'Question'
+      question: 'Question',
+      login: 'Log-in',
+      register: 'Register',
+      haveAccount: 'Already have an account?',
+      noAccount: 'Don`t have an account?'
     }
   },
   ru: {
@@ -30,7 +34,11 @@ const titleTranslations = {
       noTemplates: 'Шаблоны не найдены...',
       access: 'Доступ',
       questions: 'Вопросы',
-      question: 'Вопрос'
+      question: 'Вопрос',
+      login: 'Войти',
+      register: 'Зарегистрироваться',
+      haveAccount: 'Уже есть аккаунт?',
+      noAccount: 'Нет аккаунта?'
     }
   },
   es: {
@@ -47,7 +55,11 @@ const titleTranslations = {
       noTemplates: 'Plantillas no encontradas...',
       access: 'Acceso',
       questions: 'Preguntas',
-      question: 'Pregunta'
+      question: 'Pregunta',
+      login: 'Iniciar sesión',
+      register: 'Registrarse',
+      haveAccount: '¿Ya tienes una cuenta?',
+      noAccount: '¿No tienes una cuenta?'
     }
   }
 }

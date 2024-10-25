@@ -2,13 +2,14 @@ import { Alert, Box, Button, Snackbar, TextField } from '@mui/material'
 import moment from 'moment'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useLoginUserMutation } from '../../redux/services/auth'
 import { useUpdateUserMutation } from '../../redux/services/users'
 
 const fields = [
-  { name: 'email', label: 'Email' },
-  { name: 'password', label: 'Password' }
+  { name: 'email', label: 'emailRequired' },
+  { name: 'password', label: 'passwordRequired' }
 ]
 
 const Login: FC = () => {
@@ -23,6 +24,7 @@ const Login: FC = () => {
 
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
+  const { t } = useTranslation(['field', 'button', 'error', 'toaster'])
 
   const onSubmit = async (userData: Record<string, string>) => {
     try {
@@ -33,10 +35,10 @@ const Login: FC = () => {
         localStorage.setItem('token', token)
         localStorage.setItem('userID', `${data.id}`)
       } else {
-        setSnackbarState({ message: 'Your account is blocked.', open: true })
+        setSnackbarState({ message: t('toaster.blocked', { ns: 'toaster' }), open: true })
       }
     } catch (err) {
-      setSnackbarState({ message: 'Login failed. Please try again.', open: true })
+      setSnackbarState({ message: t('toaster.loginFailed', { ns: 'toaster' }), open: true })
       console.error('Login failed:', err)
     }
   }
@@ -52,17 +54,17 @@ const Login: FC = () => {
           <TextField
             key={field.name}
             type={field.name}
-            label={field.label}
+            label={t(`field.${field.name}`)}
             variant="standard"
             fullWidth
-            {...register(field.name, { required: `${field.label} is required!` })}
+            {...register(field.name, { required: t(`error.${field.label}`, { ns: 'error' }) })}
             error={!!errors[field.name]}
             helperText={errors[field.name]?.message as string}
             sx={{ marginBottom: field.name === 'password' ? 5 : 2 }}
           />
         ))}
         <Button type="submit" variant="contained" fullWidth disabled={isLoading} disableElevation>
-          Submit
+          {t('button.submit', { ns: 'button' })}
         </Button>
       </Box>
 

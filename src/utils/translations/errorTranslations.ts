@@ -6,7 +6,10 @@ const errorTranslations = {
       tagRequired: 'At least one tag is required!',
       userRequired: 'At least one user is required!',
       optionRequired: 'Options are required!',
-      fieldRequired: 'This field is required!'
+      fieldRequired: 'This field is required!',
+      emailRequired: 'Email is required!',
+      nameRequired: 'Username is required!',
+      passwordRequired: 'Password is required!'
     }
   },
   ru: {
@@ -16,7 +19,10 @@ const errorTranslations = {
       tagRequired: 'Требуется хотя бы один тег!',
       userRequired: 'Требуется как минимум один пользователь!',
       optionRequired: 'Требуются варианты!',
-      fieldRequired: 'Это поле является обязательным!'
+      fieldRequired: 'Это поле является обязательным!',
+      emailRequired: 'Требуется адрес электронной почты!',
+      nameRequired: 'Требуется имя пользователя!',
+      passwordRequired: 'Требуется пароль!'
     }
   },
   es: {
@@ -26,7 +32,10 @@ const errorTranslations = {
       tagRequired: '¡Se requiere al menos una etiqueta!',
       userRequired: '¡Se requiere al menos un usuario!',
       optionRequired: '¡Se requieren opciones!',
-      fieldRequired: '¡Este campo es obligatorio!'
+      fieldRequired: '¡Este campo es obligatorio!',
+      emailRequired: '¡Se requiere un email!',
+      nameRequired: '¡Se requiere un nombre de usuario!',
+      passwordRequired: '¡Se requiere una contraseña!'
     }
   }
 }

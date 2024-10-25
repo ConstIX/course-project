@@ -2,13 +2,14 @@ import { Alert, Box, Button, Snackbar, TextField } from '@mui/material'
 import moment from 'moment'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useRegisterUserMutation } from '../../redux/services/auth'
 
 const fields = [
-  { name: 'username', label: 'Username', type: 'text' },
-  { name: 'email', label: 'Email', type: 'email' },
-  { name: 'password', label: 'Password', type: 'password' }
+  { name: 'username', label: 'nameRequired', type: 'text' },
+  { name: 'email', label: 'emailRequired', type: 'email' },
+  { name: 'password', label: 'passwordRequired', type: 'password' }
 ]
 
 const Register: FC = () => {
@@ -22,6 +23,7 @@ const Register: FC = () => {
 
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
+  const { t } = useTranslation(['field', 'button', 'error', 'toaster'])
 
   const onSubmit = async (userData: Record<string, string>) => {
     try {
@@ -36,7 +38,7 @@ const Register: FC = () => {
       localStorage.setItem('token', token)
       localStorage.setItem('userID', `${data.id}`)
     } catch (err) {
-      setSnackbarState({ message: 'Register failed. Please try again.', open: true })
+      setSnackbarState({ message: t('toaster.registerFailed', { ns: 'toaster' }), open: true })
       console.error('Failed to register:', err)
     }
   }
@@ -52,17 +54,17 @@ const Register: FC = () => {
           <TextField
             key={field.name}
             type={field.type}
-            label={field.label}
+            label={t(`field.${field.name}`)}
             variant="standard"
             fullWidth
-            {...register(field.name, { required: `${field.label} is required!` })}
+            {...register(field.name, { required: t(`error.${field.label}`, { ns: 'error' }) })}
             error={!!errors[field.name]}
             helperText={errors[field.name]?.message as string}
             sx={{ marginBottom: field.type === 'password' ? 5 : 2 }}
           />
         ))}
         <Button type="submit" variant="contained" fullWidth disabled={isLoading} disableElevation>
-          Submit
+          {t('button.submit', { ns: 'button' })}
         </Button>
       </Box>
 

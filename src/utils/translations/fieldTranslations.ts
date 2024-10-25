@@ -16,6 +16,9 @@ const fieldTranslations = {
       access: 'Access',
       selectUsers: 'Select users',
       message: 'Message...',
+      email: 'E-Mail',
+      username: 'Username',
+      password: 'Password',
       tags: {
         all: 'All',
         technology: 'Technology',
@@ -52,6 +55,9 @@ const fieldTranslations = {
       access: 'Доступ',
       selectUsers: 'Выберите пользователей',
       message: 'Написать сообщение...',
+      email: 'E-Mail',
+      username: 'Имя пользователя',
+      password: 'Пароль',
       tags: {
         all: 'Все',
         technology: 'Технологии',
@@ -88,6 +94,9 @@ const fieldTranslations = {
       access: 'Acceso',
       selectUsers: 'Seleccionar usuarios',
       message: 'Mensaje...',
+      email: 'E-Mail',
+      username: 'Nombre',
+      password: 'Contraseña',
       tags: {
         all: 'Todo',
         technology: 'Tecnología',

@@ -18,7 +18,8 @@ const buttonTranslations = {
       createTemplate: 'Create template',
       editTemplate: 'Edite template',
       addQuestion: 'Add question',
-      requiredQuestion: 'Required question'
+      requiredQuestion: 'Required question',
+      submit: 'Submit'
     }
   },
   ru: {
@@ -40,7 +41,8 @@ const buttonTranslations = {
       createTemplate: 'Создать',
       editTemplate: 'Изменить',
       addQuestion: 'Добавить вопрос',
-      requiredQuestion: 'Обязательный вопрос'
+      requiredQuestion: 'Обязательный вопрос',
+      submit: 'Подтвердить'
     }
   },
   es: {
@@ -62,7 +64,8 @@ const buttonTranslations = {
       createTemplate: 'Crear',
       editTemplate: 'Editar',
       addQuestion: 'Agregar pregunta',
-      requiredQuestion: 'Pregunta obligatoria'
+      requiredQuestion: 'Pregunta obligatoria',
+      submit: 'Enviar'
     }
   }
 }
