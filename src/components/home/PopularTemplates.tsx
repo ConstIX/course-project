@@ -53,7 +53,7 @@ const PopularTemplates: FC = () => {
   }
 
   return (
-    <Box className="space-y-5 pb-20">
+    <Box className="space-y-10 pb-20">
       <Typography color="primary" variant="h4">
         Popular Templates
       </Typography>

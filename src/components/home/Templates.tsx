@@ -1,5 +1,7 @@
-import { Alert, Box, CircularProgress, debounce, Pagination, Snackbar, Typography } from '@mui/material'
+import { Add } from '@mui/icons-material'
+import { Alert, Box, Button, CircularProgress, debounce, Pagination, Snackbar, Typography, useMediaQuery } from '@mui/material'
 import { FC, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useGetFilteredTemplatesQuery } from '../../redux/services/templates'
 import TemplateCard from './TemplateCard'
 import TemplateFilters from './TemplateFilters'
@@ -16,6 +18,10 @@ const Templates: FC = () => {
     open: false,
     severity: 'success' as 'success' | 'error'
   })
+
+  const isMobile = useMediaQuery('(max-width: 450px)')
+  const navigate = useNavigate()
+  const token = localStorage.getItem('token')
 
   const { data: templates, isLoading } = useGetFilteredTemplatesQuery({
     search: filters.searchValue ? `&${filters.searchBy.toLowerCase() || 'title'}=*${filters.searchValue}*` : '',
@@ -39,9 +45,14 @@ const Templates: FC = () => {
 
   return (
     <Box>
-      <Typography color="primary" variant="h4" sx={{ marginBottom: '20px' }}>
-        Templates
-      </Typography>
+      <Box className="mb-10 flex items-center justify-between gap-10 md4:mb-5 md4:flex-col md4:items-start">
+        <Typography color="primary" variant="h4">
+          Templates
+        </Typography>
+        <Button fullWidth={isMobile} onClick={() => navigate('/create-template')} variant="contained" color="primary" disableElevation startIcon={<Add />} disabled={!token}>
+          New template
+        </Button>
+      </Box>
 
       <TemplateFilters templates={templates?.items || []} filters={filters} handleInputChange={handleInputChange} />
 
