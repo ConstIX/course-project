@@ -66,7 +66,7 @@ const TemplateCard: FC<ITemplateCard> = ({ id, authorId, title, description, the
       sx={{ display: 'flex', height: '100%', cursor: 'pointer', flexDirection: 'column', transition: 'all 0.3s ease 0s', '&:hover': { transform: 'translateY(-0.5rem)' } }}>
       <CardHeader
         title={title}
-        subheader={`${t('template.theme', { ns: 'template' })}: ${theme === 'other' ? customTheme?.toLocaleLowerCase() : theme}`}
+        subheader={`${t('template.theme', { ns: 'template' })}: ${theme === 'other' ? customTheme?.toLocaleLowerCase() : t(`template.themes.${theme}`, { ns: 'template' })}`}
         action={isAdminOrAuthor ? <DropdownMenu actions={actions} icon={<MoreVert />} /> : null}
         sx={{ paddingBottom: 1 }}
       />

@@ -4,7 +4,12 @@ const templateTranslations = {
       theme: 'Theme',
       lastUpdate: 'Last update',
       public: 'public',
-      private: 'private'
+      private: 'private',
+      themes: {
+        quiz: 'quiz',
+        exam: 'exam',
+        test: 'test'
+      }
     }
   },
   ru: {
@@ -12,7 +17,12 @@ const templateTranslations = {
       theme: 'Тема',
       lastUpdate: 'Последнее обновление',
       public: 'публичный',
-      private: 'приватный'
+      private: 'приватный',
+      themes: {
+        quiz: 'викторина',
+        exam: 'экзамен',
+        test: 'тест'
+      }
     }
   },
   es: {
@@ -20,7 +30,12 @@ const templateTranslations = {
       theme: 'Última actualización',
       lastUpdate: 'Última actualización',
       public: 'público',
-      private: 'privado'
+      private: 'privado',
+      themes: {
+        quiz: 'cuestionario',
+        exam: 'examen',
+        test: 'prueba'
+      }
     }
   }
 }
