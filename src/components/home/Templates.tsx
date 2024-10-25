@@ -5,8 +5,9 @@ import TemplateCard from './TemplateCard'
 import TemplateFilters from './TemplateFilters'
 
 const Templates: FC = () => {
-  const [filters, setFilters] = useState<{ searchValue: string; selectedTag: string; currentPage: number }>({
+  const [filters, setFilters] = useState<{ searchValue: string; searchBy: string; selectedTag: string; currentPage: number }>({
     searchValue: '',
+    searchBy: 'Title',
     selectedTag: 'All',
     currentPage: 1
   })
@@ -17,13 +18,14 @@ const Templates: FC = () => {
   })
 
   const { data: templates, isLoading } = useGetFilteredTemplatesQuery({
-    search: filters.searchValue ? `&title=*${filters.searchValue}*` : '',
+    search: filters.searchValue ? `&${filters.searchBy.toLowerCase() || 'title'}=*${filters.searchValue}*` : '',
     tag: filters.selectedTag === 'All' ? '' : `&tags[]=${filters.selectedTag}`,
     page: `?page=${filters.currentPage}&limit=10`
   })
 
-  const handleInputChange = debounce((value: string, isTag: boolean) => {
+  const handleInputChange = debounce((value: string, isTag: boolean, isSearchBy: boolean) => {
     if (isTag) setFilters((prev) => ({ ...prev, selectedTag: value, currentPage: 1 }))
+    else if (isSearchBy) setFilters((prev) => ({ ...prev, searchBy: value }))
     else setFilters((prev) => ({ ...prev, searchValue: value, currentPage: 1 }))
   }, 300)
 
