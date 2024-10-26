@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { WritableDraft } from 'immer'
 import { IComment, ITemplate } from '../../types/templates.types'
+import { websocketService } from '../websocketService'
 
 export const templatesApi = createApi({
   reducerPath: 'templatesApi',
@@ -8,7 +10,21 @@ export const templatesApi = createApi({
   endpoints: (builder) => ({
     getFilteredTemplates: builder.query<{ meta: { total_pages: number }; items: ITemplate[] }, Record<string, string>>({
       query: ({ search, tag, page }) => `/templates${page}${tag}${search}`,
-      providesTags: ['Templates']
+      providesTags: ['Templates'],
+      async onCacheEntryAdded(_, { updateCachedData, cacheEntryRemoved }) {
+        websocketService.connect('wss://course-project-ivory.vercel.app/ws')
+
+        websocketService.subscribe((data: { type: string; payload: ITemplate | WritableDraft<ITemplate> }) => {
+          if (data.type === 'NEW_TEMPLATE') {
+            updateCachedData((draft) => {
+              draft.items = [data.payload, ...draft.items]
+            })
+          }
+        })
+
+        await cacheEntryRemoved
+        websocketService.disconnect()
+      }
     }),
     getPopularTemplates: builder.query<ITemplate[], void>({
       query: () => '/templates?sortBy=-filledBy',
