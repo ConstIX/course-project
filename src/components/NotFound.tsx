@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material'
 import { FC } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const NotFound: FC = () => {
-  const navigate = useNavigate()
+  const { t } = useTranslation(['title'])
 
   return (
     <Box className="flex flex-1 items-center justify-center p-[120px_10px_10px_10px]">
@@ -12,14 +12,10 @@ const NotFound: FC = () => {
           404
         </Typography>
         <Typography variant="h4" color="textDisabled">
-          Page not found!
+          {t('title.notFound')}
         </Typography>
         <Typography color="textSecondary">
-          The page you are looking for doesnt't exist or an other error occurred. <br /> Go back, or head over to{' '}
-          <Typography onClick={() => navigate('/')} color="primary" sx={{ display: 'inline', cursor: 'pointer' }}>
-            ReactApp.com
-          </Typography>{' '}
-          to choose a new direction.
+          {t('title.notFoundMessage')} <br /> {t('title.notFoundBack')}
         </Typography>
       </Box>
     </Box>

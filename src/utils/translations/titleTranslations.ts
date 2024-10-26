@@ -17,7 +17,10 @@ const titleTranslations = {
       login: 'Log-in',
       register: 'Register',
       haveAccount: 'Already have an account?',
-      noAccount: 'Don`t have an account?'
+      noAccount: 'Don`t have an account?',
+      notFound: 'Page not found!',
+      notFoundMessage: 'The page you are looking for doesnt`t exist or an other error occurred.',
+      notFoundBack: 'Go back to choose a new direction.'
     }
   },
   ru: {
@@ -38,7 +41,10 @@ const titleTranslations = {
       login: 'Войти',
       register: 'Зарегистрироваться',
       haveAccount: 'Уже есть аккаунт?',
-      noAccount: 'Нет аккаунта?'
+      noAccount: 'Нет аккаунта?',
+      notFound: 'Страница не найдена!',
+      notFoundMessage: 'Страница, которую вы ищете, не существует или произошла ошибка.',
+      notFoundBack: 'Вернитесь, чтобы выбрать новое направление.'
     }
   },
   es: {
@@ -59,7 +65,10 @@ const titleTranslations = {
       login: 'Iniciar sesión',
       register: 'Registrarse',
       haveAccount: '¿Ya tienes una cuenta?',
-      noAccount: '¿No tienes una cuenta?'
+      noAccount: '¿No tienes una cuenta?',
+      notFound: '¡Página no encontrada!',
+      notFoundMessage: 'La página que estás buscando no existe o se produjo otro error.',
+      notFoundBack: 'Regresa para elegir una nueva dirección.'
     }
   }
 }
