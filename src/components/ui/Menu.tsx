@@ -1,14 +1,16 @@
-import { Box, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material'
+import { Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material'
 import { FC, useState } from 'react'
+import { IUser } from '../../types/user.types'
 
 interface IDropdownMenu {
   actions: { label: string; icon?: JSX.Element; function: () => void }[]
   icon: JSX.Element
   isHeader?: boolean
   selected?: boolean
+  user?: IUser
 }
 
-const DropdownMenu: FC<IDropdownMenu> = ({ actions, icon, isHeader = false, selected = false }) => {
+const DropdownMenu: FC<IDropdownMenu> = ({ actions, icon, isHeader = false, selected = false, user = {} }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
 
@@ -47,6 +49,15 @@ const DropdownMenu: FC<IDropdownMenu> = ({ actions, icon, isHeader = false, sele
             }
           }
         }}>
+        {isHeader && (
+          <Box className="px-5 pb-2">
+            <Typography>{user.username}</Typography>
+            <Typography color="textSecondary" variant="body2">
+              {user.email}
+            </Typography>
+          </Box>
+        )}
+        {isHeader && <Divider />}
         {actions.map((obj, idx) => (
           <MenuItem
             key={obj.label}

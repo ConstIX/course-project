@@ -19,7 +19,9 @@ const buttonTranslations = {
       editTemplate: 'Edite template',
       addQuestion: 'Add question',
       requiredQuestion: 'Required question',
-      submit: 'Submit'
+      submit: 'Submit',
+      connect: 'Connect to salesforce',
+      connected: 'Connected to salesforce'
     }
   },
   ru: {
@@ -42,7 +44,9 @@ const buttonTranslations = {
       editTemplate: 'Изменить',
       addQuestion: 'Добавить вопрос',
       requiredQuestion: 'Обязательный вопрос',
-      submit: 'Подтвердить'
+      submit: 'Подтвердить',
+      connect: 'Подключиться к salesforce',
+      connected: 'Подключен к salesforce'
     }
   },
   es: {
@@ -65,7 +69,9 @@ const buttonTranslations = {
       editTemplate: 'Editar',
       addQuestion: 'Agregar pregunta',
       requiredQuestion: 'Pregunta obligatoria',
-      submit: 'Enviar'
+      submit: 'Enviar',
+      connect: 'Conectarse a Salesforce',
+      connected: 'Conectada a la fuerza de ventas'
     }
   }
 }

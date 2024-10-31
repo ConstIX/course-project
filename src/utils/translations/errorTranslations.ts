@@ -9,7 +9,10 @@ const errorTranslations = {
       fieldRequired: 'This field is required!',
       emailRequired: 'Email is required!',
       nameRequired: 'Username is required!',
-      passwordRequired: 'Password is required!'
+      passwordRequired: 'Password is required!',
+      phoneRequired: 'Phone number required!',
+      faxRequired: 'Fax required!',
+      addressRequired: 'Address required!'
     }
   },
   ru: {
@@ -22,7 +25,10 @@ const errorTranslations = {
       fieldRequired: 'Это поле является обязательным!',
       emailRequired: 'Требуется адрес электронной почты!',
       nameRequired: 'Требуется имя пользователя!',
-      passwordRequired: 'Требуется пароль!'
+      passwordRequired: 'Требуется пароль!',
+      phoneRequired: 'Требуется номер телефона!',
+      faxRequired: 'Требуется факс!',
+      addressRequired: 'Требуется адрес!'
     }
   },
   es: {
@@ -35,7 +41,10 @@ const errorTranslations = {
       fieldRequired: '¡Este campo es obligatorio!',
       emailRequired: '¡Se requiere un email!',
       nameRequired: '¡Se requiere un nombre de usuario!',
-      passwordRequired: '¡Se requiere una contraseña!'
+      passwordRequired: '¡Se requiere una contraseña!',
+      phoneRequired: '¡Se requiere número de teléfono!',
+      faxRequired: '¡Se requiere fax!',
+      addressRequired: '¡Se requiere dirección!'
     }
   }
 }

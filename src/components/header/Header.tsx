@@ -50,7 +50,7 @@ const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> =
               <DropdownMenu actions={languageActions} icon={<Public sx={{ color: '#fff' }} />} selected />
 
               {token ? (
-                <DropdownMenu actions={actions} icon={<AccountCircle fontSize="large" sx={{ color: '#fff' }} />} isHeader />
+                <DropdownMenu actions={actions} icon={<AccountCircle fontSize="large" sx={{ color: '#fff' }} />} isHeader user={user} />
               ) : (
                 <Button onClick={() => navigate('/auth')} variant="contained" disableElevation startIcon={<Login />} sx={{ textTransform: 'none' }}>
                   {t('button.signIn')}

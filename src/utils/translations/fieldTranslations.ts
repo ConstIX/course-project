@@ -19,6 +19,9 @@ const fieldTranslations = {
       email: 'E-Mail',
       username: 'Username',
       password: 'Password',
+      phone: 'Phone number',
+      fax: 'Fax',
+      address: 'Address',
       tags: {
         all: 'All',
         technology: 'Technology',
@@ -58,6 +61,9 @@ const fieldTranslations = {
       email: 'E-Mail',
       username: 'Имя пользователя',
       password: 'Пароль',
+      phone: 'Номер телефона',
+      fax: 'Факс',
+      address: 'Адрес',
       tags: {
         all: 'Все',
         technology: 'Технологии',
@@ -97,6 +103,9 @@ const fieldTranslations = {
       email: 'E-Mail',
       username: 'Nombre',
       password: 'Contraseña',
+      phone: 'Número de teléfono',
+      fax: 'Fax',
+      address: 'Dirección',
       tags: {
         all: 'Todo',
         technology: 'Tecnología',
