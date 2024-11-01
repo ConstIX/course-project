@@ -2,7 +2,7 @@ import { Box, Button, Dialog, DialogContent, DialogTitle, TextField } from '@mui
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useRegisterSalesforceUserMutation } from '../../redux/services/salesforce'
+import { useRegisterSalesforceAccountMutation, useRegisterSalesforceContactMutation } from '../../redux/services/salesforce'
 import { IUser } from '../../types/user.types'
 
 interface SalesforceFormProps {
@@ -13,31 +13,29 @@ interface SalesforceFormProps {
 }
 
 const fields = [
-  { type: 'text', name: 'phone', label: 'phoneRequired' },
-  { type: 'text', name: 'fax', label: 'faxRequired' },
-  { type: 'text', name: 'address', label: 'addressRequired' }
+  { type: 'text', name: 'phone' },
+  { type: 'text', name: 'fax' }
 ]
 
 const SalesforceForm: FC<SalesforceFormProps> = ({ open, setOpen, user, setSnackbarState }) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm()
+  const { register, handleSubmit, reset } = useForm()
 
-  const { t } = useTranslation(['field', 'button', 'error', 'toaster'])
-  const [registerSalesforceUser] = useRegisterSalesforceUserMutation()
+  const { t } = useTranslation(['field', 'button', 'toaster', 'title'])
+  const [registerSalesforceAccount, { isLoading }] = useRegisterSalesforceAccountMutation()
+  const [registerSalesforceContact] = useRegisterSalesforceContactMutation()
 
   const onSubmit = async (userData: Record<string, string>) => {
     try {
-      const salesforceUser = {
-        Name: user?.username || '',
+      const { id: accountId } = await registerSalesforceAccount({ Name: user?.username || '-' }).unwrap()
+
+      const salesforceContact = {
+        LastName: user?.username || '',
+        Email: user?.email || '',
         Phone: userData.phone,
         Fax: userData.fax,
-        BillingState: userData.address
+        AccountId: accountId
       }
-      await registerSalesforceUser(salesforceUser).unwrap()
+      await registerSalesforceContact(salesforceContact).unwrap()
 
       reset()
       setOpen(false)
@@ -50,7 +48,7 @@ const SalesforceForm: FC<SalesforceFormProps> = ({ open, setOpen, user, setSnack
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
-      <DialogTitle color="primary">{t('button.connect', { ns: 'button' })}</DialogTitle>
+      <DialogTitle color="primary">{t('title.optionalSettings', { ns: 'title' })}</DialogTitle>
       <DialogContent>
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           {fields.map((field) => (
@@ -58,16 +56,15 @@ const SalesforceForm: FC<SalesforceFormProps> = ({ open, setOpen, user, setSnack
               key={field.name}
               type={field.type}
               label={t(`field.${field.name}`)}
+              placeholder=""
               variant="standard"
               fullWidth
-              {...register(field.name, { required: t(`error.${field.label}`, { ns: 'error' }) })}
-              error={!!errors[field.name]}
-              helperText={errors[field.name]?.message as string}
+              {...register(field.name)}
               sx={{ marginBottom: field.name === 'address' ? 5 : 2 }}
             />
           ))}
           <Box className="flex gap-3">
-            <Button type="submit" variant="contained" fullWidth disableElevation>
+            <Button type="submit" variant="contained" fullWidth disableElevation disabled={isLoading}>
               {t('button.submit', { ns: 'button' })}
             </Button>
             <Button onClick={() => setOpen(false)} variant="outlined" color="error" fullWidth disableElevation>

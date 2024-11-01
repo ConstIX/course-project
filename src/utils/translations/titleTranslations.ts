@@ -20,7 +20,8 @@ const titleTranslations = {
       noAccount: 'Don`t have an account?',
       notFound: 'Page not found!',
       notFoundMessage: 'The page you are looking for doesnt`t exist or an other error occurred.',
-      notFoundBack: 'Go back to choose a new direction.'
+      notFoundBack: 'Go back to choose a new direction.',
+      optionalSettings: 'Optional settings'
     }
   },
   ru: {
@@ -44,7 +45,8 @@ const titleTranslations = {
       noAccount: 'Нет аккаунта?',
       notFound: 'Страница не найдена!',
       notFoundMessage: 'Страница, которую вы ищете, не существует или произошла ошибка.',
-      notFoundBack: 'Вернитесь, чтобы выбрать новое направление.'
+      notFoundBack: 'Вернитесь, чтобы выбрать новое направление.',
+      optionalSettings: 'Дополнительные настройки'
     }
   },
   es: {
@@ -68,7 +70,8 @@ const titleTranslations = {
       noAccount: '¿No tienes una cuenta?',
       notFound: '¡Página no encontrada!',
       notFoundMessage: 'La página que estás buscando no existe o se produjo otro error.',
-      notFoundBack: 'Regresa para elegir una nueva dirección.'
+      notFoundBack: 'Regresa para elegir una nueva dirección.',
+      optionalSettings: 'Configuración opcional'
     }
   }
 }

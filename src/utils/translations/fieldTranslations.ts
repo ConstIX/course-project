@@ -20,25 +20,7 @@ const fieldTranslations = {
       username: 'Username',
       password: 'Password',
       phone: 'Phone number',
-      fax: 'Fax',
-      address: 'Address',
-      tags: {
-        all: 'All',
-        technology: 'Technology',
-        science: 'Science',
-        education: 'Education',
-        health: 'Health',
-        art: 'Art',
-        business: 'Business',
-        sports: 'Sports'
-      },
-      searchByOptions: {
-        title: 'Title',
-        description: 'Description',
-        theme: 'Theme',
-        access: 'Access',
-        id: 'Id'
-      }
+      fax: 'Fax'
     }
   },
   ru: {
@@ -62,25 +44,7 @@ const fieldTranslations = {
       username: 'Имя пользователя',
       password: 'Пароль',
       phone: 'Номер телефона',
-      fax: 'Факс',
-      address: 'Адрес',
-      tags: {
-        all: 'Все',
-        technology: 'Технологии',
-        science: 'Наука',
-        education: 'Образование',
-        health: 'Здоровье',
-        art: 'Искусство',
-        business: 'Бизнес',
-        sports: 'Спорт'
-      },
-      searchByOptions: {
-        title: 'Название',
-        description: 'Описание',
-        theme: 'Тематика',
-        access: 'Доступ',
-        id: 'ID'
-      }
+      fax: 'Факс'
     }
   },
   es: {
@@ -104,25 +68,7 @@ const fieldTranslations = {
       username: 'Nombre',
       password: 'Contraseña',
       phone: 'Número de teléfono',
-      fax: 'Fax',
-      address: 'Dirección',
-      tags: {
-        all: 'Todo',
-        technology: 'Tecnología',
-        science: 'Ciencia',
-        education: 'Educación',
-        health: 'Salud',
-        art: 'Arte',
-        business: 'Negocios',
-        sports: 'Deportes'
-      },
-      searchByOptions: {
-        title: 'Título',
-        description: 'Descripción',
-        theme: 'Tema',
-        access: 'Acceso',
-        id: 'Id'
-      }
+      fax: 'Fax'
     }
   }
 }

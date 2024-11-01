@@ -6,7 +6,7 @@ export const salesforceApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://creative-narwhal-hoj9n3-dev-ed.trailblaze.my.salesforce.com//services/data/v62.0/sobjects',
     prepareHeaders: (headers) => {
-      const accessToken = '00Dd2000004EroX!AQEAQN.M4niYfo_uXE_Xjj7zEiQFv7ioktUCcxMbvIwbNDIXihynKf1YV2fFyzpLciPGYFDNEBfwJlM7hd73BYED8F6QFIY9'
+      const accessToken = '00Dd2000004EroX!AQEAQPn0pSvcSKp2_ntwiO4hq5Ej0zfco692pMz90XQQ7C800dZY7oxdrf1QqivLuNmqbXzz24zqR3.ZGP0gucr1F3RQJdBM'
       headers.set('Authorization', `Bearer ${accessToken}`)
       return headers
     }
@@ -18,9 +18,17 @@ export const salesforceApi = createApi({
       query: () => '/Account',
       providesTags: ['Salesforce']
     }),
-    registerSalesforceUser: builder.mutation<void, Record<string, string>>({
+    registerSalesforceAccount: builder.mutation<{ id: string }, Record<string, string>>({
       query: (user) => ({
         url: '/Account',
+        method: 'POST',
+        body: user
+      }),
+      invalidatesTags: ['Salesforce']
+    }),
+    registerSalesforceContact: builder.mutation<void, Record<string, string>>({
+      query: (user) => ({
+        url: '/Contact',
         method: 'POST',
         body: user
       }),
@@ -29,4 +37,4 @@ export const salesforceApi = createApi({
   })
 })
 
-export const { useGetSalesforceUsersQuery, useRegisterSalesforceUserMutation } = salesforceApi
+export const { useGetSalesforceUsersQuery, useRegisterSalesforceAccountMutation, useRegisterSalesforceContactMutation } = salesforceApi
