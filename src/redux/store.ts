@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
 import { authApi } from './services/auth'
+import { jiraApi } from './services/jira'
 import { resultsApi } from './services/results'
 import { salesforceApi } from './services/salesforce'
 import { templatesApi } from './services/templates'
@@ -13,11 +14,18 @@ export const store = configureStore({
     [usersApi.reducerPath]: usersApi.reducer,
     [templatesApi.reducerPath]: templatesApi.reducer,
     [resultsApi.reducerPath]: resultsApi.reducer,
-    [salesforceApi.reducerPath]: salesforceApi.reducer
+    [salesforceApi.reducerPath]: salesforceApi.reducer,
+    [jiraApi.reducerPath]: jiraApi.reducer
   },
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware).concat(usersApi.middleware).concat(templatesApi.middleware).concat(resultsApi.middleware).concat(salesforceApi.middleware)
+    getDefaultMiddleware()
+      .concat(authApi.middleware)
+      .concat(usersApi.middleware)
+      .concat(templatesApi.middleware)
+      .concat(resultsApi.middleware)
+      .concat(salesforceApi.middleware)
+      .concat(jiraApi.middleware)
 })
 
 setupListeners(store.dispatch)
