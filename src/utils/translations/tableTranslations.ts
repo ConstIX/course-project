@@ -10,7 +10,10 @@ const tableTranslations = {
       regDate: 'Registration date',
       logDate: 'Last login',
       status: 'Status',
-      role: 'Role'
+      role: 'Role',
+      summary: 'Summary',
+      priority: 'Priority',
+      link: 'Link'
     }
   },
   ru: {
@@ -24,7 +27,10 @@ const tableTranslations = {
       regDate: 'Дата регистрации',
       logDate: 'Последний вход',
       status: 'Статус',
-      role: 'Роль'
+      role: 'Роль',
+      summary: 'Краткую информация',
+      priority: 'Приоритет',
+      link: 'Ссылка'
     }
   },
   es: {
@@ -38,7 +44,10 @@ const tableTranslations = {
       regDate: 'Fecha de inscripción',
       logDate: 'Último inicio de sesión',
       status: 'Estado',
-      role: 'Role'
+      role: 'Role',
+      summary: 'Resumen',
+      priority: 'Prioridad',
+      link: 'Enlace'
     }
   }
 }

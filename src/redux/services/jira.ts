@@ -1,35 +1,36 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { IJiraTicket, IJiraUser, IUserTickets } from '../../types/jira.types'
 
 export const jiraApi = createApi({
   reducerPath: 'jiraApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://mae98088.atlassian.net/rest/api/3',
+    baseUrl: 'https://jira-server-production.up.railway.app/api',
     prepareHeaders: (headers) => {
-      headers.set(
-        'Authorization',
-        `Basic ${btoa('mae98088@gmail.com:ATATT3xFfGF05sNYMUoW3sGUQfIOeyaF2_r32TDTk3njXLWFbMmmsV3SmCW2fx0mXuLQXvq0YzbXjTGTYbj7A0KK1Y9mb_7ZqRFKl9qVp13Z8zIPFEkBhpmCP_koHISS2CnvBiMPwtIkKjEvsySH0GWc5teT2_rlfvBYkyw66N-XVDrM9Sxw514=0415D3B8')}`
-      )
       headers.set('Content-Type', 'application/json')
       return headers
     }
   }),
+  tagTypes: ['Jira'],
   endpoints: (builder) => ({
-    createTicket: builder.mutation({
+    getTicketsByUserId: builder.query<IUserTickets, string>({
+      query: (userId) => `/tickets/${userId}`,
+      providesTags: ['Jira']
+    }),
+    createTicket: builder.mutation<void, IJiraTicket>({
       query: (ticketData) => ({
-        url: '/issue',
+        url: '/ticket',
         method: 'POST',
         body: ticketData
-      })
+      }),
+      invalidatesTags: ['Jira']
     }),
-    createUser: builder.mutation({
+    createUser: builder.mutation<{ accountId: string; emailAddress: string }, IJiraUser>({
       query: (userData) => ({
         url: '/user',
         method: 'POST',
         body: userData
-      })
-    }),
-    getTicketsByUserId: builder.query({
-      query: (userId) => `/search?jql=reporter=${userId}`
+      }),
+      invalidatesTags: ['Jira']
     })
   })
 })

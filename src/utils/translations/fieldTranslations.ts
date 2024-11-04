@@ -20,7 +20,11 @@ const fieldTranslations = {
       username: 'Username',
       password: 'Password',
       phone: 'Phone number',
-      fax: 'Fax'
+      fax: 'Fax',
+      summary: 'Summary',
+      priority: 'Priority',
+      templateTitle: 'Template title or ID',
+      link: 'Link'
     }
   },
   ru: {
@@ -44,7 +48,11 @@ const fieldTranslations = {
       username: 'Имя пользователя',
       password: 'Пароль',
       phone: 'Номер телефона',
-      fax: 'Факс'
+      fax: 'Факс',
+      summary: 'Краткую информация',
+      priority: 'Приоритет',
+      templateTitle: 'Название шаблона или ID',
+      link: 'Ссылка'
     }
   },
   es: {
@@ -68,7 +76,11 @@ const fieldTranslations = {
       username: 'Nombre',
       password: 'Contraseña',
       phone: 'Número de teléfono',
-      fax: 'Fax'
+      fax: 'Fax',
+      summary: 'Resumen',
+      priority: 'Prioridad',
+      templateTitle: 'Título o ID de la plantilla',
+      link: 'Enlace'
     }
   }
 }

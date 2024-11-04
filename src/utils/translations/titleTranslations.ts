@@ -6,6 +6,7 @@ const titleTranslations = {
       editTemplate: 'Editing template',
       templates: 'Templates',
       results: 'Results',
+      tickets: 'Tickets',
       profile: 'Profile',
       dashboard: 'Dashboard',
       comments: 'Comments',
@@ -21,7 +22,8 @@ const titleTranslations = {
       notFound: 'Page not found!',
       notFoundMessage: 'The page you are looking for doesnt`t exist or an other error occurred.',
       notFoundBack: 'Go back to choose a new direction.',
-      optionalSettings: 'Optional settings'
+      optionalSettings: 'Optional settings',
+      sendTicket: 'Send request'
     }
   },
   ru: {
@@ -31,6 +33,7 @@ const titleTranslations = {
       editTemplate: 'Редактирование шаблона',
       templates: 'Шаблоны',
       results: 'Результаты',
+      tickets: 'Тикеты',
       profile: 'Профиль',
       dashboard: 'Панель управления',
       comments: 'Комментарии',
@@ -46,7 +49,8 @@ const titleTranslations = {
       notFound: 'Страница не найдена!',
       notFoundMessage: 'Страница, которую вы ищете, не существует или произошла ошибка.',
       notFoundBack: 'Вернитесь, чтобы выбрать новое направление.',
-      optionalSettings: 'Дополнительные настройки'
+      optionalSettings: 'Дополнительные настройки',
+      sendTicket: 'Отправить запрос'
     }
   },
   es: {
@@ -56,6 +60,7 @@ const titleTranslations = {
       editTemplate: 'Plantilla de edición',
       templates: 'Plantillas',
       results: 'Resultados',
+      tickets: 'Entradas',
       profile: 'Perfil',
       dashboard: 'Panel de control',
       comments: 'Comentarios',
@@ -71,7 +76,8 @@ const titleTranslations = {
       notFound: '¡Página no encontrada!',
       notFoundMessage: 'La página que estás buscando no existe o se produjo otro error.',
       notFoundBack: 'Regresa para elegir una nueva dirección.',
-      optionalSettings: 'Configuración opcional'
+      optionalSettings: 'Configuración opcional',
+      sendTicket: 'Enviar registro'
     }
   }
 }
