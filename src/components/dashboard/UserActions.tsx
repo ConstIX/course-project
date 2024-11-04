@@ -48,7 +48,8 @@ const UserActions: FC<IUserActions> = ({ selectedUsers, users, setSnackbarState,
         await updateUser({ id, role }).unwrap()
 
         if (role === 'guest' && selectedUsers.includes(+userId!)) {
-          localStorage.clear()
+          localStorage.removeItem('token')
+          localStorage.removeItem('userID')
           navigate('/auth')
         }
       }

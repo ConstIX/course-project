@@ -21,7 +21,8 @@ const buttonTranslations = {
       requiredQuestion: 'Required question',
       submit: 'Submit',
       connect: 'Connect to salesforce',
-      connected: 'Connected to salesforce'
+      connected: 'Connected to salesforce',
+      contactSupport: 'Contact support'
     }
   },
   ru: {
@@ -46,7 +47,8 @@ const buttonTranslations = {
       requiredQuestion: 'Обязательный вопрос',
       submit: 'Подтвердить',
       connect: 'Подключиться к salesforce',
-      connected: 'Подключен к salesforce'
+      connected: 'Подключен к salesforce',
+      contactSupport: 'Обратиться в службу поддержки'
     }
   },
   es: {
@@ -71,7 +73,8 @@ const buttonTranslations = {
       requiredQuestion: 'Pregunta obligatoria',
       submit: 'Enviar',
       connect: 'Conectarse a Salesforce',
-      connected: 'Conectada a la fuerza de ventas'
+      connected: 'Conectada a la fuerza de ventas',
+      contactSupport: 'Contacta con soporte'
     }
   }
 }

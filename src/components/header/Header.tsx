@@ -1,5 +1,5 @@
-import { AccountCircle, Api, Dashboard, HelpOutlined, Login, Logout, Person, Public } from '@mui/icons-material'
-import { Alert, AppBar, Box, Button, IconButton, Snackbar, Toolbar, useMediaQuery } from '@mui/material'
+import { AccountCircle, Api, Dashboard, HelpOutlined, Login, Logout, Person, Public, ReportProblem } from '@mui/icons-material'
+import { Alert, AppBar, Box, Button, Snackbar, Toolbar, useMediaQuery } from '@mui/material'
 import moment from 'moment'
 import { FC, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,29 +25,30 @@ const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> =
 
   const token = localStorage.getItem('token')
   const userId = localStorage.getItem('userID')
-  const { data: user } = useGetUserByIdQuery(userId || '')
 
+  const { data: user } = useGetUserByIdQuery(userId || '')
   const [createUser, { isLoading }] = useCreateUserMutation()
   const [createTicket] = useCreateTicketMutation()
 
-  const actions = [
+  const profileActions = [
     { label: t('button.profile'), icon: <Person fontSize="small" />, function: () => navigate('/profile') },
     ...(user && user.role === 'admin' ? [{ label: t('button.dashboard'), icon: <Dashboard fontSize="small" />, function: () => navigate('/dashboard') }] : []),
     {
       label: t('button.logout'),
       icon: <Logout fontSize="small" />,
       function: () => {
-        localStorage.clear()
+        localStorage.removeItem('token')
+        localStorage.removeItem('userID')
         navigate('/auth')
       }
     }
   ]
-
   const languageActions = [
     { label: 'EN - English', function: () => i18n.changeLanguage('en') },
     { label: 'RU - Русский', function: () => i18n.changeLanguage('ru') },
     { label: 'ES - Español', function: () => i18n.changeLanguage('es') }
   ]
+  const supportActions = [{ label: t('button.contactSupport'), icon: <ReportProblem fontSize="small" />, function: () => setOpen(true) }]
 
   const fields = [
     { type: 'text', name: 'summary', label: 'fieldRequired' },
@@ -94,15 +95,11 @@ const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> =
             <Box className="flex items-center gap-3">
               <ThemeSwitcher isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
-              <IconButton onClick={() => setOpen(true)} sx={{ padding: 0 }}>
-                <HelpOutlined sx={{ color: '#fff' }} />
-              </IconButton>
-              {token && <IntegrationForm open={open} setOpen={setOpen} setSnackbarState={setSnackbarState} fields={fields} onSubmit={onSubmit} title="sendTicket" isLoading={isLoading} />}
-
+              {token && <DropdownMenu actions={supportActions} icon={<HelpOutlined sx={{ color: '#fff' }} />} />}
               <DropdownMenu actions={languageActions} icon={<Public sx={{ color: '#fff' }} />} selected />
 
               {token ? (
-                <DropdownMenu actions={actions} icon={<AccountCircle fontSize="large" sx={{ color: '#fff' }} />} isHeader user={user} />
+                <DropdownMenu actions={profileActions} icon={<AccountCircle fontSize="large" sx={{ color: '#fff' }} />} isHeader user={user} />
               ) : (
                 <Button onClick={() => navigate('/auth')} variant="contained" disableElevation startIcon={<Login />} sx={{ textTransform: 'none' }}>
                   {t('button.signIn')}
@@ -112,6 +109,8 @@ const Header: FC<{ isDarkMode: boolean; setIsDarkMode: (i: boolean) => void }> =
           </Box>
         </Toolbar>
       </AppBar>
+
+      {token && <IntegrationForm open={open} setOpen={setOpen} setSnackbarState={setSnackbarState} fields={fields} onSubmit={onSubmit} title="sendTicket" isLoading={isLoading} />}
 
       <Snackbar open={snackbarState.open} autoHideDuration={3000} onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <Alert onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))} severity={snackbarState.severity}>

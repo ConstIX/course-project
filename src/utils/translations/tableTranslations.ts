@@ -28,7 +28,7 @@ const tableTranslations = {
       logDate: 'Последний вход',
       status: 'Статус',
       role: 'Роль',
-      summary: 'Краткую информация',
+      summary: 'Краткая информация',
       priority: 'Приоритет',
       link: 'Ссылка'
     }
