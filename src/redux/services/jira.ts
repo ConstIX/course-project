@@ -18,7 +18,7 @@ export const jiraApi = createApi({
     }),
     createTicket: builder.mutation<void, IJiraTicket>({
       query: (ticketData) => ({
-        url: '/ticket',
+        url: '/tickets',
         method: 'POST',
         body: ticketData
       }),

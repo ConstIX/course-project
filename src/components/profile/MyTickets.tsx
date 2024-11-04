@@ -12,12 +12,12 @@ const MyTickets: FC = () => {
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'summary', headerName: t('table.summary'), width: 200 },
+    { field: 'summary', headerName: t('table.summary'), width: 200, sortable: false },
     { field: 'status', headerName: t('table.status'), width: 130 },
     { field: 'priority', headerName: t('table.priority'), width: 130 },
     { field: 'duedate', headerName: t('table.date'), width: 130 },
-    { field: 'customfield_10041', headerName: t('table.templateTitle'), width: 200 },
-    { field: 'customfield_10048', headerName: t('table.link'), width: 200 }
+    { field: 'customfield_10041', headerName: t('table.templateTitle'), width: 200, sortable: false },
+    { field: 'customfield_10048', headerName: t('table.link'), width: 200, sortable: false }
   ]
 
   const rows = tickets?.issues.map((issue) => ({
