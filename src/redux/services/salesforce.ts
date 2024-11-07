@@ -6,7 +6,7 @@ export const salesforceApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://creative-narwhal-hoj9n3-dev-ed.trailblaze.my.salesforce.com//services/data/v62.0/sobjects',
     prepareHeaders: (headers) => {
-      const accessToken = '00Dd2000004EroX!AQEAQM6_MKOrFdTgplceiJ4Rdbs__oYaB9S9N.yvK2vQnWIzMkSvbhrD1bC5_4DL4Ooj9y3fhhIPhJPrChKOxnfa7vK6yRVq'
+      const accessToken = '00Dd2000004EroX!AQEAQI7gbsOGre1lIZmqjrfFG3BM6gIvqNns3w1TM9x8n0KZfghmkz6MK9Z1U2zqI6emLWILN6uPReIbxOB4iGGEj.hkm0Ms'
       headers.set('Authorization', `Bearer ${accessToken}`)
       return headers
     }
